@@ -105,7 +105,9 @@
                 width: self.minimum_width
                 MDFlatButton:
                     id: button_ok
-                    text: 'OK'
+                    text:
+                    theme_text_color: 'Custom'
+                    text_color: app.theme_cls.primary_color
 
 <-FileChooserProgress>:
     pos_hint: {'x': 0, 'y': 0}
