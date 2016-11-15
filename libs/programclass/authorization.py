@@ -116,6 +116,10 @@ class AuthorizationOnVK(object):
             self.data.string_lang_load_issues_in_group
         issues_in_group, info = vk_requests.get_issue_count()
 
+        if issues_in_group > self.data.issues_in_group:
+            self.nav_drawer.ids.new_issues_in_group.text = \
+                str(issues_in_group - self.data.issues_in_group)
+
         if issues_in_group:
             self.config.set('General', 'issues_in_group', issues_in_group)
             self.config.write()
