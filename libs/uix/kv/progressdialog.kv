@@ -32,6 +32,7 @@
                 markup: True
                 halign: 'center'
                 size_hint_y: None
+                font_size: '14sp'
                 height: dp(50)
 
             Widget:
@@ -40,3 +41,4 @@
                 text: ctx.text_button_cancel
                 pos_hint: {'center_x': .5}
                 on_release: ctx.events_callback(ctx.text_button_cancel)
+                text_color: app.theme_cls.primary_color
