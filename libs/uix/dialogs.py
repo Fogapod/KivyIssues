@@ -47,7 +47,11 @@ def dialog(font_style='Body1', theme_text_color='Secondary', title='Title',
 
 def input_dialog(title='Title', hint_text_login='', password=False,
                  hint_text_password='', text_button_ok='OK', dismiss=True,
-                 text_button_cancel=None, events_callback=None):
+                 text_button_cancel=None, text_color=None,
+                 events_callback=None):
+    if not text_color:
+        text_color = 0, 0, 0, 0
+
     input_dialog = Builder.template(
         'PasswordForm', title=title, hint_text_login=hint_text_login,
         hint_text_password=hint_text_password, text_button_ok=text_button_ok,
@@ -58,7 +62,8 @@ def input_dialog(title='Title', hint_text_login='', password=False,
         input_dialog.ids.box_buttons.add_widget(
             MDFlatButton(
                 text=str(text_button_cancel),
-                on_release=lambda x: events_callback(str(text_button_cancel))
+                on_release=lambda x: events_callback(str(text_button_cancel)),
+                text_color=text_color
             )
         )
     input_dialog.open()
