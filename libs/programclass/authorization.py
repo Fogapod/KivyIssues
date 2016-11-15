@@ -116,14 +116,24 @@ class AuthorizationOnVK(object):
             self.data.string_lang_load_issues_in_group
         issues_in_group, info = vk_requests.get_issue_count()
 
-        if issues_in_group > self.data.issues_in_group:
-            self.nav_drawer.ids.new_issues_in_group.text = \
-                str(issues_in_group - self.data.issues_in_group)
-
         if issues_in_group:
+            if issues_in_group > self.data.issues_in_group:
+                self.nav_drawer.ids.new_issues_in_group.text = \
+                    self.data.string_lang_new_issues_in_group.format(
+                        str(issues_in_group - self.data.issues_in_group)
+                    )
+                self.screen.ids.action_bar.right_action_items = \
+                    [['comment-text', lambda x: None]]
+            else:
+                self.nav_drawer.ids.new_issues_in_group.text = \
+                    self.data.string_lang_new_issues_in_group.format('0')
+
             self.config.set('General', 'issues_in_group', issues_in_group)
             self.config.write()
-            self.nav_drawer.ids.issues_in_group.text = str(issues_in_group)
+            self.nav_drawer.ids.issues_in_group.text = \
+                self.data.string_lang_issues_in_group.format(
+                    str(issues_in_group)
+                )
 
     def test(self):
             wall_posts, info = vk_requests.get_issues('0', '1')
