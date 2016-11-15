@@ -163,15 +163,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             ]
         )
 
-    def check_new_issues(self):
-        '''Возвращает значение 'comment-outline', если в группе нет новых
-        вопросов, и 'comment-text', если есть.'''
-
-        def get_new_issues():
-            '''get запрос'''
-
-        return 'comment-text' if get_new_issues() else 'comment-outline'
-
     def set_banner(self, td):
         try:
             instance_banner = \
