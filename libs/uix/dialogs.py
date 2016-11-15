@@ -61,9 +61,10 @@ def input_dialog(title='Title', hint_text_login='', password=False,
     if text_button_cancel:
         input_dialog.ids.box_buttons.add_widget(
             MDFlatButton(
-                text=str(text_button_cancel),
-                on_release=lambda x: events_callback(str(text_button_cancel)),
-                text_color=text_color
+                text=str(text_button_cancel), text_color=text_color,
+                on_release=lambda x: events_callback(
+                    str(text_button_cancel)), theme_text_color='Custom'
+
             )
         )
     input_dialog.open()
