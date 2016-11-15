@@ -40,5 +40,7 @@
             MDFlatButton:
                 text: ctx.text_button_cancel
                 pos_hint: {'center_x': .5}
-                on_release: ctx.events_callback(ctx.text_button_cancel)
+                theme_text_color: 'Custom'
                 text_color: app.theme_cls.primary_color
+                on_release: ctx.events_callback(ctx.text_button_cancel)
+
