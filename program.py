@@ -122,7 +122,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             title=self.data.string_lang_registration,
             hint_text_login='Login', password=True, dismiss=False,
             hint_text_password='Password', text_button_ok='OK',
-            events_callback=self.check_fields_login_password
+            events_callback=self.check_fields_login_password,
+            text_color=self.theme_cls.primary_color
         )
 
     def show_progress_authorization(self, interval):
