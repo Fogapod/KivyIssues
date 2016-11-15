@@ -1,0 +1,66 @@
+#: kivy 1.9.1
+#: import Clock kivy.clock.Clock
+#: import MDFlatButton kivymd.button.MDFlatButton
+#: import webbrowser webbrowser
+
+<Previous>:
+    name: 'previous'
+
+    BoxLayout:
+        id: root_box
+        orientation: 'vertical'
+        padding: dp(5), dp(10)
+        spacing: dp(10)
+
+        BoxLayout:
+            size_hint_y: .1
+
+            Image:
+                source: 'data/images/kivy_logo.png'
+
+            Label:
+                text: app.data.string_lang_kivy_in_vk
+                color: app.theme_cls.primary_color
+                font_size: '18sp'
+                bold: True
+
+            Image:
+                source: 'data/images/vk_logo.png'
+
+        Widget:
+            id: banner
+            size_hint_y: .45
+            canvas:
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    source: 'data/images/banners/processcraft-featured.jpg'
+
+        ScrollView:
+            size_hint_y: .4
+
+            Label:
+                text: app.data.string_lang_introduction
+                markup: True
+                color: app.data.text_color_from_hex
+                font_size: '12sp'
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1]
+
+        MDFlatButton:
+            id: button_question
+            text: app.data.string_lang_ask_a_question
+            pos_hint: {'center_x': .5}
+
+        Label:
+            text:
+                '[color={}]{} -[/color] [ref={REF}]{REF}[/ref]'.format(\
+                app.data.text_color, app.data.string_lang_official_group,\
+                REF=app.data.string_lang_link_on_group)
+            markup: True
+            color: app.theme_cls.primary_color
+            font_size: '10sp'
+            pos: self.size[0], self.pos[1]
+            size_hint: None, .05
+            on_ref_press: webbrowser.open(app.data.string_lang_link_on_group)

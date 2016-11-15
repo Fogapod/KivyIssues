@@ -1,0 +1,11 @@
+Mercury/
+Mercury.modules
+*.log
+*.pyc
+.idea
+.buildozer
+/venv/
+/program.ini
+/error.ini
+/data/issues
+libs/vk_api_tests.py

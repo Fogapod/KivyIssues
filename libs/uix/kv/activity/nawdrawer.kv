@@ -1,0 +1,105 @@
+#: kivy 1.9.1
+#: import os os
+#: import MDIconButton kivymd.button.MDIconButton
+#: import MDSeparator kivymd.card.MDSeparator
+
+<ImageButton@ButtonBehavior+Image>:
+
+<DrawerItem>:
+    size_hint_y: None
+    height: dp(40)
+
+    MDIconButton:
+        icon: root.icon
+        on_release: root.callback()
+
+    Label:
+        id: label_item
+        text: root.text
+        markup: True
+        valign: 'center'
+        color: app.data.text_color_from_hex
+        size_hint_y: None
+        font_size: '14sp'
+        text_size: self.size[0] - 10, self.size[1]
+        height: dp(45)
+
+<LabelSection@Label>:
+    markup: True
+    bold: True
+    font_size: '16sp'
+    color: app.data.text_color_from_hex
+    size_hint_y: None
+    height: dp(45)
+
+<NavDrawer>:
+    ImageButton:
+        id: avatar
+        source:
+            'data/images/avatar.png' \
+            if os.path.exists('{}/data/images/avatar.png'.format(\
+            app.directory)) else 'data/images/avatar_empty.png'
+        size_hint: None, None
+        size: dp(150), dp(150)
+        pos_hint: {'center_x': .5}
+        on_release: app.choice_avatar_user()
+
+    Widget:
+
+    LabelSection:
+        id: user_name
+        text: app.data.user_name
+
+    ScrollView:
+        size_hint_y: None
+        height: app.window.size[1] // 1.8
+
+        GridLayout:
+            cols: 1
+            size_hint_y: None
+            height: self.minimum_height
+
+            DrawerItem:
+                icon: 'comment-outline'
+                text: 'Вопросы'
+            DrawerItem:
+                icon: 'comment-text-outline'
+                text: 'Ответы'
+
+            MDSeparator:
+
+            LabelSection:
+                text: 'Группа:'
+
+            DrawerItem:
+                id: issues_in_group
+                icon: 'comment-outline'
+                text: 'Вопросов в группе - 0'
+            DrawerItem:
+                icon: 'comment-plus-outline'
+                text: 'Новые - 0'
+
+            MDSeparator:
+
+            LabelSection:
+                text: 'Настройки:'
+
+            DrawerItem:
+                icon: 'settings-box'
+                text: app.data.string_lang_settings
+            DrawerItem:
+                icon: 'apps'
+                text: app.data.string_lang_plugin
+                callback: app.show_plugins
+            DrawerItem:
+                icon: 'information-outline'
+                text: app.data.string_lang_license
+                callback: app.show_license
+            DrawerItem:
+                icon: 'github-circle'
+                text: 'About'
+                callback: app.show_about
+            DrawerItem:
+                icon: 'close-box'
+                text: app.data.string_lang_exit_key
+                callback: app.dialog_exit

@@ -1,0 +1,21 @@
+#: kivy 1.9.1
+#: import MDCheckbox kivymd.selectioncontrols.MDCheckbox
+
+<Selection>:
+
+    MDCheckbox:
+        id: check
+        size_hint: None, None
+        size: dp(40), dp(40)
+        on_state: root.callback(root)
+
+    Label:
+        id: label
+        text: root.text
+        valign: 'middle'
+        markup: True
+        color: app.data.text_color_from_hex
+        size_hint: .9, None
+        height: dp(40)
+        font_size: '14sp'
+        text_size: self.size[0] - 10, self.size[1]

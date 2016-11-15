@@ -1,0 +1,25 @@
+#: kivy 1.9.1
+#: import Clock kivy.clock.Clock
+#: import Toolbar kivymd.toolbar.Toolbar
+
+<StartScreen>
+    orientation: 'vertical'
+
+	Toolbar:
+        id: action_bar
+        background_color: app.theme_cls.primary_color
+        title: app.title
+        left_action_items: [['menu', lambda x: app.nav_drawer.toggle()]]
+        right_action_items: [[app.check_new_issues(), lambda x: None]]
+        opposite_colors: True
+        elevation: 10
+
+    ScrManager:
+        id: manager
+        _app: app
+
+        Previous:
+            id: previous
+
+        AskAQuestion:
+            id: ask_a_question
