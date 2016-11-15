@@ -10,9 +10,11 @@
         background_color: app.theme_cls.primary_color
         title: app.title
         left_action_items: [['menu', lambda x: app.nav_drawer.toggle()]]
-        right_action_items: [[app.check_new_issues(), lambda x: None]]
+        right_action_items: [['comment-outline', lambda x: None]]
         opposite_colors: True
         elevation: 10
+        on_right_action_items:
+            app.open_dialog(app.data.string_lang_new_issues, app.title, True)
 
     ScrManager:
         id: manager
