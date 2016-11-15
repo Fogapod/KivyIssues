@@ -63,7 +63,9 @@ class AuthorizationOnVK(object):
                 dismiss=True
             )
             self.screen.ids.previous.ids.button_question.bind(
-                on_release=lambda x: snackbar.make('ioioioioioio'))
+                on_release=lambda x: snackbar.make(
+                    self.data.string_lang_please_authorization)
+            )
         else:
             self.config.set('General', 'authorization', 1)
             self.config.write()
