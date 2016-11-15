@@ -93,7 +93,8 @@ class BugReporter(FloatLayout):
             if callable(name_funcs_buttons[name_button]):
                 self.ids.box_layout.add_widget(
                     MDFlatButton(
-                        text=name_button, on_release=name_funcs_buttons[name_button]
+                        text=name_button, text_color=[1, 1, 1, 1],
+                        on_release=name_funcs_buttons[name_button]
                     )
                 )
 
