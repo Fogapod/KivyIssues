@@ -91,14 +91,15 @@ class AuthorizationOnVK(object):
                     '{}/data/images/avatar_origin.png'.format(self.directory)
                 path_to_avatar_portrait = \
                     '{}/data/images/avatar.png'.format(self.directory)
-
                 with open(path_to_avatar_origin, 'wb') as avatar_origin:
                     avatar_origin.write(avatar)
+
                 create_previous_portrait(
                     path_to_avatar_origin, path_to_avatar_portrait
                 )
                 os.remove(path_to_avatar_origin)
-                self.set_avatar(path_to_avatar_portrait)
+                Clock.schedule_once(lambda x: self.set_avatar(
+                    path_to_avatar_portrait), 1)
 
     def set_user_name(self):
         self.instance_text_authorization.text = \
