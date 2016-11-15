@@ -18,6 +18,7 @@ string_lang_issues_in_group = 'Вопросов в группе - {}'
 string_lang_new_issues_in_group = 'Новые - {}'
 string_lang_issues = 'Вопросоы'
 string_lang_answer = 'Отвевты'
+string_lang_new_issues = 'В группе появились новые вопросы!'
 
 #------------------------------------------------------------------------------
 
