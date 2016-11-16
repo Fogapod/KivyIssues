@@ -101,7 +101,9 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         Clock.schedule_interval(self.set_banner, 8)
 
         if not self.login or not self.password:
-            Clock.schedule_once(self.show_dialog_registration, 3)
+            # FIXME: не проходит авторизация после ввода логина и пароля;
+            # последующая авто авторизация успешно выполняется.
+            Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
             self._authorization_on_vk(self.login, self.password)
         if self.saved_form:
@@ -160,15 +162,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 [data.string_lang_clear_data, lambda *x: clear_data()]
             ]
         )
-
-    def check_new_issues(self):
-        '''Возвращает значение 'comment-outline', если в группе нет новых
-        вопросов, и 'comment-text', если есть.'''
-
-        def get_new_issues():
-            '''get запрос'''
-
-        return 'comment-text' if get_new_issues() else 'comment-outline'
 
     def set_banner(self, td):
         try:

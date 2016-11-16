@@ -57,9 +57,6 @@ class BugReporter(FloatLayout):
     )
     txt_report = StringProperty('')
 
-    callback_clipboard = ObjectProperty()
-    '''Функция копирования баг-репорта в буфер обмена'''
-
     callback_report = ObjectProperty()
     '''Функция отправки баг-репорта'''
 
@@ -69,7 +66,6 @@ class BugReporter(FloatLayout):
     icon_background = StringProperty('data/logo/kivy-icon-256.png')
     '''Фоновое изображение окна'''
 
-    txt_button_clipboard = StringProperty('Copy Bug')
     txt_button_report = StringProperty('Report Bug')
     txt_button_close = StringProperty('Close')
     '''Подписи кнопок'''
@@ -83,20 +79,6 @@ class BugReporter(FloatLayout):
 
         if not os.path.exists(self.icon_background):
             self.icon_background = 'data/logo/kivy-icon-256.png'
-
-        name_funcs_buttons = {
-            self.txt_button_clipboard: self.callback_clipboard,
-            self.txt_button_report: self.callback_report
-        }
-
-        for name_button in name_funcs_buttons.keys():
-            if callable(name_funcs_buttons[name_button]):
-                self.ids.box_layout.add_widget(
-                    MDFlatButton(
-                        text=name_button, text_color=[1, 1, 1, 1],
-                        on_release=name_funcs_buttons[name_button]
-                    )
-                )
 
     def _close(self, *args):
         from kivy.app import App

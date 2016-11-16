@@ -63,7 +63,9 @@ class AuthorizationOnVK(object):
                 dismiss=True
             )
             self.screen.ids.previous.ids.button_question.bind(
-                on_release=lambda x: snackbar.make('ioioioioioio'))
+                on_release=lambda x: snackbar.make(
+                    self.data.string_lang_please_authorization)
+            )
         else:
             self.config.set('General', 'authorization', 1)
             self.config.write()
@@ -89,14 +91,15 @@ class AuthorizationOnVK(object):
                     '{}/data/images/avatar_origin.png'.format(self.directory)
                 path_to_avatar_portrait = \
                     '{}/data/images/avatar.png'.format(self.directory)
-
                 with open(path_to_avatar_origin, 'wb') as avatar_origin:
                     avatar_origin.write(avatar)
+
                 create_previous_portrait(
                     path_to_avatar_origin, path_to_avatar_portrait
                 )
                 os.remove(path_to_avatar_origin)
-                self.set_avatar(path_to_avatar_portrait)
+                Clock.schedule_once(lambda x: self.set_avatar(
+                    path_to_avatar_portrait), 1)
 
     def set_user_name(self):
         self.instance_text_authorization.text = \
@@ -114,9 +117,23 @@ class AuthorizationOnVK(object):
         issues_in_group, info = vk_requests.get_issue_count()
 
         if issues_in_group:
+            if issues_in_group > self.data.issues_in_group:
+                self.nav_drawer.ids.new_issues_in_group.text = \
+                    self.data.string_lang_new_issues_in_group.format(
+                        str(issues_in_group - self.data.issues_in_group)
+                    )
+                self.screen.ids.action_bar.right_action_items = \
+                    [['comment-text', lambda x: None]]
+            else:
+                self.nav_drawer.ids.new_issues_in_group.text = \
+                    self.data.string_lang_new_issues_in_group.format('0')
+
             self.config.set('General', 'issues_in_group', issues_in_group)
             self.config.write()
-            self.nav_drawer.ids.issues_in_group.text = str(issues_in_group)
+            self.nav_drawer.ids.issues_in_group.text = \
+                self.data.string_lang_issues_in_group.format(
+                    str(issues_in_group)
+                )
 
     def test(self):
             wall_posts, info = vk_requests.get_issues('0', '1')

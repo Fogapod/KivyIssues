@@ -61,10 +61,10 @@
 
             DrawerItem:
                 icon: 'comment-outline'
-                text: 'Вопросы'
+                text: app.data.string_lang_issues
             DrawerItem:
                 icon: 'comment-text-outline'
-                text: 'Ответы'
+                text: app.data.string_lang_answer
 
             MDSeparator:
 
@@ -74,15 +74,16 @@
             DrawerItem:
                 id: issues_in_group
                 icon: 'comment-outline'
-                text: 'Вопросов в группе - 0'
+                text: app.data.string_lang_issues_in_group.format('0')
             DrawerItem:
+                id: new_issues_in_group
                 icon: 'comment-plus-outline'
-                text: 'Новые - 0'
+                text: app.data.string_lang_new_issues_in_group.format('0')
 
             MDSeparator:
 
             LabelSection:
-                text: 'Настройки:'
+                text:  app.data.string_lang_settings + ':'
 
             DrawerItem:
                 icon: 'settings-box'

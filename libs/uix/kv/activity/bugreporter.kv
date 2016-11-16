@@ -53,5 +53,13 @@
 
             MDFlatButton:
                 text: root.txt_button_close
-                on_release: root._close()
+                theme_text_color: 'Custom'
                 text_color: 1, 1, 1, 1
+                on_release: root._close()
+
+            MDFlatButton:
+                text: root.txt_button_report
+                theme_text_color: 'Custom'
+                text_color: 1, 1, 1, 1
+                on_release:
+                    if callable(root.callback_report): root.callback_report()
