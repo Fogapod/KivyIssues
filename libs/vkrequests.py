@@ -14,14 +14,14 @@ api = None
 
 
 def vk_request_errors(REQUEST):
-    def request_errors(*args):
-        # RESPONSE = REQUEST(*args)  # Для вывода ошибки в консоль
+    def request_errors(*args, **kwargs):
+        # RESPONSE = REQUEST(*args, **kwargs)  # Для вывода ошибки в консоль
         try:
-            RESPONSE = REQUEST(*args)
+            RESPONSE = REQUEST(*args, **kwargs)
         except Exception as e:
             if 'Too many requests per second.' in str(e):
                 time.sleep(0.66)
-                return request_errors(*args)
+                return request_errors(*args, **kwargs)
             elif 'Failed to establish a new connection' in str(e) != -1:
                 print('Check your connection')
             elif str(e) == 'Authorization error (incorrect password)':
@@ -42,23 +42,30 @@ def vk_request_errors(REQUEST):
 
 
 @vk_request_errors
-def log_in(*args):
+def log_in(**kwargs):
     # TODO: получить токен.
     """
     args: LOGIN ( required ), PASSWORD ( required )
     returns True if succeed
     else returns False
     """
-
     global api
-
-    LOGIN, PASSWORD = args
-    api = vk.API(vk.AuthSession(
-        app_id='5720412', scope='204804', user_login=LOGIN,
-        user_password=PASSWORD), v='5.6'
-    )
+    scope = '204804'
     # 65536 -- offline permission; 8192 -- wall permission; 131072 -- docs
     # permission; 4 -- photos permission
+    app_id = '5720412'
+    if 'token' in kwargs:
+        token = kwargs['token']
+        session = vk.Session(
+            access_token=token, scope=scope, app_id=app_id
+        )
+    else:
+        login, password = kwargs['login'], kwargs['password']
+        session = vk.AuthSession(
+            user_login=login, user_password=password,
+            scope=scope, app_id=app_id
+        )
+    api = vk.API(session, v='5.6')
     api.stats.trackVisitor()
     return True
 

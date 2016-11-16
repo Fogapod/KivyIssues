@@ -54,7 +54,7 @@ class AuthorizationOnVK(object):
         thread_authorization.start()
 
     def authorization_on_vk(self, login, password):
-        result, info = vk_requests.log_in(login, password)
+        result, info = vk_requests.log_in(login=login, password=password)
 
         if not result:
             self.dialog_authorization.dismiss()
