@@ -16,7 +16,7 @@ api = None
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        response = request(*args, **kwargs); time.sleep(0.66) 
+        # response = request(*args, **kwargs); time.sleep(0.66) 
         # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
