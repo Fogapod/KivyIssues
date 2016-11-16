@@ -16,7 +16,7 @@ api = None
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        # response = request(*args, **kwargs); time.sleep(0.66) 
+        response = request(*args, **kwargs); time.sleep(0.66) 
         # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
@@ -47,7 +47,10 @@ def vk_request_errors(request):
 def log_in(**kwargs):
     # TODO: получить токен.
     """
-    kwargs: login ( required ), password ( required )
+    :login:
+    :password:
+    :token:
+
     returns True if succeed
     else returns False
     """
@@ -57,13 +60,13 @@ def log_in(**kwargs):
     # permission; 4 -- photos permission
     app_id = '5720412'
 
-    if 'token' in kwargs:
-        token = kwargs['token']
+    token = kwargs.get('token')
+    if token:
         session = vk.Session(
             access_token=token, scope=scope, app_id=app_id
         )
     else:
-        login, password = kwargs['login'], kwargs['password']
+        login, password = kwargs.values()#['login'], kwargs['password']
         session = vk.AuthSession(
             user_login=login, user_password=password,
             scope=scope, app_id=app_id
@@ -81,18 +84,19 @@ def get_members_count():
     returns string if succeed
     else returns False
     """
-    response = api.groups.getById(group_id=GROUP_ID, fields='members_count')
-    return response[0]['members_count']
+    return api.execute.GetMembersCount()
 
 
 @vk_request_errors
-def get_issues(*args):
+def get_issues(**kwargs):
     """
-    args: offset ( required, but not throws an exception if not declared,
-    default=() ), post_count ( optional, default='30' )
+    :offset:
+    :post_count:
+
     returns dict with wall posts if succeed
     else returns False
     """
+
     if len(args) == 2:
         offset, post_count = args
     else:
