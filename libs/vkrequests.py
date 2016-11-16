@@ -66,7 +66,7 @@ def log_in(**kwargs):
             access_token=token, scope=scope, app_id=app_id
         )
     else:
-        login, password = kwargs.values()#['login'], kwargs['password']
+        login, password = kwargs['login'], kwargs['password']
         session = vk.AuthSession(
             user_login=login, user_password=password,
             scope=scope, app_id=app_id
