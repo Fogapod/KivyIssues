@@ -4,7 +4,7 @@ import requests as r
 import time
 import re
 
-from libs import vk
+import vk
 
 __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
@@ -100,8 +100,8 @@ def get_issue_count():
 @vk_request_errors
 def get_issues(**kwargs):
     """
-    :offset:
-    :post_count:
+    :offset: ( '0' )
+    :count: ( '30' )
 
     returns dict
     """
@@ -117,7 +117,7 @@ def get_issues(**kwargs):
 @vk_request_errors
 def send_issue(*args):
     """
-    :issue_data: {'file','image','theme','issue'}
+    :issue_data: ( {'file','image','theme','issue'} )
 
     returns string ( post id )
     """
@@ -150,7 +150,7 @@ def send_issue(*args):
 @vk_request_errors
 def attach_doc(**kwargs):
     """
-    args: path ( required )
+    :path:
 
     returns array with doc object
     """
@@ -179,7 +179,7 @@ def attach_doc(**kwargs):
 @vk_request_errors
 def attach_pic(**kwargs):
     """
-    args: path ( required )
+    :path:
 
     returns array with pic object
     """
@@ -208,8 +208,9 @@ def attach_pic(**kwargs):
 @vk_request_errors
 def get_comments(**kwargs):
     """
-    args: post_id ( requied ), offset ( required, but not throws an exception
-    if not declared, default=() ), comment_count ( optional, default='100' )
+    :post_id:
+    :offset: ( '0' )
+    :count: ( '100' )
 
     returns dict with comments
     """
@@ -227,7 +228,7 @@ def get_comments(**kwargs):
 def get_user_photo(**kwargs):
     """
     :size: 
-    'big'; medium'; 'small'; 'max' (smallest possible)
+    ( 'big'; medium'; 'small'; 'max' (smallest possible) )
 
     returns Photo
     # returns None if user have no avatar
