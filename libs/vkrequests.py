@@ -9,14 +9,15 @@ from libs import vk
 __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
 GROUP_ID = '99411738'
-MGROUP_ID = '-99411738'
+MGROUP_ID = '-' + GROUP_ID
 
 api = None
+token = None
 
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        # response = request(*args, **kwargs); time.sleep(0.66) 
+        # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
@@ -47,31 +48,29 @@ def vk_request_errors(request):
 def log_in(**kwargs):
     # TODO: получить токен.
     """
+    :token:
     :login:
     :password:
-    :token:
-
-    returns True if succeed
-    else returns False
     """
-    global api
+
     scope = '204804'
-    # 65536 -- offline permission; 8192 -- wall permission; 131072 -- docs
-    # permission; 4 -- photos permission
+    # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
     app_id = '5720412'
 
+    global token
     token = kwargs.get('token')
     if token:
         session = vk.Session(
             access_token=token, scope=scope, app_id=app_id
         )
     else:
-        login, password = kwargs.values()#['login'], kwargs['password']
+        login, password = ['login'], kwargs['password']
         session = vk.AuthSession(
             user_login=login, user_password=password,
             scope=scope, app_id=app_id
         )
 
+    global api
     api = vk.API(session, v='5.6')
     api.stats.trackVisitor()
 
@@ -81,10 +80,22 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """
-    returns string if succeed
-    else returns False
+    returns string
     """
-    return api.execute.GetMembersCount()
+    return api.execute.GetMembersCount(gid=GROUP_ID)
+
+
+@vk_request_errors
+def get_user_name():
+    """
+    returns string (First_name Last_name)
+    """
+    return api.execute.GetUserName()
+
+
+@vk_request_errors
+def get_issue_count():
+    return api.execute.GetIssueCount(mgid=MGROUP_ID)
 
 
 @vk_request_errors
@@ -93,8 +104,7 @@ def get_issues(**kwargs):
     :offset:
     :post_count:
 
-    returns dict with wall posts if succeed
-    else returns False
+    returns dict
     """
 
     if len(args) == 2:
@@ -110,28 +120,22 @@ def get_issues(**kwargs):
 
 
 @vk_request_errors
-def get_issue_count():
-    return api.execute.GetIssueCount()
-
-
-@vk_request_errors
 def send_issue(*args):
     """
-    args: issue_data {'file','image','theme','issue'}
+    :issue_data: {'file','image','theme','issue'}
 
-    returns string ( post id ) if succeed
-    else returns False
+    returns string ( post id )
     """
     issue_data = args[0]
-    file_path = issue_data['file']
-    image_path = issue_data['image']
+    path_to_file = issue_data['file']
+    path_to_image = issue_data['image']
     theme_text = issue_data['theme']
     issue_text = issue_data['issue']
 
     attachments = []
 
-    doc = attach_doc(file_path)[0]
-    pic = attach_pic(image_path)[0]
+    doc = attach_doc(path=path_to_file)[0]
+    pic = attach_pic(path=path_to_image)[0]
 
     if doc:
         attachments.append('doc' + str(doc[0]['owner_id'])
@@ -149,44 +153,14 @@ def send_issue(*args):
 
 
 @vk_request_errors
-def get_comments(*args):
-    """
-    args: post_id ( requied ), offset ( required, but not throws an exception
-    if not declared, default=() ), comment_count ( optional, default='100' )
-    returns dict with comments if succeed else returns False
-    """
-    if len(args) == 3:
-        post_id, offset, comment_count = args
-    else:
-        post_id, offset = args
-        comment_count = '100'
-
-    return api.wall.getComments(
-        owner_id=MGROUP_ID, post_id=post_id,
-        offset=offset, count=comment_count
-    )
-
-
-@vk_request_errors
-def get_user_name():
-    """
-    returns string (First_name Last_name) if succeed
-    else returns False
-    """
-    response = api.users.get()[0]
-
-    return response['first_name'] + ' ' + response['last_name']
-
-
-@vk_request_errors
-def attach_doc(*args):
+def attach_doc(**kwargs):
     """
     args: path ( required )
 
     returns array with doc object
-    else returns False
     """
-    path = args[0]
+    path = kwargs['path']
+
 
     if path:
         upload_data = api.docs.getUploadServer()
@@ -199,20 +173,22 @@ def attach_doc(*args):
         if 'error' in json_data:
             raise Exception('Failed loading document')
 
-        return api.docs.save(title=re.match(
-            '/.+$', path), file=json_data['file']
-        )
+        try:
+            return api.docs.save(title=re.match(
+                '/.+$', path), file=json_data['file']
+            )
+        except:
+            raise Exception('Failed loading document')
 
 
 @vk_request_errors
-def attach_pic(*args):
+def attach_pic(**kwargs):
     """
     args: path ( required )
 
-    returns array with picture object
-    else returns False
+    returns array with pic object
     """
-    path = args[0]
+    path = kwargs['path']
 
     if path:
         upload_data = api.photos.getWallUploadServer(group_id=GROUP_ID)
@@ -225,10 +201,33 @@ def attach_pic(*args):
         if json_data['photo'] == '[]':
             raise Exception('Failed loading picture')
 
-        return api.photos.saveWallPhoto(
-            group_id=GROUP_ID, photo=json_data['photo'],
-            server=json_data['server'], hash=json_data['hash']
-        )
+        try:
+            return api.photos.saveWallPhoto(
+                group_id=GROUP_ID, photo=json_data['photo'],
+                server=json_data['server'], hash=json_data['hash']
+            )
+        except:
+            raise Exception('Failed loading picture')
+
+
+@vk_request_errors
+def get_comments(*args):
+    """
+    args: post_id ( requied ), offset ( required, but not throws an exception
+    if not declared, default=() ), comment_count ( optional, default='100' )
+
+    returns dict with comments
+    """
+    if len(args) == 3:
+        post_id, offset, comment_count = args
+    else:
+        post_id, offset = args
+        comment_count = '100'
+
+    return api.wall.getComments(
+        owner_id=MGROUP_ID, post_id=post_id,
+        offset=offset, count=comment_count
+    )
 
 
 @vk_request_errors
