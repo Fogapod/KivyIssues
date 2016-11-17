@@ -239,3 +239,23 @@ def get_user_photo(**kwargs):
     # !always returns photo!
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
+
+
+#############################
+#                           #
+#   ХРАНИМЫЕ ПРОЦЕДУРЫ    #
+#                           #
+#############################
+#
+# GetIssuesCount #TODO поменять название
+#
+#
+#
+# GetMembersCount
+#
+#
+#
+# GetUserName
+#
+#
+#
