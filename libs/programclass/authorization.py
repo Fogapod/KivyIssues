@@ -84,7 +84,7 @@ class AuthorizationOnVK(object):
     def load_avatar(self):
             self.instance_text_authorization.text = \
                 self.data.string_lang_load_avatar
-            avatar, info = vkr.get_user_photo(size='max')
+            avatar, info = vkr.get_user_photo('photo_max')
 
             if avatar:
                 path_to_avatar_origin = \
