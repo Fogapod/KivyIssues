@@ -4,7 +4,7 @@ import requests as r
 import time
 import re
 
-import vk
+from libs import vk
 
 __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
