@@ -7,7 +7,7 @@ import time
 from kivy.clock import Clock
 
 from libs.createpreviousportrait import create_previous_portrait
-from libs import vkrequests as vk_requests
+from libs import vkrequests as vkr
 
 from kivymd import snackbar
 
@@ -56,7 +56,7 @@ class AuthorizationOnVK(object):
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
-        result, info = vk_requests.log_in(login, password)
+        result, info = vkr.log_in(login=login, password=password)
 
         if not result:
             self.dialog_authorization.dismiss()
@@ -86,7 +86,7 @@ class AuthorizationOnVK(object):
     def load_avatar(self):
             self.instance_text_authorization.text = \
                 self.data.string_lang_load_avatar
-            avatar, info = vk_requests.get_user_photo('photo_max')
+            avatar, info = vkr.get_user_photo(size='max')
 
             if avatar:
                 path_to_avatar_origin = \
@@ -106,7 +106,7 @@ class AuthorizationOnVK(object):
     def set_user_name(self):
         self.instance_text_authorization.text = \
             self.data.string_lang_load_user_name
-        name, info = vk_requests.get_user_name()
+        name, info = vkr.get_user_name()
 
         if name:
             self.config.set('General', 'user_name', name)
@@ -116,7 +116,7 @@ class AuthorizationOnVK(object):
     def set_issues_in_group(self):
         self.instance_text_authorization.text = \
             self.data.string_lang_load_issues_in_group
-        issues_in_group, info = vk_requests.get_issue_count()
+        issues_in_group, info = vkr.get_issue_count()
 
         if issues_in_group:
             if issues_in_group > self.data.issues_in_group:
@@ -138,7 +138,7 @@ class AuthorizationOnVK(object):
                 )
 
     def test(self):
-            wall_posts, info = vk_requests.get_issues('0', '1')
+            wall_posts, info = vkr.get_issues(offset='0', count='1')
 
             profile_dict = wall_posts['profiles'][0]
             items_dict =  wall_posts['items'][0]
