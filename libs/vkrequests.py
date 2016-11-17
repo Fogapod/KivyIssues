@@ -179,27 +179,6 @@ def get_user_name():
 
 
 @vk_request_errors
-def get_user_photo(*args):
-    """
-    args: photo_size ( optional ), default = 'photo_big', can be:
-    'photo_medium', 'photo_small', 'photo_max' (super tiny photo)
-
-    returns Photo if succeed
-    # returns None if user have no avatar
-    else returns False
-    """
-    if len(args) == 1:
-        photo_size = args[0]
-    else:
-        photo_size = 'photo_big'
-    url = api.users.get(fields=photo_size)[0]
-
-    # !always returns photo!
-    if 'images/question_c.gif' not in url[photo_size]:
-        return r.get(url[photo_size]).content
-
-
-@vk_request_errors
 def attach_doc(*args):
     """
     args: path ( required )
@@ -250,3 +229,20 @@ def attach_pic(*args):
             group_id=GROUP_ID, photo=json_data['photo'],
             server=json_data['server'], hash=json_data['hash']
         )
+
+
+@vk_request_errors
+def get_user_photo(**kwargs):
+    """
+    :size: 
+    'big'; medium'; 'small'; 'max' (smallest possible)
+
+    returns Photo
+    # returns None if user have no avatar
+    """
+    photo_size = 'photo_' + kwargs['size']
+    url = api.users.get(fields=photo_size)[0]
+
+    # !always returns photo!
+    if 'images/question_c.gif' not in url[photo_size]:
+        return r.get(url[photo_size]).content
