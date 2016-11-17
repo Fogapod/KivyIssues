@@ -52,7 +52,6 @@ def log_in(**kwargs):
     :login:
     :password:
     """
-
     scope = '204804'
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
     app_id = '5720412'
@@ -64,7 +63,7 @@ def log_in(**kwargs):
             access_token=token, scope=scope, app_id=app_id
         )
     else:
-        login, password = ['login'], kwargs['password']
+        login, password = kwargs['login'], kwargs['password']
         session = vk.AuthSession(
             user_login=login, user_password=password,
             scope=scope, app_id=app_id
@@ -106,12 +105,8 @@ def get_issues(**kwargs):
 
     returns dict
     """
-
-    if len(args) == 2:
-        offset, post_count = args
-    else:
-        offset = args
-        post_count = '30'
+    offset = kwargs.get('offset', '0')
+    post_count = kwargs.get('count', '30')
 
     return api.wall.get(
         owner_id=MGROUP_ID, filter='others', extended='1',
@@ -211,18 +206,16 @@ def attach_pic(**kwargs):
 
 
 @vk_request_errors
-def get_comments(*args):
+def get_comments(**kwargs):
     """
     args: post_id ( requied ), offset ( required, but not throws an exception
     if not declared, default=() ), comment_count ( optional, default='100' )
 
     returns dict with comments
     """
-    if len(args) == 3:
-        post_id, offset, comment_count = args
-    else:
-        post_id, offset = args
-        comment_count = '100'
+    post_id = kwargs['id']
+    offset = kwargs.get('offset', '0')
+    comment_count = kwargs.get('count', '100')
 
     return api.wall.getComments(
         owner_id=MGROUP_ID, post_id=post_id,

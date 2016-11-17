@@ -136,7 +136,7 @@ class AuthorizationOnVK(object):
                 )
 
     def test(self):
-            wall_posts, info = vkr.get_issues('0', '1')
+            wall_posts, info = vkr.get_issues(offset='0', count='1')
 
             profile_dict = wall_posts['profiles'][0]
             items_dict =  wall_posts['items'][0]
