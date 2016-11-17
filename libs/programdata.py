@@ -5,6 +5,7 @@
 
 import os
 import sys
+import re
 import traceback
 import ast
 
@@ -92,3 +93,6 @@ possible_files = {
     string_lang_add_image: [['.png', '.jpg', '.jpeg', '.gif'], string_lang_wrong_image],
     string_lang_add_file: [['.zip', '.txt'], string_lang_wrong_file]
 }
+
+sre_link = re.compile(r'<a .*?href *= *"([^">]+?)"(?:[^">]+="[^">]+")? '
+                      r'*>([^<]+?)(?=</a)', re.U)
