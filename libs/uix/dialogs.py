@@ -47,7 +47,7 @@ def dialog(font_style='Body1', theme_text_color='Secondary', title='Title',
 
 def input_dialog(title='Title', hint_text_login='', password=False,
                  hint_text_password='', text_button_ok='OK', dismiss=True,
-                 text_button_cancel=None, text_color=None,
+                 text_button_cancel=None, text_color=None, fields=True,
                  events_callback=None):
     if not text_color:
         text_color = 0, 0, 0, 0
@@ -67,6 +67,9 @@ def input_dialog(title='Title', hint_text_login='', password=False,
 
             )
         )
+    if not fields:
+        input_dialog.ids.box.remove_widget(input_dialog.ids.password)
+
     input_dialog.open()
 
     return input_dialog
