@@ -46,12 +46,14 @@ class GetAndSaveLoginPassword(object):
 class AuthorizationOnVK(object):
 
     def _authorization_on_vk(self, login, password):
+        def _authorization_on_vk(interval):
+            thread_authorization = threading.Thread(
+                target=self.authorization_on_vk, args=(login, password,)
+            )
+            thread_authorization.start()
+
         Clock.schedule_once(self.show_progress_authorization, 0)
-        thread_authorization = threading.Thread(
-            target=self.authorization_on_vk,
-            args=(self.login, self.password,)
-        )
-        thread_authorization.start()
+        Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
         result, info = vkr.log_in(login=login, password=password)
