@@ -241,21 +241,21 @@ def get_user_photo(**kwargs):
         return r.get(url[photo_size]).content
 
 
-#############################
-#                           #
-#   ХРАНИМЫЕ ПРОЦЕДУРЫ    #
-#                           #
-#############################
+##########################
+#                        #
+#   ХРАНИМЫЕ ПРОЦЕДУРЫ   #
+#                        #
+##########################
 #
-# GetIssuesCount #TODO поменять название
+#  GetIssuesCount #TODO поменять название
+# var response = API.wall.get({"count":1, "filter":"others", "owner_id":Args.mgid});
+# return response["count"];
 #
+#  GetMembersCount
+# var response = API.groups.getById({"group_id": Args.gid, "fields":"members_count"});
+# return response[0]["members_count"];
 #
-#
-# GetMembersCount
-#
-#
-#
-# GetUserName
-#
-#
+#  GetUserName
+# var response = API.users.get()[0];
+# return response["first_name"] + " " + response["last_name"];
 #
