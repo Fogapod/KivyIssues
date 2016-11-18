@@ -1,0 +1,24 @@
+#: kivy 1.9.1
+
+# Заголовок поста: аватар и имя пользователя.
+
+<Post>:
+    orientation: 'vertical'
+    padding: dp(10), dp(5)
+    spacing: dp(5)
+
+    IconItem:
+        icon: avatar
+        secondary_text: post_date
+        text: post_author
+        disabled: True
+
+    Label:
+        id: text_posts
+        text: post_text
+        markup: True
+        color: app.data.text_color_from_hex
+        font_size: '12sp'
+        text_size: self.width, None
+        size_hint_y: None
+        height: self.texture_size[1]
