@@ -67,6 +67,11 @@ class IconItem(TwoLineAvatarIconListItem):
     icon = StringProperty()
 
 
+class IconItemAsync(TwoLineAvatarIconListItem):
+    events_callback = ObjectProperty()
+    icon = StringProperty()
+
+
 class Item(OneLineListItem):
     events_callback = ObjectProperty()
 
