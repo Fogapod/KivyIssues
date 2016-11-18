@@ -12,8 +12,11 @@ class AskAQuestion(Screen):
         if app.data.PY2:
             self.ids.issue_field.hint_text = \
                 app.data.string_lang_text_issue.decode('utf-8')
+            self.ids.theme_field.hint_text = \
+                app.data.string_lang_theme_issue.decode('utf-8')
         else:
             self.ids.issue_field.hint_text = app.data.string_lang_text_issue
+            self.ids.theme_field.hint_text = app.data.string_lang_theme_issue
 
         Clock.unschedule(app.set_banner)
         app.screen.ids.action_bar.left_action_items = \
