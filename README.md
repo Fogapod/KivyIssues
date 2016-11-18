@@ -18,8 +18,6 @@ Python 3
 
 Библиотека [KivyMD](https://gitlab.com/kivymd/KivyMD)
 
-Библиотека для работы с API VK [vk-2.0.2](https://github.com/dimka665/vk)
-
 ЛИЦЕНЗИЯ
 --------
 MIT
