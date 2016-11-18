@@ -5,7 +5,7 @@
 
 import os
 
-from kivy.uix.image import Image
+from kivy.uix.image import Image, AsyncImage
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import (
@@ -27,6 +27,10 @@ class LeftMDIcon(ILeftBodyTouch, MDIconButton):
 
 
 class LeftIcon(ILeftBody, Image):
+    pass
+
+
+class LeftIconAsync(ILeftBody, AsyncImage):
     pass
 
 
