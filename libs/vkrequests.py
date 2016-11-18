@@ -22,7 +22,7 @@ def vk_request_errors(request):
         try:
             response = request(*args, **kwargs)
         except Exception as e:
-            if 'Too many requests per second.' in str(e):
+            if 'Too many requests per second' in str(e):
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
@@ -35,8 +35,11 @@ def vk_request_errors(request):
             elif 'Failed loading' in str(e):
                 raise
 
+            elif 'Failed receiving session' in str(e):
+                print('Error receiving session!')
+
             elif 'Auth check code is needed' in str(e):
-            	print('Auth code is needed!')
+                print('Auth code is needed!')
 
             elif str(e) == 'Authorization error (captcha)':
                 print('Captcha!')
@@ -54,9 +57,10 @@ def vk_request_errors(request):
 
 @vk_request_errors
 def log_in(**kwargs):
-    # TODO: получить токен.
+    # vk.logger.setLevel('DEBUG')
     """
     :token:
+    :key:
     :login:
     :password:
     """
@@ -66,10 +70,20 @@ def log_in(**kwargs):
 
     global token
     token = kwargs.get('token')
+    key = kwargs.get('key')
+
     if token:
         session = vk.Session(
             access_token=token, scope=scope, app_id=app_id
         )
+    elif key:
+        login, password = kwargs['login'], kwargs['password']
+        # TODO
+        #session = vk.AuthSession(
+        #    user_login=login, client_secret=key,
+        #    user_password=password, scope=scope,
+        #    grant_type=password, app_id=app_id 
+        #)
     else:
         login, password = kwargs['login'], kwargs['password']
         session = vk.AuthSession(
@@ -78,7 +92,11 @@ def log_in(**kwargs):
         )
 
     global api
-    api = vk.API(session, v='5.6')
+    try: 
+        api = vk.API(session, v='5.6')
+    except UnboundLocalError:
+        raise Exception('Failed receiving session!')
+
     api.stats.trackVisitor()
 
     return True
@@ -107,7 +125,7 @@ def get_issue_count():
 
 @vk_request_errors
 def get_issues(**kwargs):
-	# TODO упорядочить получаемые данные через хранимые процедуры
+    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :offset: ( '0' )
     :count: ( '30' )
@@ -216,7 +234,7 @@ def attach_pic(**kwargs):
 
 @vk_request_errors
 def get_comments(**kwargs):
-	# TODO упорядочить получаемые данные через хранимые процедуры
+    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
     :offset: ( '0' )
