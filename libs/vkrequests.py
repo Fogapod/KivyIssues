@@ -25,14 +25,22 @@ def vk_request_errors(request):
             if 'Too many requests per second.' in str(e):
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
-            elif 'Failed to establish a new connection' in str(e) != -1:
+
+            elif 'Failed to establish a new connection'in str(e):
                 print('Check your connection')
+
             elif str(e) == 'Authorization error (incorrect password)':
                 print('Incorrect password!')
+
             elif 'Failed loading' in str(e):
                 raise
+
+            elif 'Auth check code is needed' in str(e):
+            	print('Auth code is needed!')
+
             elif str(e) == 'Authorization error (captcha)':
                 print('Captcha!')
+
             else:
                 if not api:
                     print('Authentication required')
@@ -94,11 +102,12 @@ def get_user_name():
 
 @vk_request_errors
 def get_issue_count():
-    return api.execute.GetIssueCount(mgid=MGROUP_ID)
+    return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
 @vk_request_errors
 def get_issues(**kwargs):
+	# TODO упорядочить получаемые данные через хранимые процедуры
     """
     :offset: ( '0' )
     :count: ( '30' )
@@ -207,6 +216,7 @@ def attach_pic(**kwargs):
 
 @vk_request_errors
 def get_comments(**kwargs):
+	# TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
     :offset: ( '0' )
@@ -247,7 +257,7 @@ def get_user_photo(**kwargs):
 #                        #
 ##########################
 #
-#  GetIssuesCount #TODO поменять название
+#  GetIssuesCount
 # var response = API.wall.get({"count":1, "filter":"others", "owner_id":Args.mgid});
 # return response["count"];
 #

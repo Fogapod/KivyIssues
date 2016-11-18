@@ -60,7 +60,7 @@ def stringify_values(dictionary):
 
 def get_url_query(url):
     parsed_url = urlparse(url)
-    url_query = parse_qsl(parsed_url.fragment)
+    url_query = parse_qsl(parsed_url.query + '&' + parsed_url.fragment) # url_query = parse_qsl(parsed_url.fragment) 
     # login_response_url_query can have multiple key
     url_query = dict(url_query)
     return url_query

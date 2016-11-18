@@ -126,14 +126,15 @@ class Session(object):
         """
         Default behavior on 2-AUTH CODE is to raise exception
         Reload this in child
-        """           
+        """
+        
         raise VkAuthError('Authorization error (2-factor code is needed)')
     
     def auth_captcha_is_needed(self, content, session):
         """
         Default behavior on CAPTCHA is to raise exception
         Reload this in child
-        """              
+        """
         raise VkAuthError('Authorization error (captcha)')
     
     def phone_number_is_needed(self, content, session):
