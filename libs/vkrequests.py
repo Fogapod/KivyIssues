@@ -79,10 +79,10 @@ def log_in(**kwargs):
     elif key:
         login, password = kwargs['login'], kwargs['password']
         # TODO
-        #session = vk.AuthSession(
+        # session = vk.AuthSession(
         #    user_login=login, client_secret=key,
         #    user_password=password, scope=scope,
-        #    grant_type=password, app_id=app_id 
+        #    grant_type=password, app_id=app_id
         #)
     else:
         login, password = kwargs['login'], kwargs['password']
@@ -92,7 +92,7 @@ def log_in(**kwargs):
         )
 
     global api
-    try: 
+    try:
         api = vk.API(session, v='5.6')
     except UnboundLocalError:
         raise Exception('Failed receiving session!')
@@ -183,7 +183,6 @@ def attach_doc(**kwargs):
     """
     path = kwargs['path']
 
-
     if path:
         upload_data = api.docs.getUploadServer()
 
@@ -255,7 +254,7 @@ def get_comments(**kwargs):
 @vk_request_errors
 def get_user_photo(**kwargs):
     """
-    :size: 
+    :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
 
     returns Photo
