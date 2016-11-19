@@ -200,7 +200,7 @@ def attach_doc(**kwargs):
 
         try:
             return api.docs.save(
-                title=re.match('/.+$', path), 
+                title=re.match('/.+$', path),
                 file=json_data['file']
             )
         except:
