@@ -21,35 +21,39 @@ def vk_request_errors(request):
         # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
-        except Exception as e:
-            if 'Too many requests per second' in str(e):
+        except Exception as error:
+            error = str(error)
+            if 'Too many requests per second' in error:
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
-            elif 'Failed to establish a new connection'in str(e):
+            elif 'Failed to establish a new connection' in error:
                 print('Check your connection')
 
-            elif str(e) == 'Authorization error (incorrect password)':
+            elif 'incorrect password' in error:
                 print('Incorrect password!')
 
-            elif 'Failed loading' in str(e):
+            elif 'Read timed out' in error:
+                print('Response time exceeded')
+
+            elif 'Failed loading' in error:
                 raise
 
-            elif 'Failed receiving session' in str(e):
+            elif 'Failed receiving session' in error:
                 print('Error receiving session!')
 
-            elif 'Auth check code is needed' in str(e):
+            elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
 
-            elif str(e) == 'Authorization error (captcha)':
+            elif 'captcha' in error:
                 print('Captcha!')
 
             else:
                 if not api:
                     print('Authentication required')
                 else:
-                    print('\nERROR! ' + str(e) + '\n')
-            return False, str(e)
+                    print('\nERROR! ' + error + '\n')
+            return False, error
         else:
             return response, True
     return request_errors
@@ -63,6 +67,8 @@ def log_in(**kwargs):
     :key:
     :login:
     :password:
+
+    :return: string ( token )
     """
     scope = '204804'
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
@@ -73,7 +79,7 @@ def log_in(**kwargs):
     key = kwargs.get('key')
 
     if token:
-        session = vk.Session(
+        session = vk.AuthSession(
             access_token=token, scope=scope, app_id=app_id
         )
     elif key:
@@ -97,13 +103,13 @@ def log_in(**kwargs):
 
     api.stats.trackVisitor()
 
-    return True
+    return session.access_token
 
 
 @vk_request_errors
 def get_members_count():
     """
-    returns string
+    :return: string
     """
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
@@ -111,7 +117,7 @@ def get_members_count():
 @vk_request_errors
 def get_user_name():
     """
-    returns string (First_name Last_name)
+    :return: string (First_name Last_name)
     """
     return api.execute.GetUserName()
 
@@ -128,7 +134,7 @@ def get_issues(**kwargs):
     :offset: ( '0' )
     :count: ( '30' )
 
-    returns dict
+    :return: dict
     """
     offset = kwargs.get('offset', '0')
     post_count = kwargs.get('count', '30')
@@ -144,7 +150,7 @@ def send_issue(*args):
     """
     :issue_data: ( {'file','image','theme','issue'} )
 
-    returns string ( post id )
+    :return: string ( post id )
     """
     issue_data = args[0]
     path_to_file = issue_data['file']
@@ -177,7 +183,7 @@ def attach_doc(**kwargs):
     """
     :path:
 
-    returns array with doc object
+    :return: array with doc object
     """
     path = kwargs['path']
 
@@ -193,8 +199,9 @@ def attach_doc(**kwargs):
             raise Exception('Failed loading document')
 
         try:
-            return api.docs.save(title=re.match(
-                '/.+$', path), file=json_data['file']
+            return api.docs.save(
+                title=re.match('/.+$', path),
+                file=json_data['file']
             )
         except:
             raise Exception('Failed loading document')
@@ -205,7 +212,7 @@ def attach_pic(**kwargs):
     """
     :path:
 
-    returns array with pic object
+    :return: array with pic object
     """
     path = kwargs['path']
 
@@ -237,7 +244,7 @@ def get_comments(**kwargs):
     :offset: ( '0' )
     :count: ( '100' )
 
-    returns dict with comments
+    :return: dict with comments
     """
     post_id = kwargs['id']
     offset = kwargs.get('offset', '0')
@@ -255,8 +262,8 @@ def get_user_photo(**kwargs):
     :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
 
-    returns Photo
-    # returns None if user have no avatar
+    :return: Photo
+    # :return: None if user have no avatar
     """
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
