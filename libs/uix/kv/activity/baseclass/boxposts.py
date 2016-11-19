@@ -53,8 +53,10 @@ class BoxPosts(Screen):
         paginator_pages = Label(
             text=self.create_paginator(number_posts=int(count_issues)),
             markup=True, on_ref_press=self.jump_to_page, halign='center',
-            size_hint_x=None
+            text_size=(self.app.window.size[0] - 10, None),
+            size_hint=(None, None)
         )
+        paginator_pages.bind(texture_size=paginator_pages.setter('size'))
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
         canvas_add(paginator_box, self.app.data.list_color, (5, 0))
