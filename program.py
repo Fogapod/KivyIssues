@@ -54,6 +54,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
         self.data = data
         self.window = Window
+        self.Post = Post
         self.instance_dialog = None
         self.fill_out_form = None
         self.dialog_authorization = None
@@ -131,14 +132,17 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.dialog_authorization, self.instance_text_authorization = \
             dialog_progress(
                 text_wait=text, text_color=self.data.text_color_from_hex,
-                events_callback=lambda: self.dialog_authorization.dismiss()
+                events_callback=lambda x: self.dialog_on_fail_authorization()
             )
 
-    def dialog_not_authorization(self, *args):
+    def dialog_on_fail_authorization(self):
         '''Диалоговое окно с просьбой авторзироваться.'''
 
-        self.open_dialog(
-            text=self.data.string_lang_please_authorization, dismiss=True
+        # TODO: Добавить прерывание запроса данных с сервера.
+        self.dialog_authorization.dismiss()
+        self.screen.ids.previous.ids.button_question.bind(
+            on_release=lambda x: snackbar.make(
+                self.data.string_lang_please_authorization)
         )
 
     def dialog_restore_form(self, interval):
