@@ -2,7 +2,6 @@
 
 import os
 import threading
-import time
 
 from kivy.clock import Clock
 
@@ -52,22 +51,20 @@ class AuthorizationOnVK(object):
             )
             thread_authorization.start()
 
-        Clock.schedule_once(self.show_progress_authorization, 0)
+        Clock.schedule_once(lambda x: self.show_progress(
+            text=self.data.string_lang_authorization), 0)
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
         result, info = vkr.log_in(login=login, password=password)
 
         if not result:
-            self.dialog_authorization.dismiss()
+            self.dialog_on_fail_authorization()
             self.open_dialog(
                 text=self.data.string_lang_error_auth.format(info),
                 dismiss=True
             )
-            self.screen.ids.previous.ids.button_question.bind(
-                on_release=lambda x: snackbar.make(
-                    self.data.string_lang_please_authorization)
-            )
+
         else:
             self.config.set('General', 'authorization', 1)
             self.config.write()
@@ -120,12 +117,15 @@ class AuthorizationOnVK(object):
 
         if issues_in_group:
             if issues_in_group > self.data.issues_in_group:
+                new_issues = str(issues_in_group - self.data.issues_in_group)
                 self.nav_drawer.ids.new_issues_in_group.text = \
                     self.data.string_lang_new_issues_in_group.format(
-                        str(issues_in_group - self.data.issues_in_group)
+                        new_issues
                     )
                 self.screen.ids.action_bar.right_action_items = \
-                    [['comment-text', lambda x: None]]
+                    [['comment-plus-outline',
+                      lambda x: self.manager.screens[2].show_posts(
+                          new_issues)]]
             else:
                 self.nav_drawer.ids.new_issues_in_group.text = \
                     self.data.string_lang_new_issues_in_group.format('0')
@@ -136,28 +136,3 @@ class AuthorizationOnVK(object):
                 self.data.string_lang_issues_in_group.format(
                     str(issues_in_group)
                 )
-
-    def test(self):
-            wall_posts, info = vkr.get_issues(offset='0', count='1')
-
-            profile_dict = wall_posts['profiles'][0]
-            items_dict =  wall_posts['items'][0]
-            attachments_dict = items_dict['attachments'][0]
-
-            avatar_author = profile_dict['photo_50']
-            first_name = profile_dict['first_name']
-            last_name = profile_dict['last_name']
-            name_author = '{} {}'.format(first_name, last_name)
-            date_post = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
-                    items_dict['date']
-                )
-            )
-            text_post = items_dict['text']
-            int_comments_on_post = items_dict['comments']['count']
-
-            if 'attachments' in items_dict:
-                title_attachments = attachments_dict['link']['title']
-                url_attachments = attachments_dict['link']['url']
-                url_caption = attachments_dict['link']['caption']
-                photo_attachments = \
-                    attachments_dict['link']['photo']['photo_130']
