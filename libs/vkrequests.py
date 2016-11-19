@@ -33,6 +33,9 @@ def vk_request_errors(request):
             elif error == 'Authorization error (incorrect password)':
                 print('Incorrect password!')
 
+            elif 'Read timed out' in error:
+                print('Response time exceeded')
+
             elif 'Failed loading' in error:
                 raise
 
