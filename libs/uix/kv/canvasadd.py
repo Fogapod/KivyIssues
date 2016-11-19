@@ -2,7 +2,7 @@ from kivy.graphics.context_instructions import Color
 from kivy.graphics.vertex_instructions import Rectangle
 
 
-def canvas_add(instance, color=None):
+def canvas_add(instance, color=None, pos=(0, 0)):
     if not color:
         color = [0, 0, 0, 1]
 
