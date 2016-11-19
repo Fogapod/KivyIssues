@@ -9,9 +9,7 @@ def canvas_add(instance, color=None, pos=(0, 0)):
     with instance.canvas.before:
         Color(rgba=color)
         canvas_instance = \
-            Rectangle(
-                pos=(5, 0),
-                size=(instance.width, instance.height)
+            Rectangle(pos=pos, size=(instance.width, instance.height)
             )
 
         def on_canvas_pos(instance, value):
