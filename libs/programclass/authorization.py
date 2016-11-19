@@ -82,7 +82,7 @@ class AuthorizationOnVK(object):
                 on_release=self.screen.ids.previous.on_button_question)
 
     def load_avatar(self):
-            self.instance_text_authorization.text = \
+            self.instance_text_progress.text = \
                 self.data.string_lang_load_avatar
             avatar, info = vkr.get_user_photo(size='max')
 
@@ -102,7 +102,7 @@ class AuthorizationOnVK(object):
                     path_to_avatar_portrait), 1)
 
     def set_user_name(self):
-        self.instance_text_authorization.text = \
+        self.instance_text_progress.text = \
             self.data.string_lang_load_user_name
         name, info = vkr.get_user_name()
 
@@ -112,7 +112,7 @@ class AuthorizationOnVK(object):
             self.nav_drawer.ids.user_name.text = name
 
     def set_issues_in_group(self):
-        self.instance_text_authorization.text = \
+        self.instance_text_progress.text = \
             self.data.string_lang_load_issues_in_group
         issues_in_group, info = vkr.get_issue_count()
 
