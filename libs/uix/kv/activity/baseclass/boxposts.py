@@ -46,30 +46,32 @@ class BoxPosts(Screen):
                 str(posts_dict[author]['comments'])
             self.ids.box_posts.add_widget(box_posts)
 
+        paginator_width = dp(self.app.window.size[0] - 10)
         paginator_box = BoxLayout(
-            size_hint=(None, None),
-            size=(dp(self.app.window.size[0] - 10), dp(30))
+            size_hint=(None, None), size=(paginator_width, dp(30))
         )
         paginator_pages = Label(
             text=self.create_paginator(number_posts=int(count_issues)),
             markup=True, on_ref_press=self.jump_to_page, halign='center',
-            text_size=(self.app.window.size[0] - 10, None),
-            size_hint=(None, None)
+            text_size=(paginator_width, None), size_hint=(None, None)
         )
         paginator_pages.bind(texture_size=paginator_pages.setter('size'))
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
         canvas_add(paginator_box, self.app.data.list_color, (5, 0))
 
-    def create_paginator(self, number_posts=1, current_number_page=1):
+    def create_paginator(self, number_posts=1, current_number_page=1,
+                         pages=20):
         '''Формирует нумерацию страниц и помечает выбраную.
 
         :param current_number_page: номер текущей страницы;
-        :param number_posts: количество страниц;
+        :param number_posts: количество записей;
+        :param pages: количество записей на одной странице;
 
         '''
 
-        list_pages = paginator(number_posts, current_number_page)
+        number_pages = round(number_posts // pages)
+        list_pages = paginator(number_pages, current_number_page)
 
         build_pages = ""
         for number_page in list_pages:
