@@ -5,10 +5,15 @@
 <BoxPosts>:
     name: 'box posts'
 
-    ScrollView:
+    BoxLayout:
+        id: box_paginator
+        orientation: 'vertical'
+        spacing: dp(5)
 
-        GridLayout:
-            id: box_posts
-            cols: 1
-            size_hint_y: None
-            height: self.minimum_height
+        ScrollView:
+
+            GridLayout:
+                id: box_posts
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
