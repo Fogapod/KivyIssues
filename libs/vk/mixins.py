@@ -186,8 +186,7 @@ class AuthMixin(object):
     def get_auth_check_code(self):
         if self.key is None:
             raise VkAuthError('Auth check code is needed')
-        else:
-            return self.key # raw_input('key:')
+        return self.key # raw_input('key:')
 
 
 class InteractiveMixin(object):
