@@ -8,4 +8,4 @@ Mercury.modules
 /program.ini
 /error.ini
 /data/issues
-libs/vk_api_tests.py
+libs/tests.py

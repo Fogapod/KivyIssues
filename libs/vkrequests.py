@@ -22,17 +22,28 @@ def vk_request_errors(request):
         try:
             response = request(*args, **kwargs)
         except Exception as e:
-            if 'Too many requests per second.' in str(e):
+            if 'Too many requests per second' in str(e):
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
-            elif 'Failed to establish a new connection' in str(e) != -1:
+
+            elif 'Failed to establish a new connection'in str(e):
                 print('Check your connection')
+
             elif str(e) == 'Authorization error (incorrect password)':
                 print('Incorrect password!')
+
             elif 'Failed loading' in str(e):
                 raise
+
+            elif 'Failed receiving session' in str(e):
+                print('Error receiving session!')
+
+            elif 'Auth check code is needed' in str(e):
+                print('Auth code is needed!')
+
             elif str(e) == 'Authorization error (captcha)':
                 print('Captcha!')
+
             else:
                 if not api:
                     print('Authentication required')
@@ -43,12 +54,15 @@ def vk_request_errors(request):
             return response, True
     return request_errors
 
+def request(self, method, url, **kwargs):
+        return requests.request(method, url, **kwargs)
 
 @vk_request_errors
 def log_in(**kwargs):
-    # TODO: получить токен.
+    # vk.logger.setLevel('DEBUG')
     """
     :token:
+    :key:
     :login:
     :password:
     """
@@ -58,10 +72,20 @@ def log_in(**kwargs):
 
     global token
     token = kwargs.get('token')
+    key = kwargs.get('key')
+
     if token:
         session = vk.Session(
             access_token=token, scope=scope, app_id=app_id
         )
+    elif key:
+        login, password = kwargs['login'], kwargs['password']
+        # TODO
+        # session = vk.AuthSession(
+        #    user_login=login, client_secret=key,
+        #    user_password=password, scope=scope,
+        #    grant_type=password, app_id=app_id
+        #)
     else:
         login, password = kwargs['login'], kwargs['password']
         session = vk.AuthSession(
@@ -70,7 +94,11 @@ def log_in(**kwargs):
         )
 
     global api
-    api = vk.API(session, v='5.6')
+    try:
+        api = vk.API(session, v='5.6')
+    except UnboundLocalError:
+        raise Exception('Failed receiving session!')
+
     api.stats.trackVisitor()
 
     return True
@@ -94,11 +122,12 @@ def get_user_name():
 
 @vk_request_errors
 def get_issue_count():
-    return api.execute.GetIssueCount(mgid=MGROUP_ID)
+    return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
 @vk_request_errors
 def get_issues(**kwargs):
+    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :offset: ( '0' )
     :count: ( '30' )
@@ -156,7 +185,6 @@ def attach_doc(**kwargs):
     """
     path = kwargs['path']
 
-
     if path:
         upload_data = api.docs.getUploadServer()
 
@@ -207,6 +235,7 @@ def attach_pic(**kwargs):
 
 @vk_request_errors
 def get_comments(**kwargs):
+    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
     :offset: ( '0' )
@@ -227,7 +256,7 @@ def get_comments(**kwargs):
 @vk_request_errors
 def get_user_photo(**kwargs):
     """
-    :size: 
+    :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
 
     returns Photo
@@ -239,3 +268,23 @@ def get_user_photo(**kwargs):
     # !always returns photo!
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
+
+
+##########################
+#                        #
+#   ХРАНИМЫЕ ПРОЦЕДУРЫ   #
+#                        #
+##########################
+#
+#  GetIssuesCount
+# var response = API.wall.get({"count":1, "filter":"others", "owner_id":Args.mgid});
+# return response["count"];
+#
+#  GetMembersCount
+# var response = API.groups.getById({"group_id": Args.gid, "fields":"members_count"});
+# return response[0]["members_count"];
+#
+#  GetUserName
+# var response = API.users.get()[0];
+# return response["first_name"] + " " + response["last_name"];
+#
