@@ -5,6 +5,13 @@
 <BoxPosts>:
     name: 'box posts'
 
+    canvas:
+        Color:
+            rgb: 0.792156862745098, 0.792156862745098, 0.792156862745098, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         id: box_paginator
         orientation: 'vertical'
@@ -15,5 +22,7 @@
             GridLayout:
                 id: box_posts
                 cols: 1
+                spacing: dp(5)
+                padding: dp(5)
                 size_hint_y: None
                 height: self.minimum_height
