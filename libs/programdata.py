@@ -5,6 +5,7 @@
 
 import os
 import sys
+import re
 import traceback
 import ast
 
@@ -92,3 +93,7 @@ possible_files = {
     string_lang_add_image: [['.png', '.jpg', '.jpeg', '.gif'], string_lang_wrong_image],
     string_lang_add_file: [['.zip', '.txt'], string_lang_wrong_file]
 }
+
+pattern_replace_link = re.compile(r'(?#Protocol)(?:(?:ht|f)tp(' \
+                             '?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,'
+                                  '*:=]|%[a-f\d]{2})*)?')

@@ -2,6 +2,7 @@
 
 import os
 import sys
+
 from random import choice
 
 from kivy.app import App
@@ -14,8 +15,13 @@ from kivy.properties import ObjectProperty
 from libs import programdata as data
 from libs import programclass as _class
 from libs.createpreviousportrait import create_previous_portrait
-from libs.uix.dialogs import dialog, file_dialog, dialog_progress, input_dialog
+from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
+    input_dialog
+
+# Базовые классы Activity.
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
+from libs.uix.kv.activity.baseclass.post import Post
+from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
 from libs.uix.kv.activity.baseclass.scrmanager import ScrManager
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
@@ -27,31 +33,14 @@ from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
 
 
-in_development_msg = '''
-
-
-#############################################
-#                                           #
-# The project is still in development ...   #
-#                                           #
-#############################################
-'''
-
-
-class InDevelopment(Exception):
-    pass
-
-
 class NavDrawer(NavigationDrawer):
     pass
 
 
 class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
               _class.IssueForm, _class.AuthorizationOnVK,
-              _class.GetAndSaveLoginPassword):
+              _class.GetAndSaveLoginPassword, _class.WorkWithPosts):
     '''Функционал программы.'''
-
-    # raise InDevelopment(in_development_msg)
 
     title = data.string_lang_title
     icon = 'data/images/logo.png'
@@ -65,6 +54,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
         self.data = data
         self.window = Window
+        self.Post = Post
         self.instance_dialog = None
         self.fill_out_form = None
         self.dialog_authorization = None
@@ -80,6 +70,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.config = ConfigParser()
         self.config.read('{}/program.ini'.format(data.prog_path))
         self.check_existence_issues()
+        # None, если нет сохраненной формы неотправленного вопроса.
         self.saved_form = self.read_form()
         # Главный экран программы.
         self.screen = StartScreen()
@@ -101,8 +92,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         Clock.schedule_interval(self.set_banner, 8)
 
         if not self.login or not self.password:
-            # FIXME: не проходит авторизация после ввода логина и пароля;
-            # последующая авто авторизация успешно выполняется.
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
             self._authorization_on_vk(self.login, self.password)
@@ -112,6 +101,15 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         return self.screen
 
     def show_login_and_password(self, instance_selection):
+        '''
+        Устанавливает свойства текстовых полей для ввода логина и пароля.
+
+        :type instance_selection: <class 'kivy.weakproxy.WeakProxy'>;
+        :param instance_selection:
+            <libs.uix.kv.activity.baseclass.selection.Selection>
+
+        '''
+
         if instance_selection.ids.check.active:
             self.input_dialog.ids.login.password = False
             self.input_dialog.ids.password.password = False
@@ -128,20 +126,28 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             text_color=self.theme_cls.primary_color
         )
 
-    def show_progress_authorization(self, interval):
+    def show_progress(self, interval=0, text='Wait'):
+        '''Прогресс загрузки данных с сервера.'''
+
         self.dialog_authorization, self.instance_text_authorization = \
             dialog_progress(
-                text_wait=self.data.string_lang_authorization,
-                text_color=self.data.text_color_from_hex,
-                events_callback=lambda x: self.dialog_authorization.dismiss()
+                text_wait=text, text_color=self.data.text_color_from_hex,
+                events_callback=lambda x: self.dialog_on_fail_authorization()
             )
 
-    def dialog_not_authorization(self, *args):
-        self.open_dialog(
-            text=self.data.string_lang_please_authorization, dismiss=True
+    def dialog_on_fail_authorization(self):
+        '''Диалоговое окно с просьбой авторзироваться.'''
+
+        # TODO: Добавить прерывание запроса данных с сервера.
+        self.dialog_authorization.dismiss()
+        self.screen.ids.previous.ids.button_question.bind(
+            on_release=lambda x: snackbar.make(
+                self.data.string_lang_please_authorization)
         )
 
     def dialog_restore_form(self, interval):
+        '''Диалог восстановления сохраненной формы вопроса.'''
+
         def restore_form():
             self.manager.current = 'ask a question'
             self.set_default_text_check = False
@@ -163,10 +169,12 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             ]
         )
 
-    def set_banner(self, td):
+    def set_banner(self, interval):
+        '''Устанавливает баннеры приложений Kivy на главном экране. '''
+
         try:
             instance_banner = \
-                self.screen.ids.manager.current_screen.ids.banner.canvas.children[1]
+                self.manager.current_screen.ids.banner.canvas.children[1]
             name_banner = choice(data.name_banners)
             instance_banner.source = 'data/images/banners/{}'.format(
                name_banner
@@ -175,18 +183,30 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             pass
 
     def check_file_is(self, path_to_file, check_image=False):
+        '''Проверяет корректность прикрепляемых файлов по расширению.'''
+
         if check_image:
-            possible_files_ext = data.possible_files[
-                data.string_lang_add_image][0]
+            possible_files_ext = \
+                data.possible_files[data.string_lang_add_image][0]
         else:
-            possible_files_ext = data.possible_files[
-                data.string_lang_add_file][0]
+            possible_files_ext = \
+                data.possible_files[data.string_lang_add_file][0]
 
         if os.path.splitext(path_to_file)[1] in possible_files_ext:
             return True
+
         return False
 
     def check_status(self, instance_selection):
+        '''Устанавливает подписи чеков при добавления файлов в Activity формы
+        отправки вопроса.
+
+        :type instance_selection: <class 'kivy.weakproxy.WeakProxy'>;
+        :param instance_selection:
+            <libs.uix.kv.activity.baseclass.selection.Selection>
+
+        '''
+
         if self.open_filemanager_on_check:
             if instance_selection.ids.check.active:
                 self.add_content(instance_selection)
@@ -288,12 +308,16 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             else name_screen
 
     def dialog_fill_out_form(self):
+        '''Диалог с предложением сохранить форму вопроса.'''
+
         _data = self.create_data_from_form()
         self.open_dialog(
             text=data.string_lang_fill_out_form,
             buttons=[
-                [data.string_lang_yes, lambda *x: self._save_data_from_form(_data)],
-                [data.string_lang_no, lambda *x: self._close_dialog()]
+                [data.string_lang_yes, lambda *x:
+                    self._save_data_from_form(_data)],
+                [data.string_lang_no, lambda *x:
+                    self._close_dialog()]
             ]
         )
 

@@ -27,6 +27,12 @@
     LeftIcon:
         source: root.icon
 
+<IconItemAsync>:
+    id: avatar
+    on_release: root.events_callback(root.id, 'item')
+    LeftIconAsync:
+        source: root.icon
+
 <SingleIconItem>:
     on_release: root.events_callback(self.text)
     LeftMDIcon:
