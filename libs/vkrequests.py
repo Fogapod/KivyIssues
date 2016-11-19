@@ -64,6 +64,8 @@ def log_in(**kwargs):
     :key:
     :login:
     :password:
+
+    :return: string ( token )
     """
     scope = '204804'
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
@@ -74,7 +76,7 @@ def log_in(**kwargs):
     key = kwargs.get('key')
 
     if token:
-        session = vk.Session(
+        session = vk.AuthSession(
             access_token=token, scope=scope, app_id=app_id
         )
     elif key:
@@ -98,7 +100,7 @@ def log_in(**kwargs):
 
     api.stats.trackVisitor()
 
-    return True
+    return session.access_token
 
 
 @vk_request_errors
