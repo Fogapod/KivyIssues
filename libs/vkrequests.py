@@ -104,7 +104,7 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """
-    returns string
+    :return: string
     """
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
@@ -112,7 +112,7 @@ def get_members_count():
 @vk_request_errors
 def get_user_name():
     """
-    returns string (First_name Last_name)
+    :return: string (First_name Last_name)
     """
     return api.execute.GetUserName()
 
@@ -129,7 +129,7 @@ def get_issues(**kwargs):
     :offset: ( '0' )
     :count: ( '30' )
 
-    returns dict
+    :return: dict
     """
     offset = kwargs.get('offset', '0')
     post_count = kwargs.get('count', '30')
@@ -145,7 +145,7 @@ def send_issue(*args):
     """
     :issue_data: ( {'file','image','theme','issue'} )
 
-    returns string ( post id )
+    :return: string ( post id )
     """
     issue_data = args[0]
     path_to_file = issue_data['file']
@@ -178,7 +178,7 @@ def attach_doc(**kwargs):
     """
     :path:
 
-    returns array with doc object
+    :return: array with doc object
     """
     path = kwargs['path']
 
@@ -207,7 +207,7 @@ def attach_pic(**kwargs):
     """
     :path:
 
-    returns array with pic object
+    :return: array with pic object
     """
     path = kwargs['path']
 
@@ -239,7 +239,7 @@ def get_comments(**kwargs):
     :offset: ( '0' )
     :count: ( '100' )
 
-    returns dict with comments
+    :return: dict with comments
     """
     post_id = kwargs['id']
     offset = kwargs.get('offset', '0')
@@ -257,8 +257,8 @@ def get_user_photo(**kwargs):
     :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
 
-    returns Photo
-    # returns None if user have no avatar
+    :return: Photo
+    # :return: None if user have no avatar
     """
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
