@@ -54,8 +54,6 @@ def vk_request_errors(request):
             return response, True
     return request_errors
 
-def request(self, method, url, **kwargs):
-        return requests.request(method, url, **kwargs)
 
 @vk_request_errors
 def log_in(**kwargs):
@@ -80,12 +78,10 @@ def log_in(**kwargs):
         )
     elif key:
         login, password = kwargs['login'], kwargs['password']
-        # TODO
-        # session = vk.AuthSession(
-        #    user_login=login, client_secret=key,
-        #    user_password=password, scope=scope,
-        #    grant_type=password, app_id=app_id
-        #)
+        session = vk.AuthSession(
+            user_login=login, user_password=password,
+            scope=scope, app_id=app_id, key=key
+        )
     else:
         login, password = kwargs['login'], kwargs['password']
         session = vk.AuthSession(
