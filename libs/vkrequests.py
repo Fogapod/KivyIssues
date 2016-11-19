@@ -21,35 +21,36 @@ def vk_request_errors(request):
         # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
-        except Exception as e:
-            if 'Too many requests per second' in str(e):
+        except Exception as error:
+            error = str(error)
+            if 'Too many requests per second' in error:
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
-            elif 'Failed to establish a new connection'in str(e):
+            elif 'Failed to establish a new connection'in error:
                 print('Check your connection')
 
-            elif str(e) == 'Authorization error (incorrect password)':
+            elif error == 'Authorization error (incorrect password)':
                 print('Incorrect password!')
 
-            elif 'Failed loading' in str(e):
+            elif 'Failed loading' in error:
                 raise
 
-            elif 'Failed receiving session' in str(e):
+            elif 'Failed receiving session' in error:
                 print('Error receiving session!')
 
-            elif 'Auth check code is needed' in str(e):
+            elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
 
-            elif str(e) == 'Authorization error (captcha)':
+            elif error == 'Authorization error (captcha)':
                 print('Captcha!')
 
             else:
                 if not api:
                     print('Authentication required')
                 else:
-                    print('\nERROR! ' + str(e) + '\n')
-            return False, str(e)
+                    print('\nERROR! ' + error + '\n')
+            return False, error
         else:
             return response, True
     return request_errors
