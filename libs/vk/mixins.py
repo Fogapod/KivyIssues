@@ -184,9 +184,9 @@ class AuthMixin(object):
         raise VkAuthError('Phone number is needed')
 
     def get_auth_check_code(self):
-        if self.key is None:
-            raise VkAuthError('Auth check code is needed')
-        return self.key # raw_input('key:')
+        if self.key:
+            return self.key # raw_input('key:')
+        raise VkAuthError('Auth check code is needed')
 
 
 class InteractiveMixin(object):
