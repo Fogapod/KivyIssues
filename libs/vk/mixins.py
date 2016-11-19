@@ -16,8 +16,8 @@ class AuthMixin(object):
     CAPTCHA_URI = 'https://m.vk.com/captcha.php'
 
     def __init__(self, app_id=None, user_login='', user_password='', scope='offline', key=None, **kwargs):
-        logger.debug('AuthMixin.__init__(app_id=%(app_id)r, user_login=%(user_login)r, user_password=%(user_password)r, **kwargs=%(kwargs)s)',
-            dict(app_id=app_id, user_login=user_login, user_password=user_password, kwargs=kwargs))
+        logger.debug('AuthMixin.__init__(app_id=%(app_id)r, user_login=%(user_login)r, user_password=%(user_password)r, 2fa_key=%(key)s, **kwargs=%(kwargs)s)',
+            dict(app_id=app_id, user_login=user_login, user_password=user_password, key=key kwargs=kwargs))
 
         super(AuthMixin, self).__init__(**kwargs)
 
