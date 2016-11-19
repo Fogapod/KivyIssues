@@ -52,7 +52,8 @@ class BoxPosts(Screen):
         )
         paginator_pages = Label(
             text=self.create_paginator(number_posts=int(count_issues)),
-            markup=True, on_ref_press=self.jump_to_page
+            markup=True, on_ref_press=self.jump_to_page, halign='center',
+            size_hint_x=None
         )
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
