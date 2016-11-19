@@ -27,10 +27,10 @@ def vk_request_errors(request):
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
-            elif 'Failed to establish a new connection'in error:
+            elif 'Failed to establish a new connection' in error:
                 print('Check your connection')
 
-            elif error == 'Authorization error (incorrect password)':
+            elif 'incorrect password' in error:
                 print('Incorrect password!')
 
             elif 'Read timed out' in error:
@@ -45,7 +45,7 @@ def vk_request_errors(request):
             elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
 
-            elif error == 'Authorization error (captcha)':
+            elif 'captcha' in error:
                 print('Captcha!')
 
             else:
