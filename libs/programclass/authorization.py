@@ -52,8 +52,8 @@ class AuthorizationOnVK(object):
             thread_authorization.start()
 
         Clock.schedule_once(lambda x: self.show_progress(
-            self.data.string_lang_authorization,
-            self.dialog_on_fail_authorization), 0)
+            text=self.data.string_lang_authorization,
+            func_dismiss=self.dialog_on_fail_authorization), 0)
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
