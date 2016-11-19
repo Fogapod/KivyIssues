@@ -193,8 +193,9 @@ def attach_doc(**kwargs):
             raise Exception('Failed loading document')
 
         try:
-            return api.docs.save(title=re.match(
-                '/.+$', path), file=json_data['file']
+            return api.docs.save(
+                title=re.match('/.+$', path), 
+                file=json_data['file']
             )
         except:
             raise Exception('Failed loading document')
