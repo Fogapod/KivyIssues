@@ -77,7 +77,7 @@ class AuthorizationOnVK(object):
                 self.set_user_name()
             self.set_issues_in_group()
 
-            self.dialog_authorization.dismiss()
+            self.dialog_progress.dismiss()
             self.screen.ids.previous.ids.button_question.bind(
                 on_release=self.screen.ids.previous.on_button_question)
 
