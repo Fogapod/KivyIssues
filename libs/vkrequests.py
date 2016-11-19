@@ -54,6 +54,8 @@ def vk_request_errors(request):
             return response, True
     return request_errors
 
+def request(self, method, url, **kwargs):
+        return requests.request(method, url, **kwargs)
 
 @vk_request_errors
 def log_in(**kwargs):
