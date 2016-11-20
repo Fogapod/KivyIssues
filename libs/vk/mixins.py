@@ -187,37 +187,3 @@ class AuthMixin(object):
         if self.key:
             return self.key # raw_input('key:')
         raise VkAuthError('Auth check code is needed')
-
-
-class InteractiveMixin(object):
-    def get_user_login(self):
-        user_login = raw_input('VK user login: ')
-        return user_login.strip()
-
-    def get_user_password(self):
-        import getpass
-
-        user_password = getpass.getpass('VK user password: ')
-        return user_password
-
-    def get_access_token(self):
-        logger.debug('InteractiveMixin.get_access_token()')
-        access_token = super(InteractiveMixin, self).get_access_token()
-        if not access_token:
-            access_token = raw_input('VK API access token: ')
-        return access_token
-
-    def get_captcha_key(self, captcha_image_url):
-        """
-        Read CAPTCHA key from shell
-        """
-        print('Open CAPTCHA image url: ', captcha_image_url)
-        captcha_key = raw_input('Enter CAPTCHA key: ')
-        return captcha_key
-
-    def get_auth_check_code(self):
-        """
-        Read Auth code from shell
-        """
-        auth_check_code = raw_input('Auth check code: ')
-        return auth_check_code.strip()
