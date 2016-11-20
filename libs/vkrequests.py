@@ -184,7 +184,13 @@ def edit_issue(**kwargs):
 
 @vk_request_errors
 def del_issue(**kwargs):
-    pass
+    """
+    :issue_id:
+    """
+    pid = kwargs['issue_id']
+    response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
+    if response:
+        return True
 
 
 @vk_request_errors
@@ -311,8 +317,13 @@ def edit_comment(**kwargs)
 
 @vk_request_errors
 def del_comment(**kwargs):
-    pass
-
+    """
+    :comment_id:
+    """
+    cid = kwargs['comment_id']
+    response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
+    if response:
+        return True
 
 @vk_request_errors
 def get_user_photo(**kwargs):
