@@ -311,7 +311,7 @@ def add_comment(*args, **kwargs):
     )
 
 
-def edit_comment(**kwargs)
+def edit_comment(**kwargs):
     pass
 
 
