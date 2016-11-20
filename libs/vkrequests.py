@@ -18,7 +18,7 @@ token = None
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
         # Для вывода ошибки в консоль
-        response = request(*args, **kwargs); time.sleep(0.66)
+        # response = request(*args, **kwargs); time.sleep(0.66)
         try:
             response = request(*args, **kwargs)
         except Exception as error:
