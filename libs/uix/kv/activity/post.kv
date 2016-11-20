@@ -1,26 +1,62 @@
 #: kivy 1.9.1
-#: import MDSeparator kivymd.card.MDSeparator
 
 # Тело поста.
 
 <Post>:
     orientation: 'vertical'
-    padding: dp(10), dp(5)
+    padding: dp(10), dp(0)
     spacing: dp(5)
     size_hint_y: None
-    height: 200
+    height: dp(200)
 
+    canvas:
+        # Тень кнопки
+        Color:
+            rgba: 0, 0, 0, .2
+        Rectangle:
+            pos: self.x + 2.5, self.y - 3
+            size: self.size
+        # Цвет кнопки
+        Color:
+            rgba: app.data.list_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # libs/uix/kv/list.kv <IconItemAsync>
+    # Аватар автора, имя и дата поста.
     IconItemAsync:
         id: title_post
         disabled: True
 
+    # Текс поста.
     Label:
         id: text_posts
         markup: True
         color: app.data.text_color_from_hex
         font_size: '12sp'
-        text_size: self.width, None
+        text_size: self.width, dp(70)
+        valign: 'top'
         size_hint_y: None
-        height: self.texture_size[1]
+        height: dp(70)
 
-    MDSeparator:
+    # Иконка и количество коментариев.
+    BoxLayout:
+        size_hint_y: None
+        height: dp(30)
+        spacing: dp(5)
+
+        Icon:
+            id: comments_post
+            size_hint: None, None
+            size: dp(30), dp(30)
+            source: 'data/images/comments_box.png'
+
+        Label:
+            id: comments_post
+            text_size: self.width, None
+            markup: True
+            color: app.data.text_color_from_hex
+            font_size: '11sp'
+
+    Widget:

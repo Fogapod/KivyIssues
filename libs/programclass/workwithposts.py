@@ -50,10 +50,13 @@ class WorkWithPosts(object):
         for i, data_post in enumerate(wall_posts['profiles']):
             post_dict = {}
             author_id = data_post['id']
-            avatar = data_post['photo_50']
+            avatar = data_post['photo_100']
             first_name = data_post['first_name']
             last_name = data_post['last_name']
-            author = '{} {}'.format(first_name, last_name)
+            if self.data.PY2:
+                author = u'{} {}'.format(first_name, last_name)
+            else:
+                author = '{} {}'.format(first_name, last_name)
             post_dict['avatar'] = avatar
 
             for data_post in wall_posts['items']:

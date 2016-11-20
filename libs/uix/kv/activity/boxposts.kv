@@ -5,10 +5,24 @@
 <BoxPosts>:
     name: 'box posts'
 
-    ScrollView:
+    canvas:
+        Color:
+            rgb: 0.792156862745098, 0.792156862745098, 0.792156862745098, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
-        GridLayout:
-            id: box_posts
-            cols: 1
-            size_hint_y: None
-            height: self.minimum_height
+    BoxLayout:
+        id: box_paginator
+        orientation: 'vertical'
+        spacing: dp(5)
+
+        ScrollView:
+
+            GridLayout:
+                id: box_posts
+                cols: 1
+                spacing: dp(5)
+                padding: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
