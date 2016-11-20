@@ -1,7 +1,6 @@
 
 from . api import logger
-from . api import Session, AuthSession, InteractiveSession, \
-    InteractiveAuthSession
+from . api import Session, AuthSession
 from . api import VERSION
 from . api import API
 

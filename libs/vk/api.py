@@ -6,7 +6,7 @@ import logging.config
 from . logs import LOGGING_CONFIG
 from . utils import stringify_values, json_iter_parse, LoggingSession, str_type
 from . exceptions import VkAuthError, VkAPIError
-from . mixins import AuthMixin, InteractiveMixin
+from . mixins import AuthMixin
 
 
 VERSION = '2.0.2'
@@ -175,12 +175,4 @@ class Request(object):
 
 
 class AuthSession(AuthMixin, Session):
-    pass
-
-
-class InteractiveSession(InteractiveMixin, Session):
-    pass
-
-
-class InteractiveAuthSession(InteractiveMixin, AuthSession):
     pass
