@@ -257,6 +257,43 @@ def get_comments(**kwargs):
 
 
 @vk_request_errors
+def add_comment(*args, **kwargs):
+    """
+    :comment_data: ( {'file', 'image', 'text'} )
+    :post_id:
+    :reply_to:
+
+    :return: comment_id
+    """
+    comment_data = args[0]
+    path_to_file = issue_data['file']
+    path_to_image = issue_data['image']
+    text = issue_data['text']
+
+    pid = kwargs['post_id']
+    reply_to = kwargs.get('reply_to')
+
+    attachments = []
+
+    doc = attach_doc(path=path_to_file)[0]
+    pic = attach_pic(path=path_to_image)[0]
+
+    if doc:
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                           + '_' + str(doc[0]['id'])
+                           )
+    if pic:
+        attachments.append('photo' + str(pic[0]['owner_id'])
+                           + '_' + str(pic[0]['id'])
+                           )
+
+    return api.wall.createComment(
+        owner_id=MGROUP_ID, message=text, 
+        reply_to_comment=reply_to, id=pid
+    )
+
+
+@vk_request_errors
 def get_user_photo(**kwargs):
     """
     :size:

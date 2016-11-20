@@ -5,6 +5,7 @@ from collections import Iterable
 
 import requests
 
+#from kivy.network import urlrequest as requests
 
 logger = logging.getLogger('vk')
 
