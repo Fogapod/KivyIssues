@@ -57,7 +57,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.Post = Post
         self.instance_dialog = None
         self.fill_out_form = None
-        self.dialog_authorization = None
+        self.dialog_progress = None
         self.set_default_text_check = True
         self.open_filemanager_on_check = True
         self.user_choice = False
@@ -126,20 +126,26 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             text_color=self.theme_cls.primary_color
         )
 
-    def show_progress(self, interval=0, text='Wait'):
+    def show_progress(self, interval=0, text='Wait', func_dismiss=None):
         '''Прогресс загрузки данных с сервера.'''
 
-        self.dialog_authorization, self.instance_text_authorization = \
+        def p():
+            pass
+
+        if not func_dismiss:
+            func_dismiss = p
+
+        self.dialog_progress, self.instance_text_progress = \
             dialog_progress(
                 text_wait=text, text_color=self.data.text_color_from_hex,
-                events_callback=lambda x: self.dialog_on_fail_authorization()
+                events_callback=lambda x: func_dismiss()
             )
 
     def dialog_on_fail_authorization(self):
         '''Диалоговое окно с просьбой авторзироваться.'''
 
         # TODO: Добавить прерывание запроса данных с сервера.
-        self.dialog_authorization.dismiss()
+        self.dialog_progress.dismiss()
         self.screen.ids.previous.ids.button_question.bind(
             on_release=lambda x: snackbar.make(
                 self.data.string_lang_please_authorization)
