@@ -37,7 +37,8 @@ def vk_request_errors(request):
                 print('Response time exceeded')
 
             elif 'Captcha' in error:
-                raise
+                print('Capthca!!!!!')
+                # raise #TODO обработать капчу
 
             elif 'Failed loading' in error:
                 raise
