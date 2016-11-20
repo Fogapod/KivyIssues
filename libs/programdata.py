@@ -6,12 +6,21 @@
 import os
 import sys
 import re
-import traceback
 import ast
+import traceback
+import threading
 
 from kivy.config import ConfigParser
 from kivy.logger import PY2
 from kivy.utils import get_color_from_hex
+
+
+def thread(func):
+    def execute(*args, **kwargs):
+        threading.Thread(target=func, args=args, kwargs=kwargs).start()
+
+    return execute
+
 
 if PY2:
     select_locale = {u'Русский': 'russian', 'English': 'english'}
