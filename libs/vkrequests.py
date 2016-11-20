@@ -17,13 +17,13 @@ token = None
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
+        response = request(*args, **kwargs); time.sleep(0.66)
         try:
             response = request(*args, **kwargs)
         except Exception as error:
             error = str(error)
-            if 'Too many requests per second' in error:
+            if 'Too many requests per second'in error:
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
@@ -36,6 +36,9 @@ def vk_request_errors(request):
             elif 'Read timed out' in error:
                 print('Response time exceeded')
 
+            elif 'Captcha' in error:
+                raise
+
             elif 'Failed loading' in error:
                 raise
 
@@ -44,9 +47,6 @@ def vk_request_errors(request):
 
             elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
-
-            elif 'captcha' in error:
-                print('Captcha!')
 
             else:
                 if not api:
@@ -199,12 +199,13 @@ def attach_doc(**kwargs):
             raise Exception('Failed loading document')
 
         try:
-            return api.docs.save(
+            response = api.docs.save(
                 title=re.match('/.+$', path),
                 file=json_data['file']
             )
-        except:
-            raise Exception('Failed loading document')
+            return response
+        except Exception as e:
+            raise Exception('Failed loading document ' + str(e))
 
 
 @vk_request_errors
@@ -228,12 +229,13 @@ def attach_pic(**kwargs):
             raise Exception('Failed loading picture')
 
         try:
-            return api.photos.saveWallPhoto(
+            response = api.photos.saveWallPhoto(
                 group_id=GROUP_ID, photo=json_data['photo'],
                 server=json_data['server'], hash=json_data['hash']
             )
-        except:
-            raise Exception('Failed loading picture')
+            return response
+        except Exception as e:
+            raise Exception('Failed loading picture ' + str(e))
 
 
 @vk_request_errors
@@ -266,9 +268,9 @@ def add_comment(*args, **kwargs):
     :return: comment_id
     """
     comment_data = args[0]
-    path_to_file = issue_data['file']
-    path_to_image = issue_data['image']
-    text = issue_data['text']
+    path_to_file = comment_data['file']
+    path_to_image = comment_data['image']
+    text = comment_data['text']
 
     pid = kwargs['post_id']
     reply_to = kwargs.get('reply_to')
@@ -289,7 +291,8 @@ def add_comment(*args, **kwargs):
 
     return api.wall.createComment(
         owner_id=MGROUP_ID, message=text, 
-        reply_to_comment=reply_to, id=pid
+        reply_to_comment=reply_to, post_id=pid,
+        attachments=attachments
     )
 
 
