@@ -23,7 +23,7 @@ def vk_request_errors(request):
             response = request(*args, **kwargs)
         except Exception as error:
             error = str(error)
-            if 'Too many requests per second'in error:
+            if 'Too many requests per second' in error:
                 time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
