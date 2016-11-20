@@ -17,8 +17,8 @@ token = None
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
+        # response = request(*args, **kwargs); time.sleep(0.66)
         try:
             response = request(*args, **kwargs)
         except Exception as error:
@@ -36,6 +36,10 @@ def vk_request_errors(request):
             elif 'Read timed out' in error:
                 print('Response time exceeded')
 
+            elif 'Captcha' in error:
+                print('Capthca!!!!!')
+                # raise #TODO обработать капчу
+
             elif 'Failed loading' in error:
                 raise
 
@@ -44,9 +48,6 @@ def vk_request_errors(request):
 
             elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
-
-            elif 'captcha' in error:
-                print('Captcha!')
 
             else:
                 if not api:
@@ -146,12 +147,15 @@ def get_issues(**kwargs):
 
 
 @vk_request_errors
-def send_issue(*args):
+def send_issue(*args, **kwargs):
     """
     :issue_data: ( {'file','image','theme','issue'} )
+    :post_to_edit:
 
     :return: string ( post id )
     """
+    pte = kwargs.get('post_to_edit')
+
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
@@ -172,10 +176,28 @@ def send_issue(*args):
                            + '_' + str(pic[0]['id'])
                            )
 
+    if pte:
+        return api.wall.edit(
+            post_id=pte, owner_id=MGROUP_ID,
+            message=theme_text + '\n\n' +
+            issue_text, attachments=attachments
+    )
+
     return api.wall.post(
         owner_id=MGROUP_ID, message=theme_text
         + '\n\n' + issue_text, attachments=attachments
     )
+
+
+@vk_request_errors
+def del_issue(**kwargs):
+    """
+    :issue_id:
+    """
+    pid = kwargs['issue_id']
+    response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
+    if response:
+        return True
 
 
 @vk_request_errors
@@ -199,12 +221,13 @@ def attach_doc(**kwargs):
             raise Exception('Failed loading document')
 
         try:
-            return api.docs.save(
+            response = api.docs.save(
                 title=re.match('/.+$', path),
                 file=json_data['file']
             )
-        except:
-            raise Exception('Failed loading document')
+            return response
+        except Exception as e:
+            raise Exception('Failed loading document ' + str(e))
 
 
 @vk_request_errors
@@ -228,12 +251,13 @@ def attach_pic(**kwargs):
             raise Exception('Failed loading picture')
 
         try:
-            return api.photos.saveWallPhoto(
+            response = api.photos.saveWallPhoto(
                 group_id=GROUP_ID, photo=json_data['photo'],
                 server=json_data['server'], hash=json_data['hash']
             )
-        except:
-            raise Exception('Failed loading picture')
+            return response
+        except Exception as e:
+            raise Exception('Failed loading picture ' + str(e))
 
 
 @vk_request_errors
@@ -255,6 +279,64 @@ def get_comments(**kwargs):
         offset=offset, count=comment_count
     )
 
+
+@vk_request_errors
+def add_comment(*args, **kwargs):
+    """
+    :comment_data: ( {'file', 'image', 'text'} )
+    :post_id:
+    :reply_to:
+    :comment_to_edit:
+
+    :return: comment_id
+    """
+    cte = kwargs.get('comment_to_edit')
+
+    comment_data = args[0]
+    path_to_file = comment_data['file']
+    path_to_image = comment_data['image']
+    text = comment_data['text']
+
+    pid = kwargs['post_id']
+    reply_to = kwargs.get('reply_to')
+
+    attachments = []
+
+    doc = attach_doc(path=path_to_file)[0]
+    pic = attach_pic(path=path_to_image)[0]
+
+    if doc:
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                           + '_' + str(doc[0]['id'])
+                           )
+    if pic:
+        attachments.append('photo' + str(pic[0]['owner_id'])
+                           + '_' + str(pic[0]['id'])
+                           )
+
+    if cte:
+        return wall.editComment(
+        comment_id=cte, owner_id=MGROUP_ID,
+        message=text, reply_to_comment=reply_to, 
+        post_id=pid, attachments=attachments
+        )
+
+    return api.wall.createComment(
+        owner_id=MGROUP_ID, message=text, 
+        reply_to_comment=reply_to, post_id=pid,
+        attachments=attachments
+    )
+
+
+@vk_request_errors
+def del_comment(**kwargs):
+    """
+    :comment_id:
+    """
+    cid = kwargs['comment_id']
+    response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
+    if response:
+        return True
 
 @vk_request_errors
 def get_user_photo(**kwargs):
