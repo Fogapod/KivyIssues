@@ -34,7 +34,7 @@ class GetAndSaveLoginPassword(object):
         self.save_login_password(login, password)
 
     def save_login_password(self, login, password):
-        # TODO: Добавить кодировку логина и пароля.
+        # TODO: Сохранить access_token и зашифровать его.
         self.data.regdata['login'] = login
         self.data.regdata['password'] = password
         self.config.set('General', 'regdata', self.data.regdata)
