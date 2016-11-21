@@ -36,12 +36,12 @@ def vk_request_errors(request):
             elif 'Read timed out' in error:
                 print('Response time exceeded')
 
+            elif 'Failed loading' in error:
+                raise
+
             elif 'Captcha' in error:
                 print('Capthca!!!!!')
                 # raise #TODO обработать капчу
-
-            elif 'Failed loading' in error:
-                raise
 
             elif 'Failed receiving session' in error:
                 print('Error receiving session!')
