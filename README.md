@@ -27,6 +27,7 @@ MIT
 --------
 Email: gorodage@gmail.com
 
-<a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_ru.png"></a>
+<a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent
+.com/HeaTTheatR/KivyIssues/master/data/images/kivy_ru.png"></a> <a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_on_habr.png"></a>
 
 [Аккаунт на Хабре](https://habrahabr.ru/users/heattheatr/)
