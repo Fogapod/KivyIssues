@@ -6,7 +6,8 @@ Kivy Issues
 ВКонтакте](https://m.vk.com/kivy_ru). Помогите сделать Kivy простым и понятным 
 для тех, кто этого хочет!
 
-![ScreenShot](https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous.png)
+<img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous.png" 
+align="center"/>
 
 ЯЗЫК ПРОГРАММИРОВАНИЯ
 ---------------------
