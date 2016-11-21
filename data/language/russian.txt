@@ -16,7 +16,7 @@ string_lang_load_user_name = 'Загрузка имени пользовател
 string_lang_load_issues_in_group = 'Загрузка кол-ва вопросов в группе...'
 string_lang_issues_in_group = 'Вопросов в группе - {}'
 string_lang_new_issues_in_group = 'Новые - {}'
-string_lang_issues = 'Вопросоы'
+string_lang_issues = 'Вопросы'
 string_lang_answer = 'Ответы'
 string_lang_new_issues = 'В группе появились новые вопросы!'
 
