@@ -18,11 +18,11 @@ class ShowLicense(object):
         def choice_language_license(on_language):
             window = dialog(text=self.data.string_lang_wait, title=self.title)
             Clock.schedule_once(
-                lambda *args: show_license(window, on_language), 0
+                lambda x: show_license(window, on_language), 0
             )
             choice_dialog.dismiss()
 
-        def show_license(dialog, on_language):
+        def show_license(instance_dialog, on_language):
             path_to_license = '{}/license/license_{}.rst'.format(
                 self.directory, self.data.dict_language[on_language]
             )
@@ -30,7 +30,7 @@ class ShowLicense(object):
                 dialog(
                     text=self.data.string_lang_not_license, title=self.title
                 )
-                dialog.dismiss()
+                instance_dialog.dismiss()
 
                 return
 
@@ -41,7 +41,7 @@ class ShowLicense(object):
                 base_font_size=28
             )
             card(widget_license, size=(.9, .8))
-            dialog.dismiss()
+            instance_dialog.dismiss()
 
         choice_dialog = dialog(
             text=self.data.string_lang_prev_license, title=self.title,
