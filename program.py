@@ -99,8 +99,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
             self._authorization_on_vk(self.login, self.password)
-        if self.saved_form:
-            Clock.schedule_once(self.dialog_restore_form, 3)
 
         return self.screen
 
@@ -155,26 +153,31 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.data.string_lang_please_authorization)
         )
 
-    def dialog_restore_form(self, interval):
+    def dialog_restore_form(self):
         '''Диалог восстановления сохраненной формы вопроса.'''
 
-        def restore_form():
+        def set_activity_form():
+            self.close_dialog()
             self.manager.current = 'ask a question'
+            self.saved_form = None
+
+        def restore_form():
             self.set_default_text_check = False
             self.open_filemanager_on_check = False
             self.restore_form()
-            self.close_dialog()
+            set_activity_form()
             self.open_filemanager_on_check = True
 
         def clear_data():
             self.clear_data()
             self.close_dialog()
+            self.saved_form = None
 
         self.open_dialog(
             text=data.string_lang_old_form_exists, dismiss=True,
             buttons=[
                 [data.string_lang_yes, lambda *x: restore_form()],
-                [data.string_lang_no, lambda *x: self.close_dialog()],
+                [data.string_lang_no, lambda *x: set_activity_form()],
                 [data.string_lang_clear_data, lambda *x: clear_data()]
             ]
         )
