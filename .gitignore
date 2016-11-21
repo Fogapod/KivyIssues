@@ -4,6 +4,7 @@ Mercury.modules
 *.pyc
 .idea
 .buildozer
+bin
 /venv/
 /program.ini
 /error.ini
