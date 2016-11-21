@@ -23,7 +23,7 @@ class BoxPosts(Screen):
         self.app.screen.ids.action_bar.right_action_items = \
             [['comment-outline', lambda x: None]]
         self.app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', self.set_screen_previous]]
+            [['chevron-left', lambda x: self.set_screen_previous()]]
 
     @thread
     def _get_info_from_post(self, count_issues):
