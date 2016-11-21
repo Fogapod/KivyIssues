@@ -189,6 +189,12 @@ def send_issue(*args, **kwargs):
     )
 
 
+
+@vk_request_errors
+def edit_issue(**kwargs):
+    pass
+
+
 @vk_request_errors
 def del_issue(**kwargs):
     """
@@ -326,6 +332,11 @@ def add_comment(*args, **kwargs):
         reply_to_comment=reply_to, post_id=pid,
         attachments=attachments
     )
+
+
+@vk_request_errors
+def edit_comment(*args, **kwargs):
+    pass
 
 
 @vk_request_errors
