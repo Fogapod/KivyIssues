@@ -6,7 +6,8 @@ Kivy Issues
 ВКонтакте](https://m.vk.com/kivy_ru). Помогите сделать Kivy простым и понятным 
 для тех, кто этого хочет!
 
-![ScreenShot](https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous.png)
+<img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous_new.png" 
+align="center"/>
 
 ЯЗЫК ПРОГРАММИРОВАНИЯ
 ---------------------
@@ -24,6 +25,5 @@ MIT
 
 КОНТАКТЫ
 --------
-Email: gorodage@gmail.com
 
-[Аккаунт на Хабре](https://habrahabr.ru/users/heattheatr/)
+<a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_ru.png"></a> <a href="https://habrahabr.ru/users/heattheatr/topics/"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_on_habr.png"></a> <a href="gorodage@gmail.com"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/gmail_new.png"></a>

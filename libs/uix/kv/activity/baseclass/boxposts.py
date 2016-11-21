@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -8,13 +9,23 @@ from kivy.metrics import dp
 
 from libs.paginator import paginator
 from libs.uix.canvasadd import canvas_add
+from libs.programdata import thread
 
 
 class BoxPosts(Screen):
 
+    posts_dict = None
+
     def on_enter(self):
         self.app.screen.ids.action_bar.right_action_items = \
             [['comment-outline', lambda x: None]]
+        self.app.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x:
+                self.app.back_screen(self.old_screen)]]
+
+    @thread
+    def _get_info_from_post(self, count_issues):
+        self.posts_dict = self.app.get_info_from_post(count_issues)
 
     def show_posts(self, count_issues):
         '''
@@ -23,27 +34,35 @@ class BoxPosts(Screen):
 
         '''
 
-        self.create_posts(count_issues)
-        self.app.manager.current = 'box posts'
+        def check_posts_dict(interval):
+            if self.posts_dict:
+                self.app.dialog_progress.dismiss()
+                self.create_posts(count_issues)
+                self.old_screen = self.app.manager.current
+                self.app.manager.current = 'box posts'
+                self.posts_dict = None
+                Clock.unschedule(check_posts_dict)
+
+        self.app = self.manager._app
+        self.app.show_progress(text=self.app.data.string_lang_wait)
+        self._get_info_from_post(count_issues)
+        Clock.schedule_interval(check_posts_dict, 0)
 
     def create_posts(self, count_issues):
         '''Создает и компанует выджеты для вывода постов группы.'''
 
-        self.app = self.manager._app
-        posts_dict = self.app.get_info_from_post(count_issues)
-
-        for author in posts_dict.keys():
+        for author in self.posts_dict.keys():
             box_posts = self.app.Post(size_hint_y=None)
             box_posts.ids.title_post.ids._lbl_primary.bold = True
             box_posts.ids.title_post.ids._lbl_secondary.font_size = '11sp'
 
-            box_posts.ids.title_post.icon = posts_dict[author]['avatar']
+            box_posts.ids.title_post.icon = self.posts_dict[author]['avatar']
             box_posts.ids.title_post.text = author
             box_posts.ids.title_post.secondary_text = \
-                posts_dict[author]['date']
-            box_posts.ids.text_posts.text = posts_dict[author]['text']
+                self.posts_dict[author]['date']
+            box_posts.ids.text_posts.text = self.posts_dict[author]['text']
             box_posts.ids.comments_post.text = \
-                str(posts_dict[author]['comments'])
+                str(self.posts_dict[author]['comments'])
             self.ids.box_posts.add_widget(box_posts)
 
         paginator_width = dp(self.app.window.size[0] - 10)
@@ -70,7 +89,9 @@ class BoxPosts(Screen):
 
         '''
 
-        number_pages = round(number_posts // pages)
+        number_pages = int(round(number_posts / pages))
+        if not number_pages:
+            number_pages = 1
         list_pages = paginator(number_pages, current_number_page)
 
         build_pages = ""
