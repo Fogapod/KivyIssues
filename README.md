@@ -26,4 +26,4 @@ MIT
 КОНТАКТЫ
 --------
 
-<a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_ru.png"></a> <a href="https://habrahabr.ru/users/heattheatr/topics/"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_on_habr.png"></a> <a href="gorodage@gmail.com"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/gmail.png"></a>
+<a href="https://vk.com/kivy_ru"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_ru.png"></a> <a href="https://habrahabr.ru/users/heattheatr/topics/"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/kivy_on_habr.png"></a> <a href="gorodage@gmail.com"><img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/gmail_new.png"></a>
