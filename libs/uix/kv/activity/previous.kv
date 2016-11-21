@@ -63,6 +63,7 @@
             markup: True
             color: app.theme_cls.primary_color
             font_size: '10sp'
-            pos: self.size[0], self.pos[1]
             size_hint: None, .05
+            width: self.texture_size[0]
+            halign: 'left'
             on_ref_press: webbrowser.open(app.data.string_lang_link_on_group)
