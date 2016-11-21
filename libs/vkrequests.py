@@ -149,12 +149,12 @@ def get_issues(**kwargs):
 @vk_request_errors
 def send_issue(*args, **kwargs):
     """
-    :issue_data: ( {'file','image','theme','issue'} )
-    :post_to_edit:
+    :issue_data: {'file','image','theme','issue'}
+    #:post_to_edit:
 
     :return: string ( post id )
     """
-    pte = kwargs.get('post_to_edit')
+    #pte = kwargs.get('post_to_edit')
 
     issue_data = args[0]
     path_to_file = issue_data['file']
@@ -176,12 +176,12 @@ def send_issue(*args, **kwargs):
                            + '_' + str(pic[0]['id'])
                            )
 
-    if pte:
-        return api.wall.edit(
-            post_id=pte, owner_id=MGROUP_ID,
-            message=theme_text + '\n\n' +
-            issue_text, attachments=attachments
-    )
+    #if pte:
+    #    return api.wall.edit(
+    #        post_id=pte, owner_id=MGROUP_ID,
+    #        message=theme_text + '\n\n' +
+    #        issue_text, attachments=attachments
+    #)
 
     return api.wall.post(
         owner_id=MGROUP_ID, message=theme_text
@@ -283,14 +283,14 @@ def get_comments(**kwargs):
 @vk_request_errors
 def add_comment(*args, **kwargs):
     """
-    :comment_data: ( {'file', 'image', 'text'} )
+    :comment_data: {'file', 'image', 'text'}
     :post_id:
     :reply_to:
-    :comment_to_edit:
+    #:comment_to_edit:
 
     :return: comment_id
     """
-    cte = kwargs.get('comment_to_edit')
+    #cte = kwargs.get('comment_to_edit')
 
     comment_data = args[0]
     path_to_file = comment_data['file']
@@ -314,12 +314,12 @@ def add_comment(*args, **kwargs):
                            + '_' + str(pic[0]['id'])
                            )
 
-    if cte:
-        return wall.editComment(
-        comment_id=cte, owner_id=MGROUP_ID,
-        message=text, reply_to_comment=reply_to, 
-        post_id=pid, attachments=attachments
-        )
+    #if cte:
+    #    return wall.editComment(
+    #    comment_id=cte, owner_id=MGROUP_ID,
+    #    message=text, reply_to_comment=reply_to, 
+    #    post_id=pid, attachments=attachments
+    #    )
 
     return api.wall.createComment(
         owner_id=MGROUP_ID, message=text, 
