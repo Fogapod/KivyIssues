@@ -89,7 +89,7 @@ class BoxPosts(Screen):
 
         '''
 
-        number_pages = round(number_posts / pages)
+        number_pages = int(round(number_posts / pages))
         if not number_pages:
             number_pages = 1
         list_pages = paginator(number_pages, current_number_page)
