@@ -77,6 +77,10 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.manager = self.screen.ids.manager
         self.nav_drawer = NavDrawer(title=data.string_lang_menu)
 
+    def get_application_config(self):
+        return super(Program, self).get_application_config(
+                        '{}/%(appname)s.ini'.format(self.directory))
+
     def build_config(self, config):
         config.adddefaultsection('General')
         config.setdefault('General', 'language', 'Русский')
