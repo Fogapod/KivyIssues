@@ -62,17 +62,11 @@ class IssueForm(object):
         if name_adding_file == self.data.string_lang_add_file:
             _file = None
         else:
-            _file = '{}/{}'.format(
-                self.manager.current_screen.ids.add_file.path_to_file,
-                name_adding_file
-            )
+            _file = '{}/{}'.format(self.path_to_file, name_adding_file)
         if name_adding_image == self.data.string_lang_add_image:
             _image = None
         else:
-            _image = '{}/{}'.format(
-                self.manager.current_screen.ids.add_image.path_to_file,
-                name_adding_image
-            )
+            _image = '{}/{}'.format(self.path_to_file, name_adding_image)
 
         return {
             'file': _file, 'image': _image,
