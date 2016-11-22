@@ -139,7 +139,7 @@ class ShowPlugin(object):
             )
             card(widget_info, size=(.75, .6))
 
-    def show_plugins(self):
+    def show_plugins(self, *args):
         '''Выводит на экран список установленных плагинов.'''
 
         dict_info_plugins = self._get_info_plugins()
