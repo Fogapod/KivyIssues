@@ -98,7 +98,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if not self.login or not self.password:
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
-            self._authorization_on_vk(self.login, self.password)
+            #self._authorization_on_vk(self.login, self.password)
+            pass
 
         return self.screen
 
@@ -334,7 +335,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             ]
         )
 
-    def dialog_exit(self):
+    def dialog_exit(self, *args):
         self.open_dialog(
             text=data.string_lang_exit,
             buttons=[
