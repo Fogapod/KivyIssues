@@ -67,18 +67,14 @@ class BoxPosts(Screen):
                 str(self.posts_dict[author]['comments'])
             self.ids.box_posts.add_widget(box_posts)
 
-        paginator_width = dp(self.app.window.size[0] - 10)
-        paginator_box = BoxLayout(
-            size_hint=(None, None), size=(paginator_width, dp(30))
-        )
+        paginator_box = BoxLayout(size_hint_y=None, height=dp(30))
         paginator_pages = Label(
             text=self.create_paginator(number_posts=int(count_issues)),
-            markup=True, on_ref_press=self.jump_to_page, halign='center',
-            text_size=(None, dp(30)))
-        paginator_pages.bind(texture_size=paginator_pages.setter('size'))
+            markup=True, on_ref_press=self.jump_to_page
+        )
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
-        canvas_add(paginator_box, self.app.data.list_color, (5, 0))
+        canvas_add(paginator_box, self.app.data.list_color)
 
     def create_paginator(self, number_posts=1, current_number_page=1,
                          pages=20):
