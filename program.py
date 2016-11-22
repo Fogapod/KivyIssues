@@ -98,8 +98,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if not self.login or not self.password:
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
-            #self._authorization_on_vk(self.login, self.password)
-            pass
+            self._authorization_on_vk(self.login, self.password)
 
         return self.screen
 
