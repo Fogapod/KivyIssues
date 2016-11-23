@@ -314,13 +314,12 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if name_screen in (1001, 27):
             if name_current_screen == 'previous':
                 self.dialog_exit()
-            return
+                return
 
         if name_current_screen == 'ask a question' \
                 or name_screen in (1001, 27):
             self.manager.current = 'previous'
-        elif name_current_screen == 'box posts' \
-                or name_screen in (1001, 27):
+        elif name_current_screen == 'box posts' or name_screen in (1001, 27):
             if name_screen in (1001, 27):
                 self.manager.current = self.screen.ids.box_posts.old_screen
             else:
