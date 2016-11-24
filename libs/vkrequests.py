@@ -77,7 +77,7 @@ def log_in(**kwargs):
 
     global token
     token = kwargs.get('token')
-    key = kwargs.get('key')
+    key = str(kwargs.get('key'))
 
     if token:
         session = vk.AuthSession(
@@ -110,7 +110,7 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """
-    :return: string
+    :return: string ( number )
     """
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
@@ -132,13 +132,13 @@ def get_issue_count():
 def get_issues(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
-    :offset: ( '0' )
-    :count: ( '30' )
+    :offset: ( :default: '0' )
+    :count: ( :default: '30' )
 
     :return: dict
     """
-    offset = kwargs.get('offset', '0')
-    post_count = kwargs.get('count', '30')
+    offset = str(kwargs.get('offset', '0'))
+    post_count = str(kwargs.get('count', '30'))
 
     return api.wall.get(
         owner_id=MGROUP_ID, filter='others', extended='1',
@@ -147,14 +147,12 @@ def get_issues(**kwargs):
 
 
 @vk_request_errors
-def send_issue(*args, **kwargs):
+def send_issue(*args):
     """
     :issue_data: {'file','image','theme','issue'}
-    #:post_to_edit:
 
     :return: string ( post id )
     """
-    #pte = kwargs.get('post_to_edit')
 
     issue_data = args[0]
     path_to_file = issue_data['file']
@@ -176,13 +174,6 @@ def send_issue(*args, **kwargs):
                            + '_' + str(pic[0]['id'])
                            )
 
-    #if pte:
-    #    return api.wall.edit(
-    #        post_id=pte, owner_id=MGROUP_ID,
-    #        message=theme_text + '\n\n' +
-    #        issue_text, attachments=attachments
-    #)
-
     return api.wall.post(
         owner_id=MGROUP_ID, message=theme_text
         + '\n\n' + issue_text, attachments=attachments
@@ -200,7 +191,7 @@ def del_issue(**kwargs):
     """
     :issue_id:
     """
-    pid = kwargs['issue_id']
+    pid = str(kwargs['issue_id'])
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
     if response:
         return True
@@ -271,14 +262,14 @@ def get_comments(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
-    :offset: ( '0' )
-    :count: ( '100' )
+    :offset: ( :default: '0' )
+    :count: ( :default: '100' )
 
     :return: dict with comments
     """
-    post_id = kwargs['id']
-    offset = kwargs.get('offset', '0')
-    comment_count = kwargs.get('count', '100')
+    post_id = str(kwargs['id'])
+    offset = str(kwargs.get('offset', '0'))
+    comment_count = str(kwargs.get('count', '100'))
 
     return api.wall.getComments(
         owner_id=MGROUP_ID, post_id=post_id,
@@ -292,19 +283,16 @@ def add_comment(*args, **kwargs):
     :comment_data: {'file', 'image', 'text'}
     :post_id:
     :reply_to:
-    #:comment_to_edit:
 
     :return: comment_id
     """
-    #cte = kwargs.get('comment_to_edit')
-
     comment_data = args[0]
     path_to_file = comment_data['file']
     path_to_image = comment_data['image']
     text = comment_data['text']
 
-    pid = kwargs['post_id']
-    reply_to = kwargs.get('reply_to')
+    pid = str(kwargs['post_id'])
+    reply_to = str(kwargs.get('reply_to'))
 
     attachments = []
 
@@ -319,13 +307,6 @@ def add_comment(*args, **kwargs):
         attachments.append('photo' + str(pic[0]['owner_id'])
                            + '_' + str(pic[0]['id'])
                            )
-
-    #if cte:
-    #    return wall.editComment(
-    #    comment_id=cte, owner_id=MGROUP_ID,
-    #    message=text, reply_to_comment=reply_to, 
-    #    post_id=pid, attachments=attachments
-    #    )
 
     return api.wall.createComment(
         owner_id=MGROUP_ID, message=text, 
@@ -344,13 +325,14 @@ def del_comment(**kwargs):
     """
     :comment_id:
     """
-    cid = kwargs['comment_id']
+    cid = str(kwargs['comment_id'])
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
     if response:
         return True
 
 @vk_request_errors
 def get_user_photo(**kwargs):
+    #FIXME всегда возвращает фото
     """
     :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
@@ -361,7 +343,6 @@ def get_user_photo(**kwargs):
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
 
-    # !always returns photo!
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
 
