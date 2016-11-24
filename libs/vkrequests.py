@@ -8,8 +8,6 @@ from libs import vk
 
 __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
-GROUP_ID = '99411738'
-MGROUP_ID = '-' + GROUP_ID
 
 api = None
 token = None
@@ -71,6 +69,8 @@ def log_in(**kwargs):
 
     :return: string ( token )
     """
+    set_group_id()
+
     scope = '204804'
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
     app_id = '5720412'
@@ -177,7 +177,6 @@ def send_issue(*args):
         owner_id=MGROUP_ID, message=theme_text
         + issue_text, attachments=attachments
     )
-
 
 
 @vk_request_errors
@@ -395,6 +394,7 @@ def edit_comment(**kwargs):
         attachments=attachments, comment_id=cid
         )
 
+
 @vk_request_errors
 def del_comment(**kwargs):
     """
@@ -404,6 +404,7 @@ def del_comment(**kwargs):
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
     if response:
         return True
+
 
 @vk_request_errors
 def get_user_photo(**kwargs):
@@ -420,6 +421,12 @@ def get_user_photo(**kwargs):
 
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
+
+
+def set_group_id(new_gid='99411738'):
+    global GROUP_ID, MGROUP_ID
+    GROUP_ID = str(new_gid)
+    MGROUP_ID = '-' + GROUP_ID
 
 
 ##########################
