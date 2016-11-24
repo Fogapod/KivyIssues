@@ -181,7 +181,7 @@ def send_issue(*args):
 
 
 @vk_request_errors
-def edit_issue(*args, **kwargs):
+def edit_issue(**kwargs):
     """
     """
     path_to_file = issue_data['file']
@@ -218,8 +218,10 @@ def edit_issue(*args, **kwargs):
     elif pic_id and pic_oid:
         attachments.append('pic' + pic_oid + '_' + pic_id)
 
-    api.wall.edit(owner_id=MGROUP_ID, message=theme_text
-        + issue_text, attachments=attachments, post_id=issue_id)
+    api.wall.edit(
+        owner_id=MGROUP_ID, message=theme_text
+        + issue_text, attachments=attachments, post_id=issue_id
+        )
 
 
 @vk_request_errors
@@ -352,9 +354,46 @@ def add_comment(*args, **kwargs):
 
 
 @vk_request_errors
-def edit_comment(*args, **kwargs):
-    pass
+def edit_comment(**kwargs):
+    """
+    """
+    path_to_file = issue_data['file']
+    doc_id = str(kwargs.get('doc_id'))
+    doc_oid = str(kwargs.get('doc_oid'))
 
+    path_to_image = issue_data['image']
+    pic_id = str(kwargs.get('pic_id'))
+    pic_oid = str(kwargs.get('pic_oid'))
+
+    text = kwargs['text']
+
+    cid = kwargs['comment_id']
+
+    attachments = []
+
+    if path_to_file:
+        doc = attach_doc(path=path_to_file)[0]
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif doc_id and doc_oid:
+        attachments.append('doc' + doc_oid + '_' + doc_id)
+
+
+    if path_to_image:
+        pic = attach_doc(path=path_to_image)[0]
+        attachments.append('pic' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif pic_id and pic_oid:
+        attachments.append('pic' + pic_oid + '_' + pic_id)
+
+    api.wall.editComment(
+        owner_id=MGROUP_ID, message=text,
+        attachments=attachments, comment_id=cid
+        )
 
 @vk_request_errors
 def del_comment(**kwargs):
