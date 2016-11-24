@@ -153,11 +153,10 @@ def send_issue(*args):
 
     :return: string ( post id )
     """
-
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
-    theme_text = issue_data['theme']
+    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     attachments = []
@@ -167,23 +166,60 @@ def send_issue(*args):
 
     if doc:
         attachments.append('doc' + str(doc[0]['owner_id'])
-                           + '_' + str(doc[0]['id'])
+                         + '_' + str(doc[0]['id'])
                            )
     if pic:
         attachments.append('photo' + str(pic[0]['owner_id'])
-                           + '_' + str(pic[0]['id'])
+                         + '_' + str(pic[0]['id'])
                            )
 
     return api.wall.post(
         owner_id=MGROUP_ID, message=theme_text
-        + '\n\n' + issue_text, attachments=attachments
+        + issue_text, attachments=attachments
     )
 
 
 
 @vk_request_errors
-def edit_issue(**kwargs):
-    pass
+def edit_issue(*args, **kwargs):
+    """
+    """
+    path_to_file = issue_data['file']
+    doc_id = str(kwargs.get('doc_id'))
+    doc_oid = str(kwargs.get('doc_oid'))
+
+    path_to_image = issue_data['image']
+    pic_id = str(kwargs.get('pic_id'))
+    pic_oid = str(kwargs.get('pic_oid'))
+
+    theme_text = issue_data['theme'] + '\n\n'
+    issue_text = issue_data['issue']
+
+    issue_id = kwargs['issue_id']
+
+    attachments = []
+
+    if path_to_file:
+        doc = attach_doc(path=path_to_file)[0]
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif doc_id and doc_oid:
+        attachments.append('doc' + doc_oid + '_' + doc_id)
+
+
+    if path_to_image:
+        pic = attach_doc(path=path_to_image)[0]
+        attachments.append('pic' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif pic_id and pic_oid:
+        attachments.append('pic' + pic_oid + '_' + pic_id)
+
+    api.wall.edit(owner_id=MGROUP_ID, message=theme_text
+        + issue_text, attachments=attachments, post_id=issue_id)
 
 
 @vk_request_errors
