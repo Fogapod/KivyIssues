@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from kivy.clock import Clock
+from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -15,15 +16,14 @@ from libs.programdata import thread
 class BoxPosts(Screen):
 
     posts_dict = None
-
-    def set_screen_previous(self):
-        self.manager.current = self.old_screen
+    old_screen = StringProperty()
 
     def on_enter(self):
         self.app.screen.ids.action_bar.right_action_items = \
             [['comment-outline', lambda x: None]]
         self.app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.set_screen_previous()]]
+            [['chevron-left', lambda x: self.app.back_screen(
+                self.old_screen)]]
 
     @thread
     def _get_info_from_post(self, count_issues):

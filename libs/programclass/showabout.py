@@ -10,7 +10,7 @@ from libs.uix.dialogs import dialog
 
 class ShowAbout(object):
 
-    def show_about(self):
+    def show_about(self, *args):
         dialog(
             text=self.data.string_lang_about.format(
                 LINK_COLOR=self.data.text_link_color),

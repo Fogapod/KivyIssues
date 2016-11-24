@@ -316,9 +316,16 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.dialog_exit()
                 return
 
-        self.manager.current = 'previous' \
-            if name_current_screen == 'ask a question' \
-            else name_screen
+        if name_current_screen == 'ask a question' \
+                or name_screen in (1001, 27):
+            self.manager.current = 'previous'
+        elif name_current_screen == 'box posts' or name_screen in (1001, 27):
+            if name_screen in (1001, 27):
+                self.manager.current = self.screen.ids.box_posts.old_screen
+            else:
+                self.manager.current = name_screen
+        else:
+            self.manager.current = name_screen
 
     def dialog_fill_out_form(self):
         '''Диалог с предложением сохранить форму вопроса.'''
@@ -334,7 +341,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             ]
         )
 
-    def dialog_exit(self):
+    def dialog_exit(self, *args):
         self.open_dialog(
             text=data.string_lang_exit,
             buttons=[

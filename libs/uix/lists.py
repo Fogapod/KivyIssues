@@ -64,6 +64,11 @@ class IconItem(TwoLineAvatarIconListItem):
     icon = StringProperty()
 
 
+class IconItemOne(OneLineIconListItem):
+    events_callback = ObjectProperty()
+    icon = StringProperty()
+
+
 class IconItemAsync(TwoLineAvatarIconListItem):
     events_callback = ObjectProperty()
     icon = StringProperty()
@@ -75,7 +80,7 @@ class Item(OneLineListItem):
 
 class SingleIconItem(OneLineIconListItem):
     events_callback = ObjectProperty()
-    icon = StringProperty()
+    icon = StringProperty('alert-circle')
 
 
 class Lists(BoxLayout):
