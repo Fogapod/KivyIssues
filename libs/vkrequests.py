@@ -102,7 +102,7 @@ def log_in(**kwargs):
     except UnboundLocalError:
         raise Exception('Failed receiving session!')
 
-    api.stats.trackVisitor()
+    track_visitor()
 
     return session.access_token
 
@@ -421,6 +421,11 @@ def get_user_photo(**kwargs):
 
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
+
+
+@vk_request_errors
+def track_visitor():
+    api.stats.trackVisitor()
 
 
 def set_group_id(new_gid='99411738'):
