@@ -40,7 +40,7 @@ if not os.path.exists('{}/program.ini'.format(prog_path)):
     regdata = {'login': None, 'password': None}
     user_name = 'User'
     issues_in_group = 0
-    count_issues = '20'
+    count_issues = 20
 else:
     config = ConfigParser()
     config.read('{}/program.ini'.format(prog_path))
@@ -50,7 +50,7 @@ else:
     regdata = ast.literal_eval(config.get('General', 'regdata'))
     user_name = config.get('General', 'user_name')
     issues_in_group = config.getint('General', 'issues_in_group')
-    count_issues = config.get('General', 'count_issues')
+    count_issues = config.getint('General', 'count_issues')
 
 old_language = language
 language = select_locale[language]
