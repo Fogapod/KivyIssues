@@ -42,8 +42,13 @@ class NavDrawer(NavigationDrawer):
 
         '''
 
+        def _show_posts(interval):
+            self._app.screen.ids.box_posts.show_posts(
+                str(self._app.data.issues_in_group), only_questions=True
+            )
+
         self.toggle()
-        self._app.screen.ids.box_posts.show_posts(only_questions=True)
+        Clock.schedule_once(_show_posts, .3)
 
 
 class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
