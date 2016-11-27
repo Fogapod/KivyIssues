@@ -34,7 +34,16 @@ from kivymd.navigationdrawer import NavigationDrawer
 
 
 class NavDrawer(NavigationDrawer):
-    pass
+    _app = ObjectProperty()
+
+    def show_only_questions_posts(self):
+        '''Пукт "Вопросы" раздела пользователя.
+        Вызывает функцию, выводящую Activity только с постами пользователя.
+
+        '''
+
+        self.toggle()
+        self._app.screen.ids.box_posts.show_posts(only_questions=True)
 
 
 class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
@@ -319,7 +328,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if name_current_screen == 'ask a question' \
                 or name_screen in (1001, 27):
             self.manager.current = 'previous'
-        elif name_current_screen == 'box posts' or name_screen in (1001, 27):
+        elif name_current_screen == 'box posts' \
+                or name_screen in (1001, 27):
             if name_screen in (1001, 27):
                 self.manager.current = self.screen.ids.box_posts.old_screen
             else:
