@@ -8,8 +8,6 @@ from libs import vk
 
 __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
-GROUP_ID = '99411738'
-MGROUP_ID = '-' + GROUP_ID
 
 api = None
 token = None
@@ -36,12 +34,12 @@ def vk_request_errors(request):
             elif 'Read timed out' in error:
                 print('Response time exceeded')
 
+            elif 'Failed loading' in error:
+                raise
+
             elif 'Captcha' in error:
                 print('Capthca!!!!!')
                 # raise #TODO обработать капчу
-
-            elif 'Failed loading' in error:
-                raise
 
             elif 'Failed receiving session' in error:
                 print('Error receiving session!')
@@ -71,13 +69,15 @@ def log_in(**kwargs):
 
     :return: string ( token )
     """
+    set_group_id()
+
     scope = '204804'
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
     app_id = '5720412'
 
     global token
     token = kwargs.get('token')
-    key = kwargs.get('key')
+    key = str(kwargs.get('key'))
 
     if token:
         session = vk.AuthSession(
@@ -102,7 +102,7 @@ def log_in(**kwargs):
     except UnboundLocalError:
         raise Exception('Failed receiving session!')
 
-    api.stats.trackVisitor()
+    track_visitor()
 
     return session.access_token
 
@@ -110,7 +110,7 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """
-    :return: string
+    :return: string ( number )
     """
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
@@ -132,13 +132,13 @@ def get_issue_count():
 def get_issues(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
-    :offset: ( '0' )
-    :count: ( '30' )
+    :offset: ( :default: '0' )
+    :count: ( :default: '30' )
 
     :return: dict
     """
-    offset = kwargs.get('offset', '0')
-    post_count = kwargs.get('count', '30')
+    offset = str(kwargs.get('offset', '0'))
+    post_count = str(kwargs.get('count', '30'))
 
     return api.wall.get(
         owner_id=MGROUP_ID, filter='others', extended='1',
@@ -147,19 +147,16 @@ def get_issues(**kwargs):
 
 
 @vk_request_errors
-def send_issue(*args, **kwargs):
+def send_issue(*args):
     """
     :issue_data: {'file','image','theme','issue'}
-    #:post_to_edit:
 
     :return: string ( post id )
     """
-    #pte = kwargs.get('post_to_edit')
-
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
-    theme_text = issue_data['theme']
+    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     attachments = []
@@ -169,30 +166,61 @@ def send_issue(*args, **kwargs):
 
     if doc:
         attachments.append('doc' + str(doc[0]['owner_id'])
-                           + '_' + str(doc[0]['id'])
+                         + '_' + str(doc[0]['id'])
                            )
     if pic:
         attachments.append('photo' + str(pic[0]['owner_id'])
-                           + '_' + str(pic[0]['id'])
+                         + '_' + str(pic[0]['id'])
                            )
-
-    #if pte:
-    #    return api.wall.edit(
-    #        post_id=pte, owner_id=MGROUP_ID,
-    #        message=theme_text + '\n\n' +
-    #        issue_text, attachments=attachments
-    #)
 
     return api.wall.post(
         owner_id=MGROUP_ID, message=theme_text
-        + '\n\n' + issue_text, attachments=attachments
+        + issue_text, attachments=attachments
     )
-
 
 
 @vk_request_errors
 def edit_issue(**kwargs):
-    pass
+    """
+    """
+    path_to_file = issue_data['file']
+    doc_id = str(kwargs.get('doc_id'))
+    doc_oid = str(kwargs.get('doc_oid'))
+
+    path_to_image = issue_data['image']
+    pic_id = str(kwargs.get('pic_id'))
+    pic_oid = str(kwargs.get('pic_oid'))
+
+    theme_text = issue_data['theme'] + '\n\n'
+    issue_text = issue_data['issue']
+
+    issue_id = kwargs['issue_id']
+
+    attachments = []
+
+    if path_to_file:
+        doc = attach_doc(path=path_to_file)[0]
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif doc_id and doc_oid:
+        attachments.append('doc' + doc_oid + '_' + doc_id)
+
+
+    if path_to_image:
+        pic = attach_doc(path=path_to_image)[0]
+        attachments.append('pic' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif pic_id and pic_oid:
+        attachments.append('pic' + pic_oid + '_' + pic_id)
+
+    api.wall.edit(
+        owner_id=MGROUP_ID, message=theme_text
+        + issue_text, attachments=attachments, post_id=issue_id
+        )
 
 
 @vk_request_errors
@@ -200,7 +228,7 @@ def del_issue(**kwargs):
     """
     :issue_id:
     """
-    pid = kwargs['issue_id']
+    pid = str(kwargs['issue_id'])
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
     if response:
         return True
@@ -271,14 +299,14 @@ def get_comments(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
-    :offset: ( '0' )
-    :count: ( '100' )
+    :offset: ( :default: '0' )
+    :count: ( :default: '100' )
 
     :return: dict with comments
     """
-    post_id = kwargs['id']
-    offset = kwargs.get('offset', '0')
-    comment_count = kwargs.get('count', '100')
+    post_id = str(kwargs['id'])
+    offset = str(kwargs.get('offset', '0'))
+    comment_count = str(kwargs.get('count', '100'))
 
     return api.wall.getComments(
         owner_id=MGROUP_ID, post_id=post_id,
@@ -292,19 +320,16 @@ def add_comment(*args, **kwargs):
     :comment_data: {'file', 'image', 'text'}
     :post_id:
     :reply_to:
-    #:comment_to_edit:
 
     :return: comment_id
     """
-    #cte = kwargs.get('comment_to_edit')
-
     comment_data = args[0]
     path_to_file = comment_data['file']
     path_to_image = comment_data['image']
     text = comment_data['text']
 
-    pid = kwargs['post_id']
-    reply_to = kwargs.get('reply_to')
+    pid = str(kwargs['post_id'])
+    reply_to = str(kwargs.get('reply_to'))
 
     attachments = []
 
@@ -320,13 +345,6 @@ def add_comment(*args, **kwargs):
                            + '_' + str(pic[0]['id'])
                            )
 
-    #if cte:
-    #    return wall.editComment(
-    #    comment_id=cte, owner_id=MGROUP_ID,
-    #    message=text, reply_to_comment=reply_to, 
-    #    post_id=pid, attachments=attachments
-    #    )
-
     return api.wall.createComment(
         owner_id=MGROUP_ID, message=text, 
         reply_to_comment=reply_to, post_id=pid,
@@ -335,8 +353,46 @@ def add_comment(*args, **kwargs):
 
 
 @vk_request_errors
-def edit_comment(*args, **kwargs):
-    pass
+def edit_comment(**kwargs):
+    """
+    """
+    path_to_file = issue_data['file']
+    doc_id = str(kwargs.get('doc_id'))
+    doc_oid = str(kwargs.get('doc_oid'))
+
+    path_to_image = issue_data['image']
+    pic_id = str(kwargs.get('pic_id'))
+    pic_oid = str(kwargs.get('pic_oid'))
+
+    text = kwargs['text']
+
+    cid = kwargs['comment_id']
+
+    attachments = []
+
+    if path_to_file:
+        doc = attach_doc(path=path_to_file)[0]
+        attachments.append('doc' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif doc_id and doc_oid:
+        attachments.append('doc' + doc_oid + '_' + doc_id)
+
+
+    if path_to_image:
+        pic = attach_doc(path=path_to_image)[0]
+        attachments.append('pic' + str(doc[0]['owner_id'])
+                         + '_' + str(doc[0['id']])
+                        )
+
+    elif pic_id and pic_oid:
+        attachments.append('pic' + pic_oid + '_' + pic_id)
+
+    api.wall.editComment(
+        owner_id=MGROUP_ID, message=text,
+        attachments=attachments, comment_id=cid
+        )
 
 
 @vk_request_errors
@@ -344,13 +400,15 @@ def del_comment(**kwargs):
     """
     :comment_id:
     """
-    cid = kwargs['comment_id']
+    cid = str(kwargs['comment_id'])
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
     if response:
         return True
 
+
 @vk_request_errors
 def get_user_photo(**kwargs):
+    #FIXME всегда возвращает фото
     """
     :size:
     ( 'big'; medium'; 'small'; 'max' (smallest possible) )
@@ -361,9 +419,19 @@ def get_user_photo(**kwargs):
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
 
-    # !always returns photo!
     if 'images/question_c.gif' not in url[photo_size]:
         return r.get(url[photo_size]).content
+
+
+@vk_request_errors
+def track_visitor():
+    api.stats.trackVisitor()
+
+
+def set_group_id(new_gid='99411738'):
+    global GROUP_ID, MGROUP_ID
+    GROUP_ID = str(new_gid)
+    MGROUP_ID = '-' + GROUP_ID
 
 
 ##########################
