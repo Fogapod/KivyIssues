@@ -96,6 +96,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         config.setdefault('General', 'theme', 'default')
         config.setdefault('General', 'authorization', 0)
         config.setdefault('General', 'issues_in_group', 0)
+        config.setdefault('General', 'count_issues', '20')
         config.setdefault('General', 'user_name', 'User')
         config.setdefault(
             'General', 'regdata', "{'login': None, 'password': None}"
