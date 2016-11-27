@@ -27,8 +27,7 @@ class WorkWithPosts(object):
 
         return mark_text
 
-    def get_info_from_post(self, count_issues='20', offset='0',
-                           only_questions=False):
+    def get_info_from_post(self, count_issues='20', offset='0'):
         '''
         :type count_issues: str;
         :param count_issues: количество получаемых постов;
