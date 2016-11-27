@@ -2,7 +2,7 @@
 
 import time
 
-from kivy.clock import Clock, mainthread
+from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -22,21 +22,27 @@ class BoxPosts(Screen):
     current_number_page = 1
     old_screen = StringProperty()
 
+    def _back_screen(self):
+        self.clear_box_posts()
+        self.app.back_screen(self.old_screen)
+
+    def clear_box_posts(self):
+        self.ids.box_posts.clear_widgets()
+        paginator = self.ids.box_paginator.children[0]
+        self.ids.box_paginator.remove_widget(paginator)
+
     def on_enter(self):
         if self.app.screen.ids.action_bar.right_action_items[0][0] != \
                 'comment-outline':
             self.app.screen.ids.action_bar.right_action_items = \
                 [['comment-outline', lambda x: None]]
         self.app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.app.back_screen(
-                self.old_screen)]]
+            [['chevron-left', lambda x: self._back_screen()]]
 
     @thread
-    def _get_info_from_post(self, count_issues, only_questions):
+    def _get_info_from_post(self, count_issues):
         self.profiles_dict, self.items_dict = \
-            self.app.get_info_from_post(
-                count_issues=count_issues, only_questions=only_questions
-            )
+            self.app.get_info_from_post(count_issues=count_issues)
 
     def show_posts(self, count_issues, only_questions=False):
         '''
@@ -50,7 +56,8 @@ class BoxPosts(Screen):
             if self.profiles_dict:
                 self.create_posts(
                     count_issues,
-                    self.items_dict[0:self.app.data.count_issues]
+                    self.items_dict[0:self.app.data.count_issues],
+                    only_questions
                 )
                 self.old_screen = self.app.manager.current
                 self.app.manager.current = 'box posts'
@@ -59,10 +66,10 @@ class BoxPosts(Screen):
 
         self.app = self.manager._app
         self.app.show_progress(text=self.app.data.string_lang_wait)
-        self._get_info_from_post(count_issues, only_questions)
+        self._get_info_from_post(count_issues)
         Clock.schedule_interval(check_posts_dict, 0)
 
-    def create_posts(self, count_issues, items_posts):
+    def create_posts(self, count_issues, items_posts, only_questions):
         '''Создает и компанует выджеты для вывода постов группы.'''
 
         for items_dict in items_posts:
@@ -70,10 +77,11 @@ class BoxPosts(Screen):
             box_posts.ids.title_post.ids._lbl_primary.bold = True
             box_posts.ids.title_post.ids._lbl_secondary.font_size = '11sp'
 
+            author_name = \
+                self.profiles_dict[items_dict['from_id']]['author_name']
             box_posts.ids.title_post.icon = \
                 self.profiles_dict[items_dict['from_id']]['avatar']
-            box_posts.ids.title_post.text = \
-                self.profiles_dict[items_dict['from_id']]['author_name']
+            box_posts.ids.title_post.text = author_name
             date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
                 items_dict['date']
                 )
@@ -83,24 +91,30 @@ class BoxPosts(Screen):
                 self.app.mark_links_in_post(items_dict['text'])
             box_posts.ids.comments_post.text = \
                 str(items_dict['comments']['count'])
-            self.ids.box_posts.add_widget(box_posts)
 
-        paginator_box = BoxLayout(
-            id='paginator', size_hint_y=None, height=dp(30)
-        )
+            if only_questions:
+                if self.app.data.user_name == author_name:
+                    self.ids.box_posts.add_widget(box_posts)
+            else:
+                self.ids.box_posts.add_widget(box_posts)
+
+        if only_questions:
+            count_issues = self.ids.box_posts.children.__len__()
+
+        paginator_box = BoxLayout(size_hint_y=None, height=dp(30))
         paginator_string = self.create_paginator(
             number_posts=int(count_issues), pages=self.app.data.count_issues,
             current_number_page=self.current_number_page
         )
         paginator_pages = Label(
             text=paginator_string, markup=True,
-            on_ref_press=lambda *args: self.jump_to_page(args, count_issues)
+            on_ref_press=lambda *args: self.jump_to_page(
+                args, count_issues, only_questions
+            )
         )
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
         canvas_add(paginator_box, self.app.data.list_color)
-
-        return True
 
     def create_paginator(self, number_posts=1, current_number_page=1,
                          pages=20):
@@ -148,18 +162,22 @@ class BoxPosts(Screen):
         # TODO: сделать вызов функции в потоке, так как бар прогресса
         # зависает при постороении интерфейса.
         def _jump_to_page(interval):
-            value = int(args[0][1])
-            count_issues = args[1]
-            index_of = value * 20
-
             self.current_number_page = value
-            self.ids.box_posts.clear_widgets()
-            paginator = self.ids.box_paginator.children[0]
-            self.ids.box_paginator.remove_widget(paginator)
+            self.clear_box_posts()
             self.create_posts(
-                count_issues, self.items_dict[index_of - 20:index_of]
+                count_issues, self.items_dict[index_of - 20:index_of],
+                only_questions
             )
             self.app.dialog_progress.dismiss()
+
+        value = int(args[0][1])
+
+        if self.current_number_page == value:
+            return
+
+        count_issues = args[1]
+        only_questions = args[2]
+        index_of = value * 20
 
         Clock.schedule_once(
             lambda x: self.app.show_progress(
