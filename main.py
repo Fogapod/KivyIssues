@@ -21,7 +21,7 @@ try:
     import kivy
     kivy.require('1.9.1')
 
-    from kivy.app import App
+    from kivy.base import runTouchApp
     from kivy.config import Config
 
     # Указываем пользоваться системным методом ввода, использующимся на
@@ -58,34 +58,28 @@ def main():
 
         if app:  # очищаем экран приложения от всех виджетов
             try:
-                app.screen.clear_widgets()
+                app.stop()
             except AttributeError:
                 pass
 
-        class Error(App):
-            '''Выводит экран с текстом ошибки.'''
+        def callback_report(*args):
+            '''Функция отправки баг-репорта'''
 
-            def callback_report(self, *args):
-                '''Функция отправки баг-репорта'''
-
-                try:
-                    txt = six.moves.urllib.parse.quote(
-                        self.win_report.txt_traceback.text.encode('utf-8'))
-                    url = 'https://github.com/HeaTTheatR/KivyIssues/issues/new?body=' + txt
-                    webbrowser.open(url)
-                except Exception:
-                    sys.exit(1)
-
-            def build(self):
-                self.win_report = BugReporter(
-                    callback_report=self.callback_report,
-                    txt_report=text_error,
-                    icon_background='data/images/logo.png'
+            try:
+                txt = six.moves.urllib.parse.quote(
+                    report.txt_traceback.text.encode('utf-8')
                 )
+                url = 'https://github.com/HeaTTheatR/KivyIssues/issues' \
+                      '/new?body=' + txt
+                webbrowser.open(url)
+            except Exception:
+                sys.exit(1)
 
-                return self.win_report
-
-        Error().run()
+        report = BugReporter(
+            callback_report=callback_report, txt_report=text_error,
+            icon_background='data/images/logo.png'
+        )
+        runTouchApp(report)
 
 
 if __name__ in ('__main__', '__android__'):
