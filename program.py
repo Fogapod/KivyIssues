@@ -37,7 +37,7 @@ class NavDrawer(NavigationDrawer):
     _app = ObjectProperty()
 
     def show_posts(self, count_issues=None, only_questions=True):
-        '''Вызывает функцию, выводящую Activity только с постами группы.'''
+        '''Вызывает функцию, выводящую Activity с постами группы.'''
 
         def _show_posts(interval):
             if not count_issues:
@@ -91,8 +91,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.check_existence_issues()
         # None, если нет сохраненной формы неотправленного вопроса.
         self.saved_form = self.read_form()
-        # Главный экран программы.
-        self.screen = StartScreen()
+        self.screen = StartScreen()  # главный экран программы
         self.manager = self.screen.ids.manager
         self.nav_drawer = NavDrawer(title=data.string_lang_menu)
 
@@ -106,7 +105,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         config.setdefault('General', 'theme', 'default')
         config.setdefault('General', 'authorization', 0)
         config.setdefault('General', 'issues_in_group', 0)
-        config.setdefault('General', 'count_issues', '20')
+        config.setdefault('General', 'count_issues', 20)
         config.setdefault('General', 'user_name', 'User')
         config.setdefault(
             'General', 'regdata', "{'login': None, 'password': None}"
@@ -323,7 +322,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         return True
 
     def back_screen(self, name_screen):
-        '''Менеджер экранов.'''
+        '''Менеджер экранов. Вызывается при нажатии Back Key
+        и шеврона "Назад" в ToolBar.'''
 
         name_current_screen = self.manager.current
         if name_current_screen == 'ask a question' and self.fill_out_form:
@@ -366,7 +366,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.open_dialog(
             text=data.string_lang_exit,
             buttons=[
-                [data.string_lang_yes, lambda *x: sys.exit(0)],
+                [data.string_lang_yes3, lambda *x: sys.exit(0)],
                 [data.string_lang_no, lambda *x: self.close_dialog()]
             ]
         )
@@ -411,7 +411,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
     def on_pause(self):
         '''Ставит приложение на 'паузу' при выхоже из него.
-        В противном случае запускает программу заново'''
+        В противном случае запускает программу заново.'''
 
         return True
 
