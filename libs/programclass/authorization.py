@@ -133,6 +133,7 @@ class AuthorizationOnVK(object):
 
             self.config.set('General', 'issues_in_group', issues_in_group)
             self.config.write()
+            self.data.issues_in_group = issues_in_group
             self.nav_drawer.ids.issues_in_group.text = \
                 self.data.string_lang_issues_in_group.format(
                     str(issues_in_group)
