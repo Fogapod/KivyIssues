@@ -66,7 +66,7 @@
                 icon: 'data/images/issues.png'
                 text: app.data.string_lang_issues
                 events_callback:
-                    lambda: app.nav_drawer.show_only_questions_posts()
+                    lambda: root.show_posts()
             IconItemOne:
                 icon: 'data/images/answer.png'
                 text: app.data.string_lang_answer
@@ -80,10 +80,14 @@
                 icon: 'data/images/issues.png'
                 id: issues_in_group
                 text: app.data.string_lang_issues_in_group.format('0')
+                events_callback:
+                    lambda: root.show_posts(only_questions=False)
             IconItemOne:
                 icon: 'data/images/new_issues.png'
                 id: new_issues_in_group
                 text: app.data.string_lang_new_issues_in_group.format('0')
+                events_callback:
+                    lambda: root.show_posts(count_issues=self.text.split('- ')[1], only_questions=False)
 
             MDSeparator:
 
