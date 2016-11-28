@@ -36,15 +36,20 @@ from kivymd.navigationdrawer import NavigationDrawer
 class NavDrawer(NavigationDrawer):
     _app = ObjectProperty()
 
-    def show_only_questions_posts(self):
-        '''Пукт "Вопросы" раздела пользователя.
-        Вызывает функцию, выводящую Activity только с постами пользователя.
-
-        '''
+    def show_posts(self, count_issues=None, only_questions=True):
+        '''Вызывает функцию, выводящую Activity только с постами группы.'''
 
         def _show_posts(interval):
+            if not count_issues:
+                issues = str(self._app.data.issues_in_group)
+            else:
+                if count_issues == '0':
+                    return
+                else:
+                    issues = count_issues
+
             self._app.screen.ids.box_posts.show_posts(
-                str(self._app.data.issues_in_group), only_questions=True
+                issues, only_questions=only_questions
             )
 
         self.toggle()
