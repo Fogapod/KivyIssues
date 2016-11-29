@@ -98,7 +98,7 @@ def log_in(**kwargs):
 
     global api
     try:
-        api = vk.API(session, v='5.6')
+        api = vk.API(session, v='5.60')
     except UnboundLocalError:
         raise Exception('Failed receiving session!')
 
