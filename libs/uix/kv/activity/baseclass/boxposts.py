@@ -106,8 +106,8 @@ class BoxPosts(Screen):
             number_posts=int(count_issues), pages=self.app.data.count_issues,
             current_number_page=self.current_number_page
         )
-        paginator_pages = Label(
-            text=paginator_string, markup=True,
+        paginator_pages = Label(text=paginator_string, markup=True)
+        paginator_pages.bind(
             on_ref_press=lambda *args: self.jump_to_page(
                 args, count_issues, only_questions
             )
