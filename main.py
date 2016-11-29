@@ -21,7 +21,7 @@ try:
     import kivy
     kivy.require('1.9.1')
 
-    from kivy.base import runTouchApp 
+    from kivy.base import runTouchApp
     from kivy.config import Config
 
     # Указываем пользоваться системным методом ввода, использующимся на
