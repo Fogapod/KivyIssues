@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
@@ -15,62 +17,100 @@ from libs.programdata import thread
 
 class BoxPosts(Screen):
 
-    posts_dict = None
+    profiles_dict = None
+    items_dict = None
+    current_number_page = 1
     old_screen = StringProperty()
 
+    def _back_screen(self):
+        self.clear_box_posts()
+        self.app.back_screen(self.old_screen)
+
+    def clear_box_posts(self):
+        self.ids.box_posts.clear_widgets()
+        paginator = self.ids.box_paginator.children[0]
+        self.ids.box_paginator.remove_widget(paginator)
+
     def on_enter(self):
-        self.app.screen.ids.action_bar.right_action_items = \
-            [['comment-outline', lambda x: None]]
+        if self.app.screen.ids.action_bar.right_action_items[0][0] != \
+                'comment-outline':
+            self.app.screen.ids.action_bar.right_action_items = \
+                [['comment-outline', lambda x: None]]
         self.app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.app.back_screen(
-                self.old_screen)]]
+            [['chevron-left', lambda x: self._back_screen()]]
 
     @thread
     def _get_info_from_post(self, count_issues):
-        self.posts_dict = self.app.get_info_from_post(count_issues)
+        self.profiles_dict, self.items_dict = \
+            self.app.get_info_from_post(count_issues=count_issues)
 
-    def show_posts(self, count_issues):
+    def show_posts(self, count_issues, only_questions=False):
         '''
         :type count_issues: str;
         :param count_issues: количество получаемых постов;
+        :param only_questions: все или только свои посты;
 
         '''
 
         def check_posts_dict(interval):
-            if self.posts_dict:
-                self.app.dialog_progress.dismiss()
-                self.create_posts(count_issues)
+            if self.profiles_dict:
+                self.create_posts(
+                    count_issues,
+                    self.items_dict[0:self.app.data.count_issues],
+                    only_questions
+                )
                 self.old_screen = self.app.manager.current
                 self.app.manager.current = 'box posts'
-                self.posts_dict = None
                 Clock.unschedule(check_posts_dict)
+                self.app.dialog_progress.dismiss()
 
         self.app = self.manager._app
         self.app.show_progress(text=self.app.data.string_lang_wait)
         self._get_info_from_post(count_issues)
         Clock.schedule_interval(check_posts_dict, 0)
 
-    def create_posts(self, count_issues):
+    def create_posts(self, count_issues, items_posts, only_questions):
         '''Создает и компанует выджеты для вывода постов группы.'''
 
-        for author in self.posts_dict.keys():
+        for items_dict in items_posts:
             box_posts = self.app.Post(size_hint_y=None)
             box_posts.ids.title_post.ids._lbl_primary.bold = True
             box_posts.ids.title_post.ids._lbl_secondary.font_size = '11sp'
 
-            box_posts.ids.title_post.icon = self.posts_dict[author]['avatar']
-            box_posts.ids.title_post.text = author
-            box_posts.ids.title_post.secondary_text = \
-                self.posts_dict[author]['date']
-            box_posts.ids.text_posts.text = self.posts_dict[author]['text']
+            author_name = \
+                self.profiles_dict[items_dict['from_id']]['author_name']
+            box_posts.ids.title_post.icon = \
+                self.profiles_dict[items_dict['from_id']]['avatar']
+            box_posts.ids.title_post.text = author_name
+            date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(
+                items_dict['date']
+                )
+            )
+            box_posts.ids.title_post.secondary_text = date
+            box_posts.ids.text_posts.text = \
+                self.app.mark_links_in_post(items_dict['text'])
             box_posts.ids.comments_post.text = \
-                str(self.posts_dict[author]['comments'])
-            self.ids.box_posts.add_widget(box_posts)
+                str(items_dict['comments']['count'])
+
+            if only_questions:
+                if self.app.data.user_name == author_name:
+                    self.ids.box_posts.add_widget(box_posts)
+            else:
+                self.ids.box_posts.add_widget(box_posts)
+
+        if only_questions:
+            count_issues = self.ids.box_posts.children.__len__()
 
         paginator_box = BoxLayout(size_hint_y=None, height=dp(30))
+        paginator_string = self.create_paginator(
+            number_posts=int(count_issues), pages=self.app.data.count_issues,
+            current_number_page=self.current_number_page
+        )
         paginator_pages = Label(
-            text=self.create_paginator(number_posts=int(count_issues)),
-            markup=True, on_ref_press=self.jump_to_page
+            text=paginator_string, markup=True,
+            on_ref_press=lambda *args: self.jump_to_page(
+                args, count_issues, only_questions
+            )
         )
         paginator_box.add_widget(paginator_pages)
         self.ids.box_paginator.add_widget(paginator_box)
@@ -111,5 +151,36 @@ class BoxPosts(Screen):
 
         return build_pages
 
-    def jump_to_page(self, instance, value):
-        print(instance, value)
+    def jump_to_page(self, *args):
+        '''Очищает экран с вопросами группы, вызывает функцию вывода постов,
+        передавая в качестве аргумента срез списка постов согласно выбранной
+        странице пагинатора и количеству постов, которое нужно выводить на
+        экрнан.
+
+        '''
+
+        # TODO: сделать вызов функции в потоке, так как бар прогресса
+        # зависает при постороении интерфейса.
+        def _jump_to_page(interval):
+            self.current_number_page = value
+            self.clear_box_posts()
+            self.create_posts(
+                count_issues, self.items_dict[index_of - 20:index_of],
+                only_questions
+            )
+            self.app.dialog_progress.dismiss()
+
+        value = int(args[0][1])
+
+        if self.current_number_page == value:
+            return
+
+        count_issues = args[1]
+        only_questions = args[2]
+        index_of = value * 20
+
+        Clock.schedule_once(
+            lambda x: self.app.show_progress(
+                text=self.app.data.string_lang_wait), 0
+        )
+        Clock.schedule_once(_jump_to_page, 0.1)

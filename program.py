@@ -34,7 +34,21 @@ from kivymd.navigationdrawer import NavigationDrawer
 
 
 class NavDrawer(NavigationDrawer):
-    pass
+    _app = ObjectProperty()
+
+    def show_only_questions_posts(self):
+        '''Пукт "Вопросы" раздела пользователя.
+        Вызывает функцию, выводящую Activity только с постами пользователя.
+
+        '''
+
+        def _show_posts(interval):
+            self._app.screen.ids.box_posts.show_posts(
+                str(self._app.data.issues_in_group), only_questions=True
+            )
+
+        self.toggle()
+        Clock.schedule_once(_show_posts, .3)
 
 
 class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
@@ -87,6 +101,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         config.setdefault('General', 'theme', 'default')
         config.setdefault('General', 'authorization', 0)
         config.setdefault('General', 'issues_in_group', 0)
+        config.setdefault('General', 'count_issues', '20')
         config.setdefault('General', 'user_name', 'User')
         config.setdefault(
             'General', 'regdata', "{'login': None, 'password': None}"
@@ -319,7 +334,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if name_current_screen == 'ask a question' \
                 or name_screen in (1001, 27):
             self.manager.current = 'previous'
-        elif name_current_screen == 'box posts' or name_screen in (1001, 27):
+        elif name_current_screen == 'box posts' \
+                or name_screen in (1001, 27):
             if name_screen in (1001, 27):
                 self.manager.current = self.screen.ids.box_posts.old_screen
             else:

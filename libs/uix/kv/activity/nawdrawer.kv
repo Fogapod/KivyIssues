@@ -34,6 +34,8 @@
     height: dp(45)
 
 <NavDrawer>:
+    _app: app
+
     ImageButton:
         id: avatar
         source:
@@ -63,7 +65,8 @@
             IconItemOne:
                 icon: 'data/images/issues.png'
                 text: app.data.string_lang_issues
-                #events_callback: app.show_dialog_registration
+                events_callback:
+                    lambda: app.nav_drawer.show_only_questions_posts()
             IconItemOne:
                 icon: 'data/images/answer.png'
                 text: app.data.string_lang_answer
