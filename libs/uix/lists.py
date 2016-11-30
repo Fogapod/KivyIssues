@@ -27,6 +27,10 @@ class LeftIcon(ILeftBody, Image):
     pass
 
 
+class RightMDIcon(IRightBodyTouch,  MDIconButton):
+    pass
+
+
 class LeftIconAsync(ILeftBody, AsyncImage):
     pass
 
