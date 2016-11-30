@@ -130,6 +130,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         )
 
     def build(self):
+        # Пункт меню 'Авторизация'.
         self.bottom_sheet.add_item(
             data.string_lang_authorization[:-3],
             lambda x: self.authorization_from_button_sheet(),
