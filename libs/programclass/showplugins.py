@@ -53,18 +53,22 @@ class ShowPlugin(object):
                 text, result = self._compare_version_plugin(name_plugin)
                 if not result:
                     text = text.format(
-                        TEXT_COLOR=text_color, NAME_PLUGIN=name_plugin,
-                        LINK_COLOR=text_link_color,
+                        TEXT_COLOR=self.data.text_color,
+                        NAME_PLUGIN=name_plugin,
+                        LINK_COLOR=self.data.text_link_color,
                         VERSION_MIN=self.started_plugins[name_plugin][
                             'app-version-min'],
                         VERSION_APP=self.started_plugins[name_plugin][
                             'app-version']
                     )
                     buttons = [
-                        [self.data.string_lang_yes, lambda *x: self._save_status_plugin(
-                            window, name_plugin, self.data.string_lang_yes)],
-                        [self.data.string_lang_no, lambda *x: self._save_status_plugin(
-                            window, name_plugin, self.data.string_lang_no)]
+                        [self.data.string_lang_yes, lambda *x:
+                            self._save_status_plugin(
+                                window, name_plugin,
+                                self.data.string_lang_yes)],
+                        [self.data.string_lang_no, lambda *x:
+                            self._save_status_plugin(
+                                window, name_plugin, self.data.string_lang_no)]
                     ]
                     window = dialog(
                         text=text, title=self.title, buttons=buttons,
