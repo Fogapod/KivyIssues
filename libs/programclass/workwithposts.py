@@ -53,18 +53,25 @@ class WorkWithPosts(object):
 
         for data_post in wall_posts['profiles']:
             post_dict = {}
-            author_id = data_post['id']
-            avatar = data_post['photo_100']
             first_name = data_post['first_name']
             last_name = data_post['last_name']
+            author_online = data_post['online']
 
             if self.data.PY2:
                 author_name = u'{} {}'.format(first_name, last_name)
             else:
                 author_name = '{} {}'.format(first_name, last_name)
 
-            post_dict['avatar'] = avatar
+            post_dict['avatar'] = data_post['photo_100']
             post_dict['author_name'] = author_name
-            profiles_dict[author_id] = post_dict
+            post_dict['author_online'] = author_online
+
+            if author_online:
+                if 'online_mobile' in data_post:
+                    post_dict['device'] = 'mobile'
+                else:
+                    post_dict['device'] = 'computer'
+
+            profiles_dict[data_post['id']] = post_dict
 
         return profiles_dict, wall_posts['items']
