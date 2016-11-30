@@ -21,18 +21,20 @@ def vk_request_errors(request):
             response = request(*args, **kwargs)
         except Exception as error:
             error = str(error)
-            if 'Too many requests per second' in error:
-                time.sleep(0.66)
+            if 'Too many requests per second' in error or 'timed out' in error:
+                time.sleep(0.33)
                 return request_errors(*args, **kwargs)
 
             elif 'Failed to establish a new connection' in error:
-                print('Check your connection')
+                print('Check your connection!')
 
             elif 'incorrect password' in error:
                 print('Incorrect password!')
 
             elif 'Read timed out' in error:
-                print('Response time exceeded')
+                print('WARNING\nResponse time exceeded!')
+                time.sleep(0.33)
+                return request_errors(*args, **kwargs)
 
             elif 'Failed loading' in error:
                 raise
@@ -75,7 +77,6 @@ def log_in(**kwargs):
     # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
     app_id = '5720412'
 
-    global token
     token = kwargs.get('token')
     key = str(kwargs.get('key'))
 
@@ -98,7 +99,7 @@ def log_in(**kwargs):
 
     global api
     try:
-        api = vk.API(session, v='5.6')
+        api = vk.API(session, v='5.60')
     except UnboundLocalError:
         raise Exception('Failed receiving session!')
 
