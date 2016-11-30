@@ -62,7 +62,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
     '''Функционал программы.'''
 
     title = data.string_lang_title
-    icon = 'data/images/logo.png'
+    icon = 'data/images/kivy_logo.png'
     nav_drawer = ObjectProperty()
     theme_cls = ThemeManager()
     theme_cls.primary_palette = 'BlueGrey'
