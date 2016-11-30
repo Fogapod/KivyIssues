@@ -13,6 +13,7 @@ from kivy.metrics import dp
 from libs.paginator import paginator
 from libs.uix.canvasadd import canvas_add
 from libs.programdata import thread
+from libs.uix.lists import RightMDIcon
 
 
 class BoxPosts(Screen):
@@ -87,6 +88,20 @@ class BoxPosts(Screen):
                 )
             )
             box_posts.ids.title_post.secondary_text = date
+
+            if self.profiles_dict[items_dict['from_id']]['author_online']:
+                icon = self.app.data.device_online[
+                    self.profiles_dict[items_dict['from_id']]['device']
+                ]
+            else:
+                icon = self.app.data.device_online[0]
+            box_posts.ids.title_post.add_widget(
+                RightMDIcon(
+                    icon=icon, theme_text_color='Custom',
+                    text_color=self.app.theme_cls.primary_color
+                )
+            )
+
             box_posts.ids.text_posts.text = \
                 self.app.mark_links_in_post(items_dict['text'])
             box_posts.ids.comments_post.text = \
