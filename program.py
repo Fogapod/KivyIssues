@@ -145,6 +145,9 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         return self.screen
 
     def authorization_from_button_sheet(self):
+        '''Выводит список с пунктами 'Текущий пароль/Новый пароль' при
+        выборе пункта меню "Авторизация".'''
+
         def events_callback(text_item):
             dialog.dismiss()
 
