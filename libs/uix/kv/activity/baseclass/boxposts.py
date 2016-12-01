@@ -31,6 +31,7 @@ class BoxPosts(Screen):
         self.ids.box_posts.clear_widgets()
         paginator = self.ids.box_paginator.children[0]
         self.ids.box_paginator.remove_widget(paginator)
+        self.current_number_page = 1
 
     def on_enter(self):
         if self.app.screen.ids.action_bar.right_action_items[0][0] != \
@@ -103,7 +104,9 @@ class BoxPosts(Screen):
             )
 
             box_posts.ids.text_posts.text = \
-                self.app.mark_links_in_post(items_dict['text'])
+                '[ref=Text post]{}[/ref]'.format(
+                    self.app.mark_links_in_post(items_dict['text'])
+                )
             box_posts.ids.comments_post.text = \
                 str(items_dict['comments']['count'])
 
@@ -144,6 +147,7 @@ class BoxPosts(Screen):
         number_pages = int(round(number_posts / pages))
         if not number_pages:
             number_pages = 1
+        print(number_pages, current_number_page)
         list_pages = paginator(number_pages, current_number_page)
 
         build_pages = ""
