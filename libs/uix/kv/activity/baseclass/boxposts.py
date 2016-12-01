@@ -78,6 +78,7 @@ class BoxPosts(Screen):
             box_posts = self.app.Post(size_hint_y=None)
             box_posts.ids.title_post.ids._lbl_primary.bold = True
             box_posts.ids.title_post.ids._lbl_secondary.font_size = '11sp'
+            box_posts.ids.text_posts.id = str(items_dict['id'])
 
             author_name = \
                 self.profiles_dict[items_dict['from_id']]['author_name']
