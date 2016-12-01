@@ -105,6 +105,13 @@ possible_files = {
     string_lang_add_file: [['.zip', '.txt'], string_lang_wrong_file]
 }
 
+menu_items = [string_lang_current_password, string_lang_new_password]
+
+device_online = {
+    'mobile': 'cellphone-iphone', 'computer': 'laptop',
+    0: 'minus-circle-outline'
+}
+
 pattern_replace_link = re.compile(r'(?#Protocol)(?:(?:ht|f)tp(' \
                              '?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,'
                                   '*:=]|%[a-f\d]{2})*)?')

@@ -20,6 +20,8 @@ string_lang_issues = 'Вопросы'
 string_lang_answer = 'Ответы'
 string_lang_new_issues = 'В группе появились новые вопросы!'
 
+string_lang_current_password = 'Текущий пароль'
+string_lang_new_password = 'Новый пароль'
 #------------------------------------------------------------------------------
 
 string_lang_yes = 'Да'

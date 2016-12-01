@@ -10,13 +10,15 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.clock import Clock
+from kivy.metrics import dp
 from kivy.properties import ObjectProperty
 
 from libs import programdata as data
 from libs import programclass as _class
 from libs.createpreviousportrait import create_previous_portrait
+from libs.uix.lists import Lists
 from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
-    input_dialog
+    input_dialog, card
 
 # Базовые классы Activity.
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
@@ -31,6 +33,21 @@ from libs.uix.kv.activity.baseclass.previous import Previous
 from kivymd import snackbar
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
+from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
+
+
+class GridBottomSheet(MDGridBottomSheet):
+
+    def add_item(self, text, callback, icon_src):
+        item = GridBSItem(
+            caption=text,
+            on_release=callback,
+            source=icon_src
+        )
+        item.bind(on_release=lambda *args: callback(args))
+        if len(self.gl_content.children) % 3 == 0:
+            self.gl_content.height += dp(96)
+        self.gl_content.add_widget(item)
 
 
 class NavDrawer(NavigationDrawer):
@@ -62,7 +79,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
     '''Функционал программы.'''
 
     title = data.string_lang_title
-    icon = 'data/images/logo.png'
+    icon = 'data/images/kivy_logo.png'
     nav_drawer = ObjectProperty()
     theme_cls = ThemeManager()
     theme_cls.primary_palette = 'BlueGrey'
@@ -86,6 +103,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.load_all_kv_files(
             '{}/libs/uix/kv/activity'.format(self.directory)
         )
+        self.bottom_sheet = GridBottomSheet()
         self.config = ConfigParser()
         self.config.read('{}/program.ini'.format(data.prog_path))
         self.check_existence_issues()
@@ -112,6 +130,12 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         )
 
     def build(self):
+        # Пункт меню 'Авторизация'.
+        self.bottom_sheet.add_item(
+            data.string_lang_authorization[:-3],
+            lambda x: self.authorization_from_button_sheet(),
+            'data/images/auth.png'
+        )
         Clock.schedule_interval(self.set_banner, 8)
 
         if not self.login or not self.password:
@@ -120,6 +144,25 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             self._authorization_on_vk(self.login, self.password)
 
         return self.screen
+
+    def authorization_from_button_sheet(self):
+        '''Выводит список с пунктами 'Текущий пароль/Новый пароль' при
+        выборе пункта меню "Авторизация".'''
+
+        def events_callback(text_item):
+            dialog.dismiss()
+
+            if text_item == data.string_lang_current_password:
+                self._authorization_on_vk(self.login, self.password)
+            elif text_item == data.string_lang_new_password:
+                Clock.schedule_once(self.show_dialog_registration, 0)
+
+        self.bottom_sheet.dismiss()
+        self._list_plugins = Lists(
+            list_items=data.menu_items, events_callback=events_callback,
+            flag='single_list'
+        )
+        dialog = card(self._list_plugins)
 
     def show_login_and_password(self, instance_selection):
         '''
@@ -317,7 +360,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.nav_drawer.toggle()
             self.back_screen(keyboard)
         elif keyboard in (282, 319):
-            self.nav_drawer.toggle()
+            self.show_bottom_sheet()
+            # self.nav_drawer.toggle()
 
         return True
 
@@ -393,6 +437,9 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                         directory_kv_files, kv_file)):
                 continue
             Builder.load_file('{}/{}'.format(directory_kv_files, kv_file))
+
+    def show_bottom_sheet(self):
+        self.bottom_sheet.open()
 
     def on_config_change(self, config, section, key, value):
         '''Вызывается при выборе одного из пункта настроек программы.'''

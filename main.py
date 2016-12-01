@@ -77,7 +77,7 @@ def main():
 
         report = BugReporter(
             callback_report=callback_report, txt_report=text_error,
-            icon_background='data/images/logo.png'
+            icon_background='data/images/kivy_logo.png'
         )
         runTouchApp(report)
 

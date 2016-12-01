@@ -27,6 +27,10 @@ class LeftIcon(ILeftBody, Image):
     pass
 
 
+class RightMDIcon(IRightBodyTouch,  MDIconButton):
+    pass
+
+
 class LeftIconAsync(ILeftBody, AsyncImage):
     pass
 
@@ -91,7 +95,7 @@ class Lists(BoxLayout):
     '''{'Name item': ['Desc item', 'icon_item.png', True/False}.'''
 
     list_items = ListProperty()
-    '''{'Name item': ['Desc item', 'icon_item.png', True/False}.'''
+    '''['Desc item', 'icon_item.png', True/False]...'''
 
     right_icons = ListProperty()
     '''Список путей к иконкам для кнопок,
