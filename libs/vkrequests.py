@@ -31,9 +31,9 @@ def vk_request_errors(request):
             elif 'incorrect password' in error:
                 print('Incorrect password!')
 
-            elif 'Read timed out' in error:
+            elif 'Read timed out' in error or 'Connection aborted' in error:
                 print('WARNING\nResponse time exceeded!')
-                time.sleep(0.33)
+                time.sleep(0.66)
                 return request_errors(*args, **kwargs)
 
             elif 'Failed loading' in error:
