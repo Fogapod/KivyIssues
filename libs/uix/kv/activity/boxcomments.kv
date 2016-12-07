@@ -1,0 +1,18 @@
+#: kivy 1.9.1
+# View для вывода списка комментариев группы.
+
+<BoxComments>:
+    name: 'box comments'
+
+    id: box_commemts
+    orientation: 'vertical'
+    padding: dp(5)
+
+    ScrollView:
+
+        GridLayout:
+            id: list_comments
+            cols: 1
+            spacing: dp(5)
+            size_hint_y: None
+            height: self.minimum_height
