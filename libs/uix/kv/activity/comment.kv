@@ -1,0 +1,87 @@
+#: kivy 1.9.1
+
+# Тело комментария.
+
+<Comment>:
+    orientation: 'vertical'
+    padding: dp(10), dp(0)
+    spacing: dp(5)
+    size_hint_y: None
+    height: dp(200)
+
+    # libs/uix/kv/list.kv <IconItemAsync>
+    # Аватар автора, имя и дата комментария.
+    IconItemAsync:
+        id: title_post
+        disabled: True
+
+    # Текс комментария.
+    Label:
+        id: text_comments
+        markup: True
+        color: app.data.text_color_from_hex
+        font_size: '12sp'
+        text_size: self.width, dp(70)
+        valign: 'top'
+        size_hint_y: None
+        height: dp(70)
+        #on_ref_press: root.tap_on_text_or_link_post(args)
+
+<CommentedPost@BoxLayout>:
+    id: commented_post
+    orientation: 'vertical'
+    padding: dp(10), dp(0)
+    spacing: dp(5)
+    size_hint_y: None
+    height: dp(200)
+
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    # libs/uix/kv/list.kv <IconItemAsync>
+    # Аватар автора, имя и дата комментария.
+    IconItemAsync:
+        canvas.before:
+            Color:
+                rgba: 0.9686274509803922, 0.9686274509803922, 0.9686274509803922, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        id: title_post
+        disabled: True
+
+    # Текс комментария.
+    Label:
+        id: text_comments
+        markup: True
+        color: app.data.text_color_from_hex
+        font_size: '12sp'
+        text_size: self.width, dp(70)
+        valign: 'top'
+        size_hint_y: None
+        height: dp(70)
+        #on_ref_press: root.tap_on_text_or_link_post(args)
+
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0.4686274509803922, 0.4686274509803922, 0.4686274509803922, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        size_hint_y: None
+        height: dp(30)
+
+        Label:
+            text: ' 6 комментрариев'
+            size_hint_x: None
+            font_size: '12sp'
+            bold: True
+            width: self.texture_size[0]
+            halign: 'left'
