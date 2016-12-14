@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
 
 
-class Comment(BoxLayout):
+class IconCountComments(BoxLayout):
     pass
