@@ -13,8 +13,8 @@ from libs.programdata import thread
 class ShowPosts(object):
 
     def __init__(self, app=None, count_issues_comments='1',
-                 only_questions=False, comments=False, post_id='',
-                 current_number_page=1):
+                 only_questions=False, commented_post_info=None,
+                 comments=False, post_id='', current_number_page=1):
         '''
         :param app: <class 'program.Program'>;
         :param count_issues_comments: количество получаемых постов/комм-ев;
@@ -22,7 +22,8 @@ class ShowPosts(object):
         :param comments: если True - выводим комментарии;
         :param post_id: id поста для которого выводится список комментариев;
         :param current_number_page: выбранная страница;
-
+        :param commented_post_info: имя, аватар, дата, текст
+                                    комментируемого поста;
         '''
 
         self.app = app
@@ -35,6 +36,11 @@ class ShowPosts(object):
         self.items_list = None
         self.index_start = 0
         self.index_end = current_number_page * self.app.data.count_issues
+
+        if commented_post_info is None:
+            self.commented_post_info = []
+        else:
+            self.commented_post_info = commented_post_info
 
     def on_enter(self):
         if self.screen.ids.action_bar.right_action_items[0][0] != \
@@ -64,6 +70,7 @@ class ShowPosts(object):
                     count_issues=self.count_issues_comments,
                     only_questions=self.only_questions,
                     current_number_page=self.current_number_page,
+                    commented_post_info=self.commented_post_info,
                     comments=self.comments
                 )
                 box_posts.create_posts(
