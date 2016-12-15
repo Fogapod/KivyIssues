@@ -4,6 +4,7 @@
 #
 
 string_lang_title = 'KivyIssues'
+string_lang_count_comments = 'Комментариев: {} '
 string_lang_exit_key = 'Выход'
 string_lang_wait = 'Подождите...'
 string_lang_exit = 'Покинуть программу?'
