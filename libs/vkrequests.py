@@ -310,8 +310,8 @@ def get_comments(**kwargs):
     comment_count = str(kwargs.get('count', '100'))
 
     return api.wall.getComments(
-        owner_id=MGROUP_ID, post_id=post_id,
-        offset=offset, count=comment_count
+        owner_id=MGROUP_ID, post_id=post_id, offset=offset,
+        count=comment_count, extended='1'
     )
 
 
