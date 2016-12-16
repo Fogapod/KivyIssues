@@ -78,7 +78,7 @@ def log_in(**kwargs):
     app_id = '5720412'
 
     token = kwargs.get('token')
-    key = str(kwargs.get('key'))
+    key = kwargs.get('key')
 
     if token:
         session = vk.AuthSession(
@@ -138,8 +138,8 @@ def get_issues(**kwargs):
 
     :return: dict
     """
-    offset = str(kwargs.get('offset', '0'))
-    post_count = str(kwargs.get('count', '30'))
+    offset = kwargs.get('offset', '0')
+    post_count = kwargs.get('count', '30')
 
     return api.wall.get(
         owner_id=MGROUP_ID, filter='others', extended='1',
@@ -185,12 +185,12 @@ def edit_issue(**kwargs):
     """
     """
     path_to_file = issue_data['file']
-    doc_id = str(kwargs.get('doc_id'))
-    doc_oid = str(kwargs.get('doc_oid'))
+    doc_id = kwargs.get('doc_id')
+    doc_oid = kwargs.get('doc_oid')
 
     path_to_image = issue_data['image']
-    pic_id = str(kwargs.get('pic_id'))
-    pic_oid = str(kwargs.get('pic_oid'))
+    pic_id = kwargs.get('pic_id')
+    pic_oid = kwargs.get('pic_oid')
 
     theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
@@ -229,7 +229,7 @@ def del_issue(**kwargs):
     """
     :issue_id:
     """
-    pid = str(kwargs['issue_id'])
+    pid = kwargs['issue_id']
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
     if response:
         return True
@@ -305,9 +305,9 @@ def get_comments(**kwargs):
 
     :return: dict with comments
     """
-    post_id = str(kwargs['id'])
-    offset = str(kwargs.get('offset', '0'))
-    comment_count = str(kwargs.get('count', '100'))
+    post_id = kwargs['id']
+    offset = kwargs.get('offset', '0')
+    comment_count =kwargs.get('count', '100')
 
     return api.wall.getComments(
         owner_id=MGROUP_ID, post_id=post_id,
@@ -330,8 +330,8 @@ def add_comment(*args, **kwargs):
     path_to_image = comment_data['image']
     text = comment_data['text']
 
-    pid = str(kwargs['post_id'])
-    reply_to = str(kwargs.get('reply_to'))
+    pid = kwargs['post_id']
+    reply_to = kwargs.get('reply_to')
 
     attachments = []
 
@@ -359,12 +359,12 @@ def edit_comment(**kwargs):
     """
     """
     path_to_file = issue_data['file']
-    doc_id = str(kwargs.get('doc_id'))
-    doc_oid = str(kwargs.get('doc_oid'))
+    doc_id = kwargs.get('doc_id')
+    doc_oid = kwargs.get('doc_oid')
 
     path_to_image = issue_data['image']
-    pic_id = str(kwargs.get('pic_id'))
-    pic_oid = str(kwargs.get('pic_oid'))
+    pic_id = kwargs.get('pic_id')
+    pic_oid = kwargs.get('pic_oid')
 
     text = kwargs['text']
 
@@ -402,7 +402,7 @@ def del_comment(**kwargs):
     """
     :comment_id:
     """
-    cid = str(kwargs['comment_id'])
+    cid = kwargs['comment_id']
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
     if response:
         return True
