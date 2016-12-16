@@ -71,7 +71,8 @@ class ShowPosts(object):
                     only_questions=self.only_questions,
                     current_number_page=self.current_number_page,
                     commented_post_info=self.commented_post_info,
-                    comments=self.comments
+                    comments=self.comments,
+                    post_id=self.post_id
                 )
                 box_posts.create_posts(
                     self.items_list[self.index_start:self.index_end]
