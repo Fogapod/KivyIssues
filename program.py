@@ -15,6 +15,7 @@ from kivy.properties import ObjectProperty
 
 from libs import programdata as data
 from libs import programclass as _class
+from libs.programclass.showposts import ShowPosts
 from libs.createpreviousportrait import create_previous_portrait
 from libs.uix.lists import Lists
 from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
@@ -38,14 +39,18 @@ from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
 
 class GridBottomSheet(MDGridBottomSheet):
 
+    # Переопределил метод, поскольку в оригинале item просто биндился
+    # на закрытие меню - item.bind(on_release=lambda x: self.dismiss()),
+    # не вызывая переданную ему функцию.
+    # TODO: сообщить автору KivyMD о проблеме...
     def add_item(self, text, callback, icon_src):
         item = GridBSItem(
             caption=text,
             on_release=callback,
             source=icon_src
         )
-        item.bind(on_release=lambda *args: callback(args))
-        if len(self.gl_content.children) % 3 == 0:
+        item.bind(on_release=callback)
+        if self.gl_content.children.__len__() % 3 == 0:
             self.gl_content.height += dp(96)
         self.gl_content.add_widget(item)
 
@@ -65,9 +70,10 @@ class NavDrawer(NavigationDrawer):
                 else:
                     issues = count_issues
 
-            self._app.screen.ids.box_posts.show_posts(
-                issues, only_questions=only_questions
-            )
+            ShowPosts(
+                app=self._app, count_issues_comments=issues,
+                only_questions=only_questions
+            ).show_posts()
 
         self.toggle()
         Clock.schedule_once(_show_posts, .3)
@@ -91,6 +97,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.data = data
         self.window = Window
         self.Post = Post
+        self.BoxPosts = BoxPosts
+        self.show_posts = None
         self.instance_dialog = None
         self.fill_out_form = None
         self.dialog_progress = None
@@ -205,7 +213,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 events_callback=lambda x: func_dismiss()
             )
 
-    def dialog_on_fail_authorization(self):
+    def set_dialog_on_fail_authorization(self):
         '''Диалоговое окно с просьбой авторзироваться.'''
 
         # TODO: Добавить прерывание запроса данных с сервера.
@@ -410,7 +418,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.open_dialog(
             text=data.string_lang_exit,
             buttons=[
-                [data.string_lang_yes3, lambda *x: sys.exit(0)],
+                [data.string_lang_yes, lambda *x: sys.exit(0)],
                 [data.string_lang_no, lambda *x: self.close_dialog()]
             ]
         )
@@ -423,6 +431,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if not buttons:
             buttons = []
         if self.instance_dialog:
+            self.close_dialog()
             return
 
         self.instance_dialog = dialog(
