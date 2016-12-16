@@ -148,7 +148,7 @@ def get_issues(**kwargs):
 
 
 @vk_request_errors
-def send_issue(*args):
+def create_issue(*args):
     """
     :issue_data: {'file','image','theme','issue'}
 
@@ -317,7 +317,7 @@ def get_comments(**kwargs):
 
 
 @vk_request_errors
-def add_comment(*args, **kwargs):
+def create_comment(*args, **kwargs):
     """
     :comment_data: {'file', 'image', 'text'}
     :post_id:
