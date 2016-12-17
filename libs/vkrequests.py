@@ -13,11 +13,12 @@ api = None
 token = None
 kivy_ru = '99411738' # raw_id of http://vk.com/kivy_ru
 
+# vk.logger.setLevel('DEBUG')
 
 def vk_request_errors(request):
     def request_errors(*args, **kwargs):
-        # Для вывода ошибки в консоль
         # response = request(*args, **kwargs); time.sleep(0.66)
+        # Для вывода ошибки в консоль
         try:
             response = request(*args, **kwargs)
         except Exception as error:
@@ -42,7 +43,7 @@ def vk_request_errors(request):
 
             elif 'Captcha' in error:
                 print('Capthca!!!!!')
-                # raise #TODO обработать капчу
+                #TODO обработать капчу
 
             elif 'Failed receiving session' in error:
                 print('Error receiving session!')
@@ -63,19 +64,17 @@ def vk_request_errors(request):
 
 @vk_request_errors
 def log_in(**kwargs):
-    # vk.logger.setLevel('DEBUG')
     """
-    :token:
-    :key:
-    :login:
-    :password:
+    :token: ключ доступа для работы с аккаунтом ( str )
+    :key: код подтверждения при двухфакторной авторизации ( int )
+    :login: логин ( str )
+    :password: пароль ( str )
 
-    :return: string ( token )
+    Возвращает: новое значение token ( str )
     """
     set_group_id()
 
-    scope = '204804'
-    # 65536 -- offline; 8192 -- wall; 131072 -- docs; 4 -- photos
+    scope = '204804' # 65536 == offline; 8192 == wall; 131072 == docs; 4 == photos
     app_id = '5720412'
 
     token = kwargs.get('token')
@@ -112,7 +111,7 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """
-    :return: string ( number )
+    Возвращает: число участников ( str )
     """
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
@@ -120,13 +119,16 @@ def get_members_count():
 @vk_request_errors
 def get_user_name():
     """
-    :return: string (First_name Last_name)
+    Возвращает: Имя_пробел_Фамилия ( str )
     """
     return api.execute.GetUserName()
 
 
 @vk_request_errors
 def get_issue_count():
+    """
+    Возвращает: число записей в группе ( str )
+    """
     return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
@@ -134,10 +136,16 @@ def get_issue_count():
 def get_issues(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
-    :offset: ( :default: '0' )
-    :count: ( :default: '30' )
+    :offset:
+        необходимое смещение при получении списка записей
+        стандартное значение: 0
+    :count:
+        количество записей, которое необходимо получить за раз
+        стандартное значение: 30
+        максимальное значение: 200
 
-    :return: dict
+    Возвращает: список записей группы ( dict )
+    #TODO: описание структуры словаря
     """
     offset = kwargs.get('offset', '0')
     post_count = kwargs.get('count', '30')
@@ -151,9 +159,11 @@ def get_issues(**kwargs):
 @vk_request_errors
 def create_issue(*args):
     """
-    :issue_data: {'file','image','theme','issue'}
+    agrs:
+    :issue_data:
+        {'file':путь к документу или None,'image':путь к фотографии или None,'theme':тема вопроса,'issue':основной текст вопроса}
 
-    :return: string ( post id )
+    Возвращает: id созданной записи ( str )
     """
     issue_data = args[0]
     path_to_file = issue_data['file']
@@ -184,6 +194,7 @@ def create_issue(*args):
 @vk_request_errors
 def edit_issue(**kwargs):
     """
+    # требует доработки
     """
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
@@ -228,7 +239,7 @@ def edit_issue(**kwargs):
 @vk_request_errors
 def del_issue(**kwargs):
     """
-    :issue_id:
+    :issue_id: id записи, подлежащей удалению
     """
     pid = kwargs['issue_id']
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
@@ -238,10 +249,12 @@ def del_issue(**kwargs):
 
 @vk_request_errors
 def attach_doc(**kwargs):
+    # Использование извне не предполагается
     """
-    :path:
+    :path: путь к документу
 
-    :return: array with doc object
+    Возвращает:
+    #TODO: описать, что же возвращает этот метод
     """
     path = kwargs['path']
 
@@ -268,10 +281,12 @@ def attach_doc(**kwargs):
 
 @vk_request_errors
 def attach_pic(**kwargs):
+    # Использование извне не предполагается
     """
-    :path:
+    :path: путь к фотографии
 
-    :return: array with pic object
+    Возвращает:
+    #TODO: описать, что же возвращает этот метод
     """
     path = kwargs['path']
 
@@ -301,10 +316,17 @@ def get_comments(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
-    :offset: ( :default: '0' )
-    :count: ( :default: '100' )
+        id поста, комментарии под которым необходимо получить
+    :offset:
+        необходимое смещение при получении списка комментариев
+        стандартное значение: 0
+    :count:
+        количество комментариев, которое необходимо получить за раз
+        стандартное значение: 100
+        максимальное значение: 200
 
-    :return: dict with comments
+    Возвращает: список комментариев ( dict )
+    #TODO: описать структуру словаря
     """
     post_id = kwargs['id']
     offset = kwargs.get('offset', '0')
@@ -320,11 +342,14 @@ def get_comments(**kwargs):
 @vk_request_errors
 def create_comment(*args, **kwargs):
     """
-    :comment_data: {'file', 'image', 'text'}
+    :comment_data:
+        {'file':путь к документу или None,'image':путь к фотографии или None, 'text'}
     :post_id:
+        id поста, под которым будет создан комментарий
     :reply_to:
+        новый комментарий будет отмечен как ответ на комментарий, id которого указан в данном параметре
 
-    :return: comment_id
+    Возвращает: id нового комментария
     """
     comment_data = args[0]
     path_to_file = comment_data['file']
@@ -358,6 +383,7 @@ def create_comment(*args, **kwargs):
 @vk_request_errors
 def edit_comment(**kwargs):
     """
+    # требует доработки
     """
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
@@ -401,7 +427,7 @@ def edit_comment(**kwargs):
 @vk_request_errors
 def del_comment(**kwargs):
     """
-    :comment_id:
+    :comment_id: id комментария, подлежащего удалению
     """
     cid = kwargs['comment_id']
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
@@ -413,11 +439,15 @@ def del_comment(**kwargs):
 def get_user_photo(**kwargs):
     #FIXME всегда возвращает фото
     """
-    :size:
-    ( 'big'; medium'; 'small'; 'max' (smallest possible) )
+    :size: необходимый размер фотографии
+        возможные значения (от большего к меньшему)
+            'big'
+            'medium'
+            'small'
+            'max'
 
-    :return: Photo
-    # :return: None if user have no avatar
+    Возвращает: фото
+    # Возвращает: None, если у пользователя нет аватара
     """
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
@@ -428,10 +458,15 @@ def get_user_photo(**kwargs):
 
 @vk_request_errors
 def track_visitor():
+    """
+    отвечает за занесение в статистику приложения информации о пользователе
+    """
     api.stats.trackVisitor()
 
 
 def set_group_id(new_gid=kivy_ru):
+    """
+    """
     global GROUP_ID, MGROUP_ID
     GROUP_ID = str(new_gid)
     MGROUP_ID = '-' + GROUP_ID
