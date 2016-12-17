@@ -11,6 +11,7 @@ __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
 api = None
 token = None
+kivy_ru = '99411738' # raw_id of http://vk.com/kivy_ru
 
 
 def vk_request_errors(request):
@@ -430,7 +431,7 @@ def track_visitor():
     api.stats.trackVisitor()
 
 
-def set_group_id(new_gid='99411738'):
+def set_group_id(new_gid=kivy_ru):
     global GROUP_ID, MGROUP_ID
     GROUP_ID = str(new_gid)
     MGROUP_ID = '-' + GROUP_ID
