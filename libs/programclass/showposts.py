@@ -22,8 +22,8 @@ class ShowPosts(object):
         :param comments: если True - выводим комментарии;
         :param post_id: id поста для которого выводится список комментариев;
         :param current_number_page: выбранная страница;
-        :param commented_post_info: имя, аватар, дата, текст
-                                    комментируемого поста;
+        :param commented_post_info: [имя, аватар, дата, текст
+                                     комментируемого поста[;
         '''
 
         self.app = app
