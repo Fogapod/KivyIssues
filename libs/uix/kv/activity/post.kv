@@ -40,8 +40,6 @@
         markup: True
         color: app.data.text_color_from_hex
         font_size: '12sp'
-        text_size: self.width, dp(70)
+        text_size: self.width, None
         valign: 'top'
-        size_hint_y: None
-        height: dp(70)
-        on_ref_press: root.tap_on_text_or_link_post(args)
+
