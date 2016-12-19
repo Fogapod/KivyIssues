@@ -132,6 +132,32 @@ def get_issue_count():
 	return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
+@vk_request_errors
+def get_info_from_group():
+	"""
+	Возвращает: информацию о текущей группе ( dict )
+	Структура словаря:
+	{
+		"id":id группы ( int ),
+		"name":название группы,
+		"screen_name":короткое имя группы,
+		"is_closed":группа закрыта? ( bool ),
+		"type": "group",
+		"is_admin":пользователь является администратором? ( bool ),
+		"is_member":пользователь состоит в группе? ( bool ),
+		"description":текст описания группы,
+		"members_count":число участников ( int ),
+		"status":текст из статуса группы,
+		"photo_50":ссылка на фото,
+		"photo_100":ссылка на фото,
+		"photo_200":ссылка на фото
+	}
+	"""
+	response = api.groups.getById(
+		group_id=GROUP_ID, fields='description,members_count,status'
+		)
+	return response[0]
+	
 
 
 @vk_request_errors
