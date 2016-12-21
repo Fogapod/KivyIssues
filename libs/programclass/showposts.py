@@ -42,13 +42,15 @@ class ShowPosts(object):
         else:
             self.commented_post_info = commented_post_info
 
-    def on_enter(self):
-        if self.screen.ids.action_bar.right_action_items[0][0] != \
+    def set_chevron_back_screen(self):
+        '''Устанавливает шеврон возврата к предыдущему экрану в ToolBar.'''
+
+        if self.app.screen.ids.action_bar.right_action_items[0][0] != \
                 'comment-outline':
-            self.screen.ids.action_bar.right_action_items = \
+            self.app.screen.ids.action_bar.right_action_items = \
                 [['comment-outline', lambda x: None]]
-        self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self._back_screen()]]
+        self.app.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: None]]
 
     @thread
     def _set_info_for_post(self):
@@ -89,6 +91,7 @@ class ShowPosts(object):
                 self.old_screen = self.app.manager.current
                 Clock.unschedule(check_posts_dict)
                 self.app.dialog_progress.dismiss()
+                self.set_chevron_back_screen()
 
         self.app.show_progress(text=self.app.data.string_lang_wait)
 
