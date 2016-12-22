@@ -189,15 +189,12 @@ class BoxPosts(BoxLayout):
                 whom_id, whom_name = \
                     count.replace('[', '').replace(']', '').split('|')
                 text_post = text_post.replace(count, '')
-                text_post = '[ref=Text post][b][color={}]\n{}[/b][/color]' \
+                text_post = u'[ref=Text post][b][color={}]\n{}[/b][/color]' \
                             '{}[/ref]'.format(
                     get_hex_from_color(self._app.theme_cls.primary_color),
                     whom_name, self._app.mark_links_in_post(text_post))
             else:
-                if self._app.data.PY2:
-                    text_post = u'\n{}'.format(text_post)
-                else:
-                    text_post = '\n{}'.format(text_post)
+                text_post = u'\n{}'.format(text_post)
 
             if 'reply_to_comment' in items_dict:
                 commented_post_id = items_dict['id']
@@ -220,24 +217,14 @@ class BoxPosts(BoxLayout):
             box_posts.add_widget(answer_label)
         # Для комментируемого поста.
         elif self.comments and add_commented_post:
-            if self._app.data.PY2:
-                text_post = self._app.mark_links_in_post(
-                    u'\n{}'.format(self.commented_post_info[3])
-                )
-            else:
-                text_post = self._app.mark_links_in_post(
-                    '\n{}'.format(self.commented_post_info[3])
-                )
+            text_post = self._app.mark_links_in_post(
+                u'\n{}'.format(self.commented_post_info[3])
+            )
         # Для поста.
         else:
-            if self._app.data.PY2:
-                text_post = u'[ref=Post]{}[/ref]'.format(
-                    self._app.mark_links_in_post(items_dict['text'])
-                )
-            else:
-                text_post = '[ref=Post]{}[/ref]'.format(
-                    self._app.mark_links_in_post(items_dict['text'])
-                )
+            text_post = u'[ref=Post]{}[/ref]'.format(
+                self._app.mark_links_in_post(items_dict['text'])
+            )
             # Иконка количества коментариев к посту.
             box_posts.add_widget(
                 IconCountComments(
