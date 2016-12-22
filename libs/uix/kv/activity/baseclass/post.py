@@ -5,7 +5,7 @@ from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
 
 from libs.programclass.showposts import ShowPosts
-from libs.vkrequests import add_comment
+# from libs.vkrequests import add_comment
 
 
 class Post(BoxLayout):
