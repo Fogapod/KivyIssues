@@ -67,7 +67,7 @@ class Post(BoxLayout):
         self.ids.text_posts.text_size = \
             (dp(self._app.window.width - 30),
              dp((self.height - self.ids.title_post.height) - 30))
-        self.ids.text_posts.text = u'\n{}'.format(self.ids.text_posts.text)
+        self.ids.text_posts.text = u'\n' + self.ids.text_posts.text
         self.ids.text_posts.bind(
             on_ref_press=lambda instance, text_link: none
         )
