@@ -117,10 +117,10 @@ class ShowPosts(object):
     def show_posts(self):
         if not self.comments:
             name_screen = \
-                'box posts page {}'.format(str(self.current_number_page))
+                'box posts page ' + str(self.current_number_page)
         else:
             name_screen = \
-                'box comments page {}'.format(str(self.current_number_page))
+                'box comments page ' + str(self.current_number_page)
 
         if self.app.manager.has_screen(name_screen):
             self.app.manager.current = name_screen
