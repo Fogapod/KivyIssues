@@ -68,7 +68,7 @@ class ShowPosts(object):
         def check_posts_dict(interval):
             if self.items_list:
                 box_posts = self.app.BoxPosts(
-                    _app=self.app, profiles_dict=self.profiles_dict,
+                    profiles_dict=self.profiles_dict,
                     count_issues=self.count_issues_comments,
                     only_questions=self.only_questions,
                     current_number_page=self.current_number_page,
