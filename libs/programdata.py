@@ -30,7 +30,7 @@ else:
 prog_path = os.path.split(os.path.abspath(sys.argv[0]))[0]
 
 # Если файл настроек отсутствует.
-if not os.path.exists('{}/program.ini'.format(prog_path)):
+if not os.path.exists(prog_path + '/program.ini'):
     if PY2:
         language = u'Русский'
     else:
@@ -82,14 +82,10 @@ text_link_color = config_theme.get('color', 'text_link_color')
 
 try:  # устанавливаем языковую локализацию
     if not PY2:
-        exec(
-            open('{}/data/language/{}.txt'.format(
-                prog_path, language), encoding='utf-8-sig').read()
-        )
+        exec(open(prog_path + '/data/language/%s.txt' % language,
+                  encoding='utf-8-sig').read())
     else:
-        exec(
-            open('{}/data/language/{}.txt'.format(prog_path, language)).read()
-        )
+        exec(open(prog_path + '/data/language/%s.txt' % language).read())
 except Exception:
     raise Exception(traceback.format_exc())
 
@@ -98,7 +94,7 @@ dict_language = {
     string_lang_on_english: 'english'
 }
 
-name_banners = os.listdir('{}/data/images/banners'.format(prog_path))
+name_banners = os.listdir(prog_path + '/data/images/banners')
 
 possible_files = {
     string_lang_add_image: [['.png', '.jpg', '.jpeg', '.gif'], string_lang_wrong_image],
