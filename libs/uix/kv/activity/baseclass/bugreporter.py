@@ -44,8 +44,6 @@ from kivy.lang import Builder
 from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty, BooleanProperty, StringProperty
 
-from kivymd.button import MDFlatButton
-
 
 class BugReporter(FloatLayout):
     title = StringProperty('Bug reporter')
