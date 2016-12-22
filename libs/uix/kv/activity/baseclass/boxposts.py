@@ -189,12 +189,12 @@ class BoxPosts(BoxLayout):
                 whom_id, whom_name = \
                     count.replace('[', '').replace(']', '').split('|')
                 text_post = text_post.replace(count, '')
-                text_post = u'[ref=Text post][b][color={}]\n{}[/b][/color]' \
-                            '{}[/ref]'.format(
+                text_post = u'[ref=Text post][b][color=%s]\n%s[/b][/color]' \
+                            '%s[/ref]' %(
                     get_hex_from_color(self._app.theme_cls.primary_color),
                     whom_name, self._app.mark_links_in_post(text_post))
             else:
-                text_post = u'\n{}'.format(text_post)
+                text_post = u'\n' + text_post
 
             if 'reply_to_comment' in items_dict:
                 commented_post_id = items_dict['id']
@@ -218,11 +218,11 @@ class BoxPosts(BoxLayout):
         # Для комментируемого поста.
         elif self.comments and add_commented_post:
             text_post = self._app.mark_links_in_post(
-                u'\n{}'.format(self.commented_post_info[3])
+                u'\n' + self.commented_post_info[3]
             )
         # Для поста.
         else:
-            text_post = u'[ref=Post]{}[/ref]'.format(
+            text_post = u'[ref=Post]%s[/ref]' %(
                 self._app.mark_links_in_post(items_dict['text'])
             )
             # Иконка количества коментариев к посту.
