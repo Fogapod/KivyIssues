@@ -5,7 +5,7 @@ from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
 
 from libs.programclass.showposts import ShowPosts
-# from libs.vkrequests import add_comment
+from libs.vkrequests import create_comment
 
 
 class Post(BoxLayout):
@@ -39,7 +39,7 @@ class Post(BoxLayout):
         :param commented_post_id: id комментария для которого пишется ответ;
 
         """
-        #result = add_comment(
+        #result = create_comment(
         #    {'file': None, 'image': None, 'text': 'Text text'},
         #    post_id=post_id, reply_to=commented_post_id
         #)
