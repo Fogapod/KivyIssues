@@ -39,10 +39,10 @@ class BoxPosts(BoxLayout):
     '''Если True - выводим комментарии.'''
 
     count_issues = StringProperty()
-    '''Лоличество получаемых постов/комментариев.'''
+    '''Количество получаемых постов/комментариев.'''
 
     current_number_page = NumericProperty()
-    '''Ввыбранная страница.'''
+    '''Выбранная страница.'''
 
     commented_post_info = ListProperty()
     '''Имя, аватар, дата, текст комментируемого поста.'''
@@ -90,8 +90,8 @@ class BoxPosts(BoxLayout):
                 '''Смотрите метод set_height_post.'''
 
                 box_posts.height = \
-                    dp(value[1] + box_posts.ids.title_post.height + \
-                    count_comments.height)
+                    dp(value[1] + box_posts.ids.title_post.height +
+                       count_comments.height)
 
             def set_height_post(instance, value):
                 '''Смотрите метод open_real_size_post класса Post.'''
@@ -120,6 +120,10 @@ class BoxPosts(BoxLayout):
                     )
                 )
                 box_posts.ids.title_post.secondary_text = date
+                # FIXME: UnicodeError: A Unicode character above '\uFFFF'
+                # was found; not supported - ошибка при присутствии в тексте
+                # постов/комментариев ебаных смайлов (как их я их ненавижу)
+                # при использовании третьей версии Python.
                 box_posts.ids.text_posts.text = text_post
                 box_posts.ids.text_posts.bind(
                     texture_size=set_height_post
@@ -130,7 +134,7 @@ class BoxPosts(BoxLayout):
                 box_posts.ids.title_post.icon = self.commented_post_info[1]
                 box_posts.ids.title_post.secondary_text = \
                     self.commented_post_info[2]
-                box_posts.ids.text_posts.text = text_post + '\n'
+                box_posts.ids.text_posts.text = text_post + u'\n'
                 # Выделяем имя автора комментрируемого поста канвасом
                 # темнее, чем комментарии к нему.
                 canvas_color = [
@@ -183,6 +187,7 @@ class BoxPosts(BoxLayout):
             # Ищем в комментариях, кому адресованно -
             # подстроку вида '[id12345|NameAuthor]'.
             count = re.match(self._app.data.pattern_whom_comment, text_post)
+            print('SEARCH')
             if count:
                 count = count.group()
                 # id и имя автора, которому написан комментарий.
