@@ -74,7 +74,7 @@ def log_in(**kwargs):
 	"""
 	set_group_id()
 
-	scope = '208900' # 65536 == offline; 4096 == messages; 8192 == wall; 131072 == docs; 4 == photos
+	scope = '204804' # 65536 == offline; 8192 == wall; 131072 == docs; 4 == photos
 	app_id = '5720412'
 
 	token = kwargs.get('token')
@@ -482,21 +482,6 @@ def get_user_photo(**kwargs):
 
 	if 'images/question_c.gif' not in url[photo_size]:
 		return r.get(url[photo_size]).content
-
-
-@vk_request_errors
-def get_message_long_poll_data():
-	"""
-	Возвращает: словарь ( dict )
-	Структура ответа:
-	{
-		'key':str,
-		'server':str,
-		'ts':int
-	}
-	"""
-	response = api.messages.getLongPollServer()
-	return response
 
 
 @vk_request_errors
