@@ -125,6 +125,7 @@ class BoxPosts(BoxLayout):
                 # постов/комментариев ебаных смайлов (как их я их ненавижу)
                 # при использовании третьей версии Python.
                 box_posts.ids.text_posts.text = text_post
+                # print(text_post.encode().decode("utf-8", 'ignore'))
                 box_posts.ids.text_posts.bind(
                     texture_size=set_height_post
                 )
@@ -187,7 +188,6 @@ class BoxPosts(BoxLayout):
             # Ищем в комментариях, кому адресованно -
             # подстроку вида '[id12345|NameAuthor]'.
             count = re.match(self._app.data.pattern_whom_comment, text_post)
-            print('SEARCH')
             if count:
                 count = count.group()
                 # id и имя автора, которому написан комментарий.
@@ -212,12 +212,13 @@ class BoxPosts(BoxLayout):
                 markup=True, halign="left", font_size='11sp',
                 color=self._app.theme_cls.primary_color,
                 )
+            whom_name = \
+                self.profiles_dict[items_dict['from_id']]['author_name']
             answer_label.bind(
                 size=answer_label.setter('text_size'),
-                on_ref_press=lambda post_id, commented_id_post:
-                    box_posts.answer_on_comments(
-                        self.post_id, commented_post_id
-                    )
+                on_ref_press=lambda *args: box_posts.answer_on_comments(
+                    self.post_id, commented_post_id, whom_name
+                )
             )
             box_posts.add_widget(answer_label)
         # Для комментируемого поста.
