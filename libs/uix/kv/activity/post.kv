@@ -1,6 +1,25 @@
 #: kivy 1.9.1
-
 # Тело поста.
+
+# Иконка и количество коментариев.
+<IconCountComments>:
+    size_hint_y: None
+    height: dp(30)
+    spacing: dp(5)
+
+    # libs/uix/list.py <Icon>
+    Icon:
+        size_hint: None, None
+        size: dp(30), dp(30)
+        source: 'data/images/comments_box.png'
+        on_release: root.callback(args)
+
+    Label:
+        id: comments_post
+        text_size: self.width, None
+        markup: True
+        color: app.data.text_color_from_hex
+        font_size: '11sp'
 
 <Post>:
     _app: app
@@ -8,21 +27,6 @@
     padding: dp(10), dp(0)
     spacing: dp(5)
     size_hint_y: None
-    height: dp(200)
-
-    canvas:
-        # Тень кнопки
-        Color:
-            rgba: 0, 0, 0, .2
-        Rectangle:
-            pos: self.x + 2.5, self.y - 3
-            size: self.size
-        # Цвет кнопки
-        Color:
-            rgba: app.data.list_color
-        Rectangle:
-            pos: self.pos
-            size: self.size
 
     # libs/uix/kv/list.kv <IconItemAsync>
     # Аватар автора, имя и дата поста.
@@ -36,29 +40,6 @@
         markup: True
         color: app.data.text_color_from_hex
         font_size: '12sp'
-        text_size: self.width, dp(70)
+        text_size: self.width, None
         valign: 'top'
-        size_hint_y: None
-        height: dp(70)
         on_ref_press: root.tap_on_text_or_link_post(args)
-
-    # Иконка и количество коментариев.
-    BoxLayout:
-        size_hint_y: None
-        height: dp(30)
-        spacing: dp(5)
-
-        Icon:
-            id: comments_post
-            size_hint: None, None
-            size: dp(30), dp(30)
-            source: 'data/images/comments_box.png'
-
-        Label:
-            id: comments_post
-            text_size: self.width, None
-            markup: True
-            color: app.data.text_color_from_hex
-            font_size: '11sp'
-
-    Widget:

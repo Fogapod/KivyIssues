@@ -53,14 +53,14 @@ class AuthorizationOnVK(object):
 
         Clock.schedule_once(lambda x: self.show_progress(
             text=self.data.string_lang_authorization,
-            func_dismiss=self.dialog_on_fail_authorization), 0)
+            func_dismiss=self.set_dialog_on_fail_authorization), 0)
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
         result, info = vkr.log_in(login=login, password=password)
 
         if not result:
-            self.dialog_on_fail_authorization()
+            self.set_dialog_on_fail_authorization()
             self.open_dialog(
                 text=self.data.string_lang_error_auth.format(info),
                 dismiss=True

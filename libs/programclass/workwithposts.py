@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import time
-
-from libs import vkrequests as vkr
+from libs.vkrequests import get_issues, get_comments
 
 
 class WorkWithPosts(object):
@@ -27,24 +25,28 @@ class WorkWithPosts(object):
 
         return mark_text
 
-    def get_info_from_post(self, count_issues='20', offset='0'):
+    def get_info_from_post(self, count_issues, post_id='', comments=False):
         '''
         :type count_issues: str;
         :param count_issues: количество получаемых постов;
-        :param only_questions: все или только свои посты;
+        :param post_id: id поста для которого получаем комментарии;
+        :param comments: если True -получаем комментарии;
 
         Возвращает словарь:
-        {id атора поста:
-            {'author_name': 'Имя автора поста',
-             'avatar': 'https://pp.vk.me/c17/v6760/1/FdjA4ho.jpg',}, ...
+        {'Имя атора поста':
+            {'text': 'Текст поста', 'date': '2016-11-14 16:21:20',
+             'attachments': ['', 'https://p.vk.me/c9/v60/36fe/ylDQ.jpg', ...],
+             'avatar': 'https://pp.vk.me/c17/v6760/1/FdjA4ho.jpg',
+             'comments': 4}, ...
         }
-
-        и список словарей с информацией о постах группы, возврвщаемый
-        функцией get_issues.
 
         '''
 
-        wall_posts, info = vkr.get_issues(offset=offset, count=count_issues)
+        if not comments:
+            wall_posts, info = get_issues(offset='0', count=count_issues)
+        else:
+            wall_posts, info = get_comments(id=post_id, count=count_issues)
+
         profiles_dict = {}
 
         if not wall_posts:
