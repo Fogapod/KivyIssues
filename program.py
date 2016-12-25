@@ -25,6 +25,7 @@ from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
 from libs.uix.kv.activity.baseclass.post import Post
 from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
+from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.uix.kv.activity.baseclass.scrmanager import ScrManager
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
