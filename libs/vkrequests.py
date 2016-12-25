@@ -469,8 +469,8 @@ def get_message_long_poll_data():
     return response
  
 
- @vk_request_errors
- def do_message_long_poll_request(**kwargs):
+@vk_request_errors
+def do_message_long_poll_request(**kwargs):
     """
     :url: специальный url, собранный с использованием данных из get_message_long_poll_data()
 
