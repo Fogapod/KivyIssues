@@ -72,10 +72,14 @@ def log_in(**kwargs):
     :password: пароль ( str )
 
     Возвращает: новое значение token ( str )
+
     """
+
     set_group_id()
 
-    scope = '208900' # 65536 == offline; 4096 == messages; 8192 == wall; 131072 == docs; 4 == photos
+    # 65536 == offline; 4096 == messages; 8192 == wall; 131072 == docs;
+    # 4 == photos;
+    scope = '208900'
     app_id = '5720412'
 
     token = kwargs.get('token')
@@ -106,25 +110,22 @@ def log_in(**kwargs):
 
 @vk_request_errors
 def get_members_count():
-    """
-    Возвращает: число участников ( str )
-    """
+    """Возвращает: число участников ( str )"""
+
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
 
 @vk_request_errors
 def get_user_name():
-    """
-    Возвращает: Имя_пробел_Фамилия ( str )
-    """
+    """Возвращает: Имя_пробел_Фамилия ( str )"""
+
     return api.execute.GetUserName()
 
 
 @vk_request_errors
 def get_issue_count():
-    """
-    Возвращает: число записей в группе ( str )
-    """
+    """Возвращает: число записей в группе ( str )"""
+
     return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
@@ -148,6 +149,7 @@ def get_info_from_group():
         "photo_100":ссылка на фото,
         "photo_200":ссылка на фото
     }
+
     """
     response = api.groups.getById(group_id=GROUP_ID,
                                   fields='description,members_count,status')
@@ -167,8 +169,10 @@ def get_issues(**kwargs):
         максимальное значение: 200
 
     Возвращает: список записей группы ( dict )
-    #TODO: описание структуры словаря
+    # TODO: описание структуры словаря
+
     """
+
     offset = kwargs.get('offset', '0')
     post_count = kwargs.get('count', '30')
 
@@ -181,10 +185,15 @@ def create_issue(*args):
     """
     agrs:
     :issue_data:
-        {'file':путь к документу или None,'image':путь к фотографии или None,'theme':тема вопроса,'issue':основной текст вопроса}
+        {'file': путь к документу или None
+        'image':путь к фотографии или None
+        'theme':тема вопроса,'issue':основной текст вопроса
+        }
 
     Возвращает: id созданной записи ( str )
+
     """
+
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
@@ -207,11 +216,9 @@ def create_issue(*args):
                          attachments=attachments)
 
 
+# TODO: требует доработки.
 @vk_request_errors
 def edit_issue(**kwargs):
-    """
-    # требует доработки
-    """
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
     doc_oid = kwargs.get('doc_oid')
@@ -250,23 +257,27 @@ def edit_issue(**kwargs):
 @vk_request_errors
 def del_issue(**kwargs):
     """
-    :issue_id: id записи, подлежащей удалению
+    :issue_id: id записи, подлежащей удалению;
+
     """
+
     pid = kwargs['issue_id']
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
     if response:
         return True
 
 
+# Использование извне не предполагается.
 @vk_request_errors
 def attach_doc(**kwargs):
-    # Использование извне не предполагается
     """
     :path: путь к документу
 
     Возвращает:
     #TODO: описать, что же возвращает этот метод
+
     """
+
     path = kwargs['path']
 
     if path:
@@ -288,15 +299,17 @@ def attach_doc(**kwargs):
             raise Exception('Failed loading document ' + str(e))
 
 
+# Использование извне не предполагается.
 @vk_request_errors
 def attach_pic(**kwargs):
-    # Использование извне не предполагается
     """
-    :path: путь к фотографии
+    :path: путь к фотографии;
 
     Возвращает:
     #TODO: описать, что же возвращает этот метод
+
     """
+
     path = kwargs['path']
 
     if path:
@@ -320,9 +333,9 @@ def attach_pic(**kwargs):
             raise Exception('Failed loading picture ' + str(e))
 
 
+# TODO упорядочить получаемые данные через хранимые процедуры
 @vk_request_errors
 def get_comments(**kwargs):
-    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :post_id:
         id поста, комментарии под которым необходимо получить
@@ -336,7 +349,9 @@ def get_comments(**kwargs):
 
     Возвращает: список комментариев ( dict )
     #TODO: описать структуру словаря
+
     """
+
     post_id = kwargs['id']
     offset = kwargs.get('offset', '0')
     comment_count = kwargs.get('count', '100')
@@ -354,10 +369,13 @@ def create_comment(*args, **kwargs):
     :post_id:
         id поста, под которым будет создан комментарий
     :reply_to:
-        новый комментарий будет отмечен как ответ на комментарий, id которого указан в данном параметре
+        новый комментарий будет отмечен как ответ на комментарий,
+        id которого указан в данном параметре
 
     Возвращает: id нового комментария
+
     """
+
     comment_data = args[0]
     path_to_file = comment_data['file']
     path_to_image = comment_data['image']
@@ -383,11 +401,9 @@ def create_comment(*args, **kwargs):
                                   attachments=attachments)
 
 
+# TODO: требует доработки.
 @vk_request_errors
 def edit_comment(**kwargs):
-    """
-    # требует доработки
-    """
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
     doc_oid = kwargs.get('doc_oid')
@@ -425,17 +441,19 @@ def edit_comment(**kwargs):
 @vk_request_errors
 def del_comment(**kwargs):
     """
-    :comment_id: id комментария, подлежащего удалению
+    :comment_id: id комментария, подлежащего удалению;
+
     """
+
     cid = kwargs['comment_id']
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
     if response:
         return True
 
 
+# FIXME всегда возвращает фото
 @vk_request_errors
 def get_user_photo(**kwargs):
-    # FIXME всегда возвращает фото
     """
     :size: необходимый размер фотографии
         возможные значения (от большего к меньшему)
@@ -445,8 +463,10 @@ def get_user_photo(**kwargs):
             'max'
 
     Возвращает: фото
-    # Возвращает: None, если у пользователя нет аватара
+    # Возвращает: None, если у пользователя нет аватара.
+
     """
+
     photo_size = 'photo_' + kwargs['size']
     url = api.users.get(fields=photo_size)[0]
 
@@ -464,10 +484,12 @@ def get_message_long_poll_data():
         'server':str,
         'ts':int
     }
+
     """
+
     response = api.messages.getLongPollServer()
     return response
- 
+
 
 @vk_request_errors
 def do_message_long_poll_request(**kwargs):
@@ -506,26 +528,31 @@ def do_message_long_poll_request(**kwargs):
                     4,
                     id сообщения ( int ),
                     сумма флагов сообщения ( int ),
-                    id назначения ( str )(для пользователя его id, для беседы 2000000000 + id беседы, для группы -id группы или id группы + 1000000000),
-                    время отправки сообщения в Unixtime ( int ),
-                    тема сообщения (для диалога == ' ... ', для беседы это название беседы),
-                    текст сообщения ( str ),
-                    ловарь вложений или {},
-                    параметр random_id ( int ), если он был передан при отправке сообщений (нужен для предотвращения отправки одного сообщения несколько раз)
+                    id назначения ( str )(для пользователя его id,
+                    для беседы 2000000000 + id беседы, для группы -id группы
+                    или id группы + 1000000000), время отправки сообщения в
+                    Unixtime ( int ), тема сообщения (для диалога == ' ... ',
+                    для беседы это название беседы), текст сообщения ( str ),
+                    словарь вложений или {}, параметр random_id ( int ),
+                    если он был передан при отправке сообщений
+                    (нужен для предотвращения отправки одного сообщения
+                    несколько раз)
                 ]
 
             6 - Прочитаны входящие сообщения на данном отрезке
                 [
                     6,
-                    id назначения ( str )(для пользователя его id, для беседы 2000000000 + id беседы, для группы -id группы или id группы + 1000000000),
-                    до ( int )
+                    id назначения ( str )(для пользователя его id,
+                    для беседы 2000000000 + id беседы, для группы -id группы
+                    или id группы + 1000000000), до ( int )
                 ]
 
             7 - Прочитаны исходящие сообщения на данном отрезке
                 [
                     7,
-                    id назначения ( str )(для пользователя его id; для беседы 2000000000 + id беседы; для группы -id группы или id группы + 1000000000),
-                    до ( int )
+                    id назначения ( str )(для пользователя его id;
+                    для беседы 2000000000 + id беседы; для группы -id группы
+                    или id группы + 1000000000), до ( int )
                 ]
 
             8 - Друг зашёл на сайт
@@ -547,7 +574,8 @@ def do_message_long_poll_request(**kwargs):
                 [12, флаг диалога]
 
             51 - Изменились параметры беседы (название/состав)
-                [51, id беседы ( int ), изменения сделаны пользователем (1/0)]
+                [51, id беседы ( int ),
+                изменения сделаны пользователем (1/0)]
 
             61 - Пользователь начал набирать текст в диалоге
                 [61, id пользователя ( int ), id диалога ( int )]
@@ -568,30 +596,34 @@ def do_message_long_poll_request(**kwargs):
                     114,
                     id пользователя или беседы ( int ),
                     звуковые сообщения включены (1/0),
-                    оповещения отключены до: -1 - навсегда; 0 - включены; другое число - когда нужно включить
+                    оповещения отключены до: -1 - навсегда; 0 - включены;
+                    другое число - когда нужно включить
                 ]
 
     Более полная информация о событиях:
-    https://vk.com/dev/using_longpoll?f=3.%20%D0%A1%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0%20%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9
+    https://vk.com/dev/using_longpoll?f=3.%20%D0%A1%D1%82%D1%80%D1%83%D0%
+    BA%D1%82%D1%83%D1%80%D0%B0%20%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9
+
     """
+
     url = kwargs['url']
     return r.post(url)
 
- 
+
 @vk_request_errors
 def track_visitor():
-    """
-    отвечает за занесение в статистику приложения информации о пользователе
-    """
+    """Отвечает за занесение в статистику приложения
+    информации о пользователе."""
+
     api.stats.trackVisitor()
 
 
 def set_group_id(new_gid=kivy_ru):
-    """
-    """
     global GROUP_ID, MGROUP_ID
+
     GROUP_ID = str(new_gid)
     MGROUP_ID = '-' + GROUP_ID
+
 
 ##########################
 #                        #
