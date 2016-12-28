@@ -59,12 +59,12 @@ class Post(BoxLayout):
                     icon = '%s/data/images/error.png' % self._app.directory
                 else:
                     update_post(text_answer, post_id)
-                    message = self._app.data.string_lang_sending,
+                    message = self._app.data.string_lang_sending
                     icon = '%s/data/images/send.png' % self._app.directory
 
                 self._app.notify(
                     title=self._app.data.string_lang_title, message=message,
-                    app_icon=icon
+                    app_icon=icon, timeout=2
                 )
 
         def update_post(text_answer, post_id):
