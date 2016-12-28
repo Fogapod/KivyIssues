@@ -1,5 +1,7 @@
 # -*- coding: utf: 8 -*-
 
+import time
+
 # from kivy.animation import Animation
 from kivy.uix.boxlayout import BoxLayout
 from kivy.metrics import dp
@@ -8,7 +10,9 @@ from kivy.properties import ObjectProperty, NumericProperty
 from libs.programclass.showposts import ShowPosts
 from libs.vkrequests import create_comment
 
-from kivymd import snackbar
+# from kivymd import snackbar
+
+from plyer import notification
 
 
 class Post(BoxLayout):
@@ -18,6 +22,9 @@ class Post(BoxLayout):
     _texture_height = NumericProperty()
     '''Реальные размеры (texture_size) лейбла текста поста:
     Используются для развертывание текста поста при клике на него.'''
+
+    _box_posts = ObjectProperty()
+    '''<class 'libs.uix.kv.activity.baseclass.boxposts.BoxPosts'>'''
 
     def __init__(self, **kwargs):
         super(Post, self).__init__(**kwargs)
@@ -32,6 +39,7 @@ class Post(BoxLayout):
         instance, text_link = args[0]
         if text_link == 'Post':
             self.open_real_size_post()
+        # TODO: добавить обработку ссылок в тексте.
 
     def answer_on_comments(self, *args):
         def callback(flag):
@@ -51,9 +59,39 @@ class Post(BoxLayout):
                 input_text_form.ids.text_input.message = ''
 
                 if not comment_id:
-                    snackbar.make(self._app.data.string_lang_sending_error)
+                    # snackbar.make(self._app.data.string_lang_sending_error)
+                    notification.notify(
+                        title='Kivy Issues',
+                        message=self._app.data.string_lang_sending_error,
+                        app_icon='%s/data/images/error.png' %
+                                 self._app.directory, timeout=2
+                    )
                 else:
-                    snackbar.make(self._app.data.string_lang_sending)
+                    update_post(text_answer, post_id)
+                    # snackbar.make(self._app.data.string_lang_sending)
+                    notification.notify(
+                        title='Kivy Issues',
+                        message=self._app.data.string_lang_sending,
+                        app_icon='%s/data/images/send.png' %
+                                 self._app.directory, timeout=2
+                    )
+
+        def update_post(text_answer, post_id):
+            '''Добавляет в список комментариев только что отправленное
+            сообщение.'''
+
+            items_dict = {'text': text_answer, 'id': post_id,
+                          'date': time.time(), 'from_id': 1}
+            self._box_posts.profiles_dict = \
+                {1:
+                     {'author_name': whom_name, 'author_online': 1,
+                      'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
+
+            self._box_posts.comments = True
+            post, author_name = self._box_posts.add_info_for_post(
+                items_dict=items_dict, add_commented_post=False
+            )
+            self._box_posts.ids.list_posts.add_widget(post)
 
         # type post_id: str;
         # param post_id: id комментируемого поста;
@@ -63,13 +101,17 @@ class Post(BoxLayout):
         # ----------------------------------------
         # type whom_name: list;
         # param whom_name: кому - 'First name Last name';
-        post_id, self.commented_post_id, whom_name, input_text_form = args
+        post_id, count_comment, \
+            self.commented_post_id, whom_name, input_text_form = args
 
         self.show_input_form(input_text_form)
         input_text_form.ids.text_input.message = 'Для: ' + whom_name
+        input_text_form.ids.text_input.focus = True
+        input_text_form.ids.text_input.text = \
+            '%s, ' % whom_name.split(' ')[0]
         input_text_form.callback = callback
-        print('Call answer_on_comments:',
-              post_id, self.commented_post_id, whom_name, input_text_form)
+        # print('Call answer_on_comments:',
+        #      post_id, self.commented_post_id, whom_name, input_text_form)
 
     def show_input_form(self, instance):
         '''Выводит окно формы для ввода текста.'''
@@ -116,11 +158,11 @@ class Post(BoxLayout):
         """Вызывается при клике на иконку комментариев под текстом поста.
         Выводит на экран список комментариев к посту."""
 
-        # :type post_id: str;
-        # :param post_id: id поста для которого выводится список комментариев;
-
-        # :type count_comment: str;
-        # :param count_comment: количество комментириев;
+        # type post_id: str;
+        # param post_id: id поста для которого выводится список комментариев;
+        # ----------------------------------------
+        # type count_comment: str;
+        # param count_comment: количество комментириев;
         post_id, count_comment = args
 
         name_author = self.ids.title_post.text
