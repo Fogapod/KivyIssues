@@ -19,6 +19,8 @@ Python 3
 
 Библиотека [KivyMD](https://gitlab.com/kivymd/KivyMD)
 
+Библиотека [plyer](https://github.com/kivy/plyer)
+
 Библиотека PIL
 
 ЛИЦЕНЗИЯ
