@@ -113,5 +113,5 @@ string_lang_old_form_exists = '''У вас есть черновик с не о�
 Восстановить форму?'''
 string_lang_registration = 'Регистрация:'
 string_lang_error_auth = 'Ошибка авторизации!\n{}'
-string_lang_field_login_empty = 'Поле Login не заполнено!'
-string_lang_field_password_empty = 'Поле Password не заполнено!'
+string_lang_field_login_empty = 'Field Login empty!'
+string_lang_field_password_empty = 'Field Password empty!'
