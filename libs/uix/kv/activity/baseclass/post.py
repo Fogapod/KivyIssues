@@ -68,7 +68,7 @@ class Post(BoxLayout):
                 )
 
         def update_post(text_answer, post_id):
-            '''Добавляет в список комментариев только что отправленное
+            '''Добавляет в бокс списка комментариев только что отправленное
             сообщение.'''
 
             items_dict = {'text': text_answer, 'id': post_id,
