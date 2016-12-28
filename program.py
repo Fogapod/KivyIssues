@@ -12,6 +12,7 @@ from kivy.config import ConfigParser
 from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
+from plyer import notification
 
 from libs import programdata as data
 from libs import programclass as _class
@@ -455,6 +456,12 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
         self.instance_dialog = dialog(
             text=text, title=title, dismiss=dismiss, buttons=buttons
+        )
+
+    def notify(self, title='Title:', message='Message!',
+               app_icon='data/logo/kivy-icon-128.png', timeout=2):
+        notification.notify(
+            title=title, message=message, app_icon=app_icon, timeout=timeout
         )
 
     def load_all_kv_files(self, directory_kv_files):
