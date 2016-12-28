@@ -10,10 +10,6 @@ from kivy.properties import ObjectProperty, NumericProperty
 from libs.programclass.showposts import ShowPosts
 from libs.vkrequests import create_comment
 
-# from kivymd import snackbar
-
-from plyer import notification
-
 
 class Post(BoxLayout):
     _app = ObjectProperty()
@@ -59,22 +55,17 @@ class Post(BoxLayout):
                 input_text_form.ids.text_input.message = ''
 
                 if not comment_id:
-                    # snackbar.make(self._app.data.string_lang_sending_error)
-                    notification.notify(
-                        title='Kivy Issues',
-                        message=self._app.data.string_lang_sending_error,
-                        app_icon='%s/data/images/error.png' %
-                                 self._app.directory, timeout=2
-                    )
+                    message = self._app.data.string_lang_sending_error
+                    icon = '%s/data/images/error.png' % self._app.directory
                 else:
                     update_post(text_answer, post_id)
-                    # snackbar.make(self._app.data.string_lang_sending)
-                    notification.notify(
-                        title='Kivy Issues',
-                        message=self._app.data.string_lang_sending,
-                        app_icon='%s/data/images/send.png' %
-                                 self._app.directory, timeout=2
-                    )
+                    message = self._app.data.string_lang_sending,
+                    icon = '%s/data/images/send.png' % self._app.directory
+
+                self._app.notify(
+                    title=self._app.data.string_lang_title, message=message,
+                    app_icon=icon
+                )
 
         def update_post(text_answer, post_id):
             '''Добавляет в список комментариев только что отправленное
