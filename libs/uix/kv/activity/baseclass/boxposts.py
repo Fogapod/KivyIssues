@@ -181,7 +181,7 @@ class BoxPosts(FloatLayout):
         if items_dict is None:
             items_dict = {}
 
-        post = self._app.Post(height=dp(200))
+        post = self._app.Post(height=dp(200), _box_posts=self)
 
         # Для комментариев.
         if self.comments and not add_commented_post:
@@ -219,8 +219,8 @@ class BoxPosts(FloatLayout):
             answer_label.bind(
                 size=answer_label.setter('text_size'),
                 on_ref_press=lambda *args: post.answer_on_comments(
-                    self.post_id, commented_post_id, whom_name,
-                    self.ids.input_text_form
+                    self.post_id, self.count_issues, commented_post_id,
+                    whom_name, self.ids.input_text_form
                 )
             )
             post.add_widget(answer_label)
