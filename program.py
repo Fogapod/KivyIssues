@@ -43,7 +43,8 @@ class GridBottomSheet(MDGridBottomSheet):
     # Переопределил метод, поскольку в оригинале item просто биндился
     # на закрытие меню - item.bind(on_release=lambda x: self.dismiss()),
     # не вызывая переданную ему функцию.
-    # TODO: сообщить автору KivyMD о проблеме...
+    # TODO: в примере kitchen_sink.py KivyMD callback вызывается успешно -
+    # пересмотреть свой код.
     def add_item(self, text, callback, icon_src):
         item = GridBSItem(
             caption=text,
@@ -60,7 +61,12 @@ class NavDrawer(NavigationDrawer):
     _app = ObjectProperty()
 
     def show_posts(self, count_issues=None, only_questions=True):
-        '''Вызывает функцию, выводящую Activity с постами группы.'''
+        '''Вызывает функцию, выводящую Activity с постами группы.
+
+        :param only_questions: все или только свои посты;
+        :param count_issues: количество постов, str;
+
+        '''
 
         def _show_posts(interval):
             if not count_issues:
@@ -156,7 +162,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         '''Выводит список с пунктами 'Текущий пароль/Новый пароль' при
         выборе пункта меню "Авторизация".'''
 
-        def events_callback(text_item):
+        def callback(text_item):
             dialog.dismiss()
 
             if text_item == data.string_lang_current_password:
@@ -165,11 +171,11 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 Clock.schedule_once(self.show_dialog_registration, 0)
 
         self.bottom_sheet.dismiss()
-        self._list_plugins = Lists(
-            list_items=data.menu_items, events_callback=events_callback,
+        current_or_new_password_list = Lists(
+            list_items=data.menu_items, events_callback=callback,
             flag='single_list'
         )
-        dialog = card(self._list_plugins)
+        dialog = card(current_or_new_password_list)
 
     def show_login_and_password(self, instance_selection):
         '''
@@ -189,6 +195,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             self.input_dialog.ids.password.password = True
 
     def show_dialog_registration(self, interval):
+        '''Окно с формой регистрации.'''
+
         self.input_dialog = input_dialog(
             title=self.data.string_lang_registration,
             hint_text_login='Login', password=True, dismiss=False,
@@ -304,7 +312,14 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
     def add_content(self, instance_selection):
         '''Выводит файловый менеджер для выбора файлов, которые будут
-        прикреплены к отправляемому сообщению.'''
+        прикреплены к отправляемому сообщению.
+
+        :param instance_selection:
+            <libs.uix.kv.activity.baseclass.selection.Selection>;
+        :param instance_selection:
+            <class 'kivy.weakproxy.WeakProxy'>;
+
+        '''
 
         def dialog_dismiss():
             if not self.user_choice:
@@ -454,7 +469,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.bottom_sheet.open()
 
     def on_config_change(self, config, section, key, value):
-        '''Вызывается при выборе одного из пункта настроек программы.'''
+        '''Вызывается при выборе одного из пунктов настроек программы.'''
 
         if key == 'language':
             if not os.path.exists('%s/data/language/%s.txt' %(
