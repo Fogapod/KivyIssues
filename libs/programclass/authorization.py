@@ -22,14 +22,14 @@ class GetAndSaveLoginPassword(object):
 
         if login == '' or login.isspace():
             self.notify(
-                title=self._app.data.string_lang_title,
+                title=self.data.string_lang_title,
                 message=self.data.string_lang_field_login_empty,
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory,
             )
             return
         if password == '' or password.isspace():
             self.notify(
-                title=self._app.data.string_lang_title,
+                title=self.data.string_lang_title,
                 message=self.data.string_lang_field_password_empty,
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory,
             )
