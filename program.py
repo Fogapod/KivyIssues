@@ -12,7 +12,6 @@ from kivy.config import ConfigParser
 from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
-from plyer import notification
 
 from libs import programdata as data
 from libs import programclass as _class
@@ -37,6 +36,8 @@ from kivymd import snackbar
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
 from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
+
+from plyer import notification
 
 
 class GridBottomSheet(MDGridBottomSheet):
