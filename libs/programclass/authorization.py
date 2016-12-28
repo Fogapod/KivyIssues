@@ -8,26 +8,31 @@ from kivy.clock import Clock
 from libs.createpreviousportrait import create_previous_portrait
 from libs import vkrequests as vkr
 
-from kivymd import snackbar
-
 
 class GetAndSaveLoginPassword(object):
 
     def get_fields_login_password(self):
         login = self.input_dialog.ids.login.text
         password = self.input_dialog.ids.password.text
+
         return login, password
 
     def check_fields_login_password(self, text_button):
         login, password = self.get_fields_login_password()
 
         if login == '' or login.isspace():
-            msg = self.data.string_lang_field_login_empty
-            snackbar.make(msg)
+            self.notify(
+                title=self._app.data.string_lang_title,
+                message=self.data.string_lang_field_login_empty,
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
+            )
             return
         if password == '' or password.isspace():
-            msg = self.data.string_lang_field_password_empty
-            snackbar.make(msg)
+            self.notify(
+                title=self._app.data.string_lang_title,
+                message=self.data.string_lang_field_password_empty,
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
+            )
             return
 
         self.input_dialog.dismiss()
@@ -65,12 +70,12 @@ class AuthorizationOnVK(object):
                 text=self.data.string_lang_error_auth.format(info),
                 dismiss=True
             )
-
         else:
             self.config.set('General', 'authorization', 1)
             self.config.write()
 
-            if not os.path.exists(self.directory + '/data/images/avatar.png'):
+            if not os.path.exists(
+                    self.directory + '/data/images/avatar.png'):
                 self.load_avatar()
             if self.data.user_name == 'User':
                 self.set_user_name()
