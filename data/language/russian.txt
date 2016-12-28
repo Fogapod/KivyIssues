@@ -3,7 +3,7 @@
 # Файл русской языковой локализации
 #
 
-string_lang_title = 'KivyIssues'
+string_lang_title = 'Kivy Issues'
 string_lang_count_comments = 'Комментариев: {} '
 string_lang_answer_on_post = 'Ответить'
 string_lang_exit_key = 'Выход'
