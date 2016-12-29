@@ -1,0 +1,34 @@
+#:kivy 1.9.1
+#:import MDSpinner kivymd.spinner.MDSpinner
+
+<LoadScreen>:
+    name: 'load screen'
+
+    FloatLayout:
+
+        Image:
+            source: 'data/images/presplash_invert.png'
+            opacity: .1
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(0), dp(10)
+
+            Widget:
+            Widget:
+
+            Label:
+                id: status
+                text: 'Load...'
+                font_size: '18sp'
+                bold: True
+                color: app.data.text_color_from_hex
+
+            MDSpinner:
+                size_hint: None, None
+                size: dp(46), dp(46)
+                pos_hint: {'center_x': .5}
+                active: True
+
+            Widget:
+            Widget:
