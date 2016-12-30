@@ -2,10 +2,8 @@ Mercury/
 Mercury.modules
 *.log
 *.pyc
+*.pyo
 .idea
 .buildozer
 /venv/
 /program.ini
-/error.ini
-/data/issues
-tests.py
