@@ -2,7 +2,6 @@
 
 import time
 
-# from kivy.animation import Animation
 from kivy.uix.boxlayout import BoxLayout
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
@@ -39,20 +38,19 @@ class Post(BoxLayout):
 
     def answer_on_comments(self, *args):
         def callback(flag):
-            # Отправка комментария.
             if flag == 'SEND':
-                self.hide_input_form(input_text_form)
+                self._app.hide_input_form(input_text_form)
                 text_answer = input_text_form.ids.text_input.text
 
                 if text_answer.isspace() or text_answer == '':
                     return
 
+                # Отправка комментария.
                 comment_id, result = create_comment(
                     {'file': None, 'image': None, 'text': text_answer},
                     post_id=post_id, reply_to=self.commented_post_id
                 )
-                input_text_form.ids.text_input.text = ''
-                input_text_form.ids.text_input.message = ''
+                input_text_form.clear()
 
                 if not comment_id:
                     message = self._app.data.string_lang_sending_error
@@ -64,7 +62,7 @@ class Post(BoxLayout):
 
                 self._app.notify(
                     title=self._app.data.string_lang_title, message=message,
-                    app_icon=icon, timeout=2
+                    app_icon=icon
                 )
 
         def update_post(text_answer, post_id):
@@ -95,7 +93,7 @@ class Post(BoxLayout):
         post_id, count_comment, \
             self.commented_post_id, whom_name, input_text_form = args
 
-        self.show_input_form(input_text_form)
+        self._app.show_input_form(input_text_form)
         input_text_form.ids.text_input.message = 'Для: ' + whom_name
         input_text_form.ids.text_input.focus = True
         input_text_form.ids.text_input.text = \
@@ -103,21 +101,6 @@ class Post(BoxLayout):
         input_text_form.callback = callback
         # print('Call answer_on_comments:',
         #      post_id, self.commented_post_id, whom_name, input_text_form)
-
-    def show_input_form(self, instance):
-        '''Выводит окно формы для ввода текста.'''
-
-        # FIXME: не работает анимация.
-        # animation = Animation()
-        # animation += Animation(d=.5, y=0, t='out_cubic')
-        # animation.start(instance)
-
-        instance.pos_hint = {'y': 0}
-
-    def hide_input_form(self, instance):
-        '''Скрывает окно формы для ввода текста.'''
-
-        instance.pos_hint = {'y': -.3}
 
     def open_real_size_post(self):
         '''Устанавливает высоту поста в соответствии с высотой текстуры
