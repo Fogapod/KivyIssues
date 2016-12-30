@@ -23,18 +23,18 @@
                 hint_text: ctx.hint_text
             Widget:
             Widget:
-		    AnchorLayout:
-			    anchor_x: 'right'
-			    anchor_y: 'center'
-			    size_hint: 1, None
-			    height: dp(48)
-			    padding: dp(8), dp(8)
-			    spacing: dp(4)
-			    GridLayout:
-				    rows: 1
-				    size_hint: None, None
-				    height: dp(36)
-				    width: self.minimum_width
+            AnchorLayout:
+                anchor_x: 'right'
+                anchor_y: 'center'
+                size_hint: 1, None
+                height: dp(48)
+                padding: dp(8), dp(8)
+                spacing: dp(4)
+                GridLayout:
+                    rows: 1
+                    size_hint: None, None
+                    height: dp(36)
+                    width: self.minimum_width
                     MDFlatButton:
                         text: ctx.text_button_ok
                         on_release: ctx.events_callback(text_field.text)

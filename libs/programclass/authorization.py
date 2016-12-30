@@ -70,8 +70,7 @@ class AuthorizationOnVK(object):
             self.config.set('General', 'authorization', 1)
             self.config.write()
 
-            if not os.path.exists(
-                    '{}/data/images/avatar.png'.format(self.directory)):
+            if not os.path.exists(self.directory + '/data/images/avatar.png'):
                 self.load_avatar()
             if self.data.user_name == 'User':
                 self.set_user_name()
@@ -88,9 +87,9 @@ class AuthorizationOnVK(object):
 
             if avatar:
                 path_to_avatar_origin = \
-                    '{}/data/images/avatar_origin.png'.format(self.directory)
+                    self.directory + '/data/images/avatar_origin.png'
                 path_to_avatar_portrait = \
-                    '{}/data/images/avatar.png'.format(self.directory)
+                    self.directory + '/data/images/avatar.png'
                 with open(path_to_avatar_origin, 'wb') as avatar_origin:
                     avatar_origin.write(avatar)
 

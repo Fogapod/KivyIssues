@@ -26,7 +26,7 @@ class ShowPosts(object):
                                      комментируемого поста[;
         '''
 
-        self.app = app
+        self._app = app
         self.count_issues_comments = count_issues_comments
         self.only_questions = only_questions
         self.comments = comments
@@ -35,7 +35,9 @@ class ShowPosts(object):
         self.profiles_dict = {}
         self.items_list = None
         self.index_start = 0
-        self.index_end = current_number_page * self.app.data.count_issues
+        self.index_end = current_number_page * self._app.data.count_issues
+        # Имя предыдущего экрана.
+        self.previous_screen = self._app.manager.current
 
         if commented_post_info is None:
             self.commented_post_info = []
@@ -45,12 +47,13 @@ class ShowPosts(object):
     def set_chevron_back_screen(self):
         '''Устанавливает шеврон возврата к предыдущему экрану в ToolBar.'''
 
-        if self.app.screen.ids.action_bar.right_action_items[0][0] != \
+        if self._app.screen.ids.action_bar.right_action_items[0][0] != \
                 'comment-outline':
-            self.app.screen.ids.action_bar.right_action_items = \
+            self._app.screen.ids.action_bar.right_action_items = \
                 [['comment-outline', lambda x: None]]
-        self.app.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: None]]
+        self._app.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: self._app.back_screen(
+                self.previous_screen)]]
 
     @thread
     def _set_info_for_post(self):
@@ -58,7 +61,7 @@ class ShowPosts(object):
         атрибуту items_list.'''
 
         self.profiles_dict, self.items_list = \
-            self.app.get_info_from_post(
+            self._app.get_info_from_post(
                 self.count_issues_comments, self.post_id, self.comments
             )
 
@@ -67,7 +70,7 @@ class ShowPosts(object):
 
         def check_posts_dict(interval):
             if self.items_list:
-                box_posts = self.app.BoxPosts(
+                box_posts = self._app.BoxPosts(
                     profiles_dict=self.profiles_dict,
                     count_issues=self.count_issues_comments,
                     only_questions=self.only_questions,
@@ -83,19 +86,20 @@ class ShowPosts(object):
                     on_ref_press=lambda *args: self.jump_to_page(args)
                 )
 
+                #self.previous_screen = self._app.manager.current
+                #self.set_chevron_back_screen()
+
                 screen = Screen(name=name_screen)
                 screen.add_widget(box_posts)
-                self.app.manager.add_widget(screen)
-                self.app.manager.current = name_screen
+                self._app.manager.add_widget(screen)
+                self._app.manager.current = name_screen
 
-                self.old_screen = self.app.manager.current
                 Clock.unschedule(check_posts_dict)
-                self.app.dialog_progress.dismiss()
-                self.set_chevron_back_screen()
+                self._app.dialog_progress.dismiss()
 
-        self.app.show_progress(text=self.app.data.string_lang_wait)
+        self._app.show_progress(text=self._app.data.string_lang_wait)
 
-        if not self.app.manager.has_screen(name_screen):
+        if not self._app.manager.has_screen(name_screen):
             self._set_info_for_post()
 
         Clock.schedule_interval(check_posts_dict, 0)
@@ -109,20 +113,20 @@ class ShowPosts(object):
         if self.current_number_page == select_number_page:
             return
 
-        self.index_end = select_number_page * self.app.data.count_issues
-        self.index_start = self.index_end - self.app.data.count_issues
+        self.index_end = select_number_page * self._app.data.count_issues
+        self.index_start = self.index_end - self._app.data.count_issues
         self.current_number_page = select_number_page
         self.show_posts()
 
     def show_posts(self):
         if not self.comments:
             name_screen = \
-                'box posts page {}'.format(str(self.current_number_page))
+                'box posts page ' + str(self.current_number_page)
         else:
             name_screen = \
-                'box comments page {}'.format(str(self.current_number_page))
+                'box comments page ' + str(self.current_number_page)
 
-        if self.app.manager.has_screen(name_screen):
-            self.app.manager.current = name_screen
+        if self._app.manager.has_screen(name_screen):
+            self._app.manager.current = name_screen
         else:
             self.create_posts(name_screen)

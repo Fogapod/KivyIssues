@@ -39,10 +39,10 @@ class BoxPosts(BoxLayout):
     '''Если True - выводим комментарии.'''
 
     count_issues = StringProperty()
-    '''Лоличество получаемых постов/комментариев.'''
+    '''Количество получаемых постов/комментариев.'''
 
     current_number_page = NumericProperty()
-    '''Ввыбранная страница.'''
+    '''Выбранная страница.'''
 
     commented_post_info = ListProperty()
     '''Имя, аватар, дата, текст комментируемого поста.'''
@@ -90,8 +90,8 @@ class BoxPosts(BoxLayout):
                 '''Смотрите метод set_height_post.'''
 
                 box_posts.height = \
-                    dp(value[1] + box_posts.ids.title_post.height + \
-                    count_comments.height)
+                    dp(value[1] + box_posts.ids.title_post.height +
+                       count_comments.height)
 
             def set_height_post(instance, value):
                 '''Смотрите метод open_real_size_post класса Post.'''
@@ -120,7 +120,12 @@ class BoxPosts(BoxLayout):
                     )
                 )
                 box_posts.ids.title_post.secondary_text = date
+                # FIXME: UnicodeError: A Unicode character above '\uFFFF'
+                # was found; not supported - ошибка при присутствии в тексте
+                # постов/комментариев ебаных смайлов (как их я их ненавижу)
+                # при использовании третьей версии Python.
                 box_posts.ids.text_posts.text = text_post
+                # print(text_post.encode().decode("utf-8", 'ignore'))
                 box_posts.ids.text_posts.bind(
                     texture_size=set_height_post
                 )
@@ -130,7 +135,7 @@ class BoxPosts(BoxLayout):
                 box_posts.ids.title_post.icon = self.commented_post_info[1]
                 box_posts.ids.title_post.secondary_text = \
                     self.commented_post_info[2]
-                box_posts.ids.text_posts.text = text_post + '\n'
+                box_posts.ids.text_posts.text = text_post + u'\n'
                 # Выделяем имя автора комментрируемого поста канвасом
                 # темнее, чем комментарии к нему.
                 canvas_color = [
@@ -189,12 +194,12 @@ class BoxPosts(BoxLayout):
                 whom_id, whom_name = \
                     count.replace('[', '').replace(']', '').split('|')
                 text_post = text_post.replace(count, '')
-                text_post = u'[ref=Text post][b][color={}]\n{}[/b][/color]' \
-                            '{}[/ref]'.format(
+                text_post = u'[ref=Text post][b][color=%s]\n%s[/b][/color]' \
+                            '%s[/ref]' %(
                     get_hex_from_color(self._app.theme_cls.primary_color),
                     whom_name, self._app.mark_links_in_post(text_post))
             else:
-                text_post = u'\n{}'.format(text_post)
+                text_post = u'\n' + text_post
 
             if 'reply_to_comment' in items_dict:
                 commented_post_id = items_dict['id']
@@ -207,22 +212,23 @@ class BoxPosts(BoxLayout):
                 markup=True, halign="left", font_size='11sp',
                 color=self._app.theme_cls.primary_color,
                 )
+            whom_name = \
+                self.profiles_dict[items_dict['from_id']]['author_name']
             answer_label.bind(
                 size=answer_label.setter('text_size'),
-                on_ref_press=lambda post_id, commented_id_post:
-                    box_posts.answer_on_comments(
-                        self.post_id, commented_post_id
-                    )
+                on_ref_press=lambda *args: box_posts.answer_on_comments(
+                    self.post_id, commented_post_id, whom_name
+                )
             )
             box_posts.add_widget(answer_label)
         # Для комментируемого поста.
         elif self.comments and add_commented_post:
             text_post = self._app.mark_links_in_post(
-                u'\n{}'.format(self.commented_post_info[3])
+                u'\n' + self.commented_post_info[3]
             )
         # Для поста.
         else:
-            text_post = u'[ref=Post]{}[/ref]'.format(
+            text_post = u'[ref=Post]%s[/ref]' %(
                 self._app.mark_links_in_post(items_dict['text'])
             )
             # Иконка количества коментариев к посту.

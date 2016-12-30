@@ -107,13 +107,11 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.user_choice = False
         self.login = data.regdata['login']
         self.password = data.regdata['password']
-        self.load_all_kv_files('{}/libs/uix/kv'.format(self.directory))
-        self.load_all_kv_files(
-            '{}/libs/uix/kv/activity'.format(self.directory)
-        )
+        self.load_all_kv_files(self.directory + '/libs/uix/kv')
+        self.load_all_kv_files(self.directory + '/libs/uix/kv/activity')
         self.bottom_sheet = GridBottomSheet()
         self.config = ConfigParser()
-        self.config.read('{}/program.ini'.format(data.prog_path))
+        self.config.read(data.prog_path + '/program.ini')
         self.check_existence_issues()
         # None, если нет сохраненной формы неотправленного вопроса.
         self.saved_form = self.read_form()
@@ -259,9 +257,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             instance_banner = \
                 self.manager.current_screen.ids.banner.canvas.children[1]
             name_banner = choice(data.name_banners)
-            instance_banner.source = 'data/images/banners/{}'.format(
-               name_banner
-            )
+            instance_banner.source = 'data/images/banners/' + name_banner
         except AttributeError:
             pass
 
@@ -346,7 +342,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             dialog_manager.dismiss()
             if self.check_file_is(path_to_avatar, check_image=True):
                 new_path_to_avatar = \
-                    '{}/data/images/avatar.png'.format(self.directory)
+                    self.directory + '/data/images/avatar.png'
                 create_previous_portrait(path_to_avatar, new_path_to_avatar)
                 self.set_avatar(new_path_to_avatar)
             else:
@@ -375,7 +371,14 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
     def back_screen(self, name_screen):
         '''Менеджер экранов. Вызывается при нажатии Back Key
-        и шеврона "Назад" в ToolBar.'''
+        и шеврона "Назад" в ToolBar.
+
+        :type name_screen: str;
+        :param name_screen: имя Activity, которое будет установлено;
+
+        '''
+        print(name_screen)
+        print(self.manager.screens)
 
         name_current_screen = self.manager.current
         if name_current_screen == 'ask a question' and self.fill_out_form:
@@ -442,10 +445,9 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         for kv_file in os.listdir(directory_kv_files):
             if kv_file in ('bugreporter.kv', '__init__.py', '__init__.pyo',
                            '__init__.pyc') or \
-                    os.path.isdir('{}/{}'.format(
-                        directory_kv_files, kv_file)):
+                    os.path.isdir(directory_kv_files + '/' + kv_file):
                 continue
-            Builder.load_file('{}/{}'.format(directory_kv_files, kv_file))
+            Builder.load_file(directory_kv_files + '/' + kv_file)
 
     def show_bottom_sheet(self):
         self.bottom_sheet.open()
@@ -454,7 +456,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         '''Вызывается при выборе одного из пункта настроек программы.'''
 
         if key == 'language':
-            if not os.path.exists('{}/data/language/{}.txt'.format(
+            if not os.path.exists('%s/data/language/%s.txt' %(
                     self.directory, data.select_locale[value])):
                 dialog(
                     text=data.string_lang_not_locale.format(
@@ -466,7 +468,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.close_settings()
 
     def on_pause(self):
-        '''Ставит приложение на 'паузу' при выхоже из него.
+        '''Ставит приложение на 'паузу' при выходе из него.
         В противном случае запускает программу заново.'''
 
         return True

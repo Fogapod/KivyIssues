@@ -5,6 +5,8 @@ from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
 
 from libs.programclass.showposts import ShowPosts
+from libs.uix.dialogs import card
+from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.vkrequests import create_comment
 
 
@@ -18,6 +20,7 @@ class Post(BoxLayout):
 
     def __init__(self, **kwargs):
         super(Post, self).__init__(**kwargs)
+        self.commented_post_id = ''
         self.not_set_height_label = False
         self.ids.title_post.ids._lbl_primary.bold = True
         self.ids.title_post.ids._lbl_secondary.font_size = '11sp'
@@ -30,21 +33,50 @@ class Post(BoxLayout):
         if text_link == 'Post':
             self.open_real_size_post()
 
-    def answer_on_comments(self, post_id, commented_post_id):
-        """
-        :type post_id: str;
-        :param post_id: id комментируемого поста;
+    def answer_on_comments(self, *args):
+        def callback(flag):
+            print('Call with flag', flag)
+            # Удаляем имя адресата и кнопку удаления адресата.
+            if flag == 'DELL':
+                print('DELL')
+                form.ids.box.remove_widget(form.ids.label_to)
+                form.ids.box.remove_widget(form.ids.delete_whom)
+                self.commented_post_id = ''
+            elif flag == 'SEND':
+                print(self.commented_post_id)
+                text_answer = form.ids.text_input.text
+                if text_answer.isspace() or text_answer == '':
+                    dialog.dismiss()
+                    return
+                result = create_comment(
+                    {'file': None, 'image': None, 'text': text_answer},
+                    post_id=post_id, reply_to=self.commented_post_id
+                )
+                print(result)
 
-        :type commented_post_id: str;
-        :param commented_post_id: id комментария для которого пишется ответ;
+        # type post_id: str;
+        # param post_id: id комментируемого поста;
+        # ----------------------------------------
+        # type commented_post_id: str;
+        # param commented_post_id: id комментария для которого пишется ответ;
+        # ----------------------------------------
+        # type whom_name: list;
+        # param whom_name: кому - ['First name', 'Last name'];
+        post_id, self.commented_post_id, whom_name = args
 
-        """
-        #result = create_comment(
-        #    {'file': None, 'image': None, 'text': 'Text text'},
-        #    post_id=post_id, reply_to=commented_post_id
-        #)
-        #print(result)
-        print('Call answer_on_comments:', post_id, commented_post_id)
+        print('Call answer_on_comments:',
+              post_id, self.commented_post_id, whom_name)
+        form = FormInputText()
+        form.ids.text_input.background_normal = 'data/images/text_input.png'
+        form.avatar_icon = 'data/images/avatar.png'
+        form.add_file_icon = 'data/images/paperclip.png'
+        form.add_foto_icon = 'data/images/camera.png'
+        form.delete_whom_icon = 'data/images/exit.png'
+        form.label_color = self._app.theme_cls.primary_color
+        form.button_text_send = 'Отправить'
+        form.label_text_to = whom_name.split(' ')[0]
+        form.callback = callback
+        dialog = card(form, size=(.99, .3))
 
     def open_real_size_post(self):
         '''Устанавливает высоту поста в соответствии с высотой текстуры
@@ -67,7 +99,7 @@ class Post(BoxLayout):
         self.ids.text_posts.text_size = \
             (dp(self._app.window.width - 30),
              dp((self.height - self.ids.title_post.height) - 30))
-        self.ids.text_posts.text = u'\n{}'.format(self.ids.text_posts.text)
+        self.ids.text_posts.text = u'\n' + self.ids.text_posts.text
         self.ids.text_posts.bind(
             on_ref_press=lambda instance, text_link: none
         )
