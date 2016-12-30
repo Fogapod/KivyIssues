@@ -167,7 +167,8 @@ class BoxPosts(FloatLayout):
             с компьютера/мобильного/offline.'''
 
             if not add_commented_post:
-                if self.profiles_dict[items_dict['from_id']]['author_online']:
+                if self.profiles_dict[
+                        items_dict['from_id']]['author_online']:
                     icon = self._app.data.device_online[
                         self.profiles_dict[items_dict['from_id']]['device']
                     ]
