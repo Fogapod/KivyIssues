@@ -34,24 +34,24 @@ class Post(BoxLayout):
             self.open_real_size_post()
         # TODO: добавить обработку ссылок в тексте.
 
+    def update_post(self, text_answer, post_id, whom_name):
+        '''Добавляет в бокс списка комментариев только что отправленное
+        сообщение.'''
+
+        items_dict = {'text': text_answer, 'id': post_id,
+                      'date': time.time(), 'from_id': 1}
+        self._box_posts.profiles_dict = \
+            {1:
+                {'author_name': whom_name, 'author_online': 1,
+                 'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
+
+        self._box_posts.comments = True
+        post, author_name = self._box_posts.add_info_for_post(
+            items_dict=items_dict, add_commented_post=False,
+        )
+        self._box_posts.ids.list_posts.add_widget(post)
+
     def answer_on_comments(self, *args):
-        def update_post(text_answer, post_id):
-            '''Добавляет в бокс списка комментариев только что отправленное
-            сообщение.'''
-
-            items_dict = {'text': text_answer, 'id': post_id,
-                          'date': time.time(), 'from_id': 1}
-            self._box_posts.profiles_dict = \
-                {1:
-                     {'author_name': whom_name, 'author_online': 1,
-                      'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
-
-            self._box_posts.comments = True
-            post, author_name = self._box_posts.add_info_for_post(
-                items_dict=items_dict, add_commented_post=False,
-            )
-            self._box_posts.ids.list_posts.add_widget(post)
-
         # type post_id: str;
         # param post_id: id комментируемого поста;
         # ----------------------------------------
@@ -70,10 +70,9 @@ class Post(BoxLayout):
         input_text_form.ids.text_input.text = '%s, ' % whom_name.split(' ')[0]
         input_text_form.callback = \
             lambda *args: self._app.callback_for_input_text(
-                args, post_id, commented_post_id, input_text_form, self
+                args, post_id, commented_post_id, input_text_form, self,
+                whom_name
             )
-        # print('Call answer_on_comments:',
-        #      post_id, commented_post_id, whom_name, input_text_form)
 
     def open_real_size_post(self):
         '''Устанавливает высоту поста в соответствии с высотой текстуры
