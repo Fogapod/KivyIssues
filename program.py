@@ -31,6 +31,8 @@ from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
 from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
 from libs.uix.kv.activity.baseclass.previous import Previous
 
+from libs.vkrequests import create_issue, create_comment
+
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
 from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
@@ -108,6 +110,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.show_posts = None
         self.instance_dialog = None
         self.dialog_progress = None
+        self.attach_file = None
+        self.attach_image = None
         self.group_info = None
         self.path_to_attach_file = None
         self.login = data.regdata['login']
@@ -272,13 +276,69 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             )
         )
 
+    def callback_for_input_text(self, *args):
+        current_screen = self.screen.ids.manager.current
+        # flag - 'FILE', 'FOTO', 'SEND'
+        if current_screen == 'previous':  # форма из главного экрана
+            flag = args[0]
+        else:  # форма из списка комментариев
+            flag = args[0][0]
+
+        if flag in ('FILE', 'FOTO'):
+            self.add_content(flag)
+        elif flag == 'SEND':
+            if current_screen == 'previous':
+                input_text_form = self.screen.ids.previous.ids.input_text_form
+                text_from_form = input_text_form.ids.text_input.text
+            else:
+                input_text_form = args[3]
+                self.hide_input_form(input_text_form)
+                text_from_form = input_text_form.ids.text_input.text
+
+            if text_from_form.isspace() or text_from_form != '':
+                # Отправка вопроса.
+                if current_screen == 'previous':
+                    result, text_error = create_issue(
+                        {'file': self.attach_file,
+                         'image': self.attach_image,
+                         'issue': text_from_form,
+                         'theme': ''}
+                     )
+                else:
+                    # Отправка комментария.
+                    result, text_error = create_comment(
+                        {'file': self.attach_file,
+                         'image': self.attach_image,
+                         'text': text_from_form},
+                        post_id=args[1], reply_to=args[2]
+                    )
+                input_text_form.clear()
+
+                if result:
+                    message = data.string_lang_sending
+                    icon = '%s/data/images/send.png' % self.directory
+
+                    if current_screen != 'previous':
+                        post_instance = args[4]
+                        post_instance.update_post(
+                            text_from_form, args[1], args[2]
+                        )
+                else:
+                    message = data.string_lang_sending_error
+                    icon = '%s/data/images/error.png' % self.directory
+
+                self.notify(
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
+                )
+
     def add_content(self, flag):
         '''Выводит файловый менеджер для выбора файлов, которые будут
         прикреплены к отправляемому сообщению.'''
 
         def select_file(path_to_file):
             dialog_manager.dismiss()
-            self.path_to_attach_file, name_file = os.path.split(path_to_file)
+            path_to_attach_file, name_file = os.path.split(path_to_file)
             ext_file = os.path.splitext(name_file)[1]
 
             if ext_file not in data.possible_files:
@@ -294,13 +354,18 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                     title=data.string_lang_title, message=message,
                     app_icon=icon
                 )
+            # TODO: добавить визуализацию прикрепленных файлов.
             else:
-                print(self.path_to_attach_file)
+                if flag == 'FILE':
+                    self.attach_file = path_to_file
+                else:
+                    self.attach_image = path_to_file
+
                 input_text_form = \
                     self.screen.ids.previous.ids.input_text_form
                 text = input_text_form.ids.text_input.text
                 input_text_form.ids.text_input.text = \
-                    '%s\n\n[%s]' % (text, name_file)
+                    '%s\n[#Прикрепленный файл - %s]' % (text, name_file)
 
         dialog_manager, file_manager = file_dialog(
             title='Choice', path='.', filter='files',
