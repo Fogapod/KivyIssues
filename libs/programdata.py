@@ -94,10 +94,7 @@ dict_language = {
     string_lang_on_english: 'english'
 }
 
-possible_files = {
-    string_lang_wrong_image: ['.png', '.jpg', '.jpeg', '.gif'],
-    string_lang_wrong_file: ['.zip', '.txt']
-}
+possible_files = ['.png', '.jpg', '.jpeg', '.gif', '.zip', '.txt']
 
 menu_items = [string_lang_current_password, string_lang_new_password]
 
