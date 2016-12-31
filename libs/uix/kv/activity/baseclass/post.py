@@ -7,7 +7,6 @@ from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
 
 from libs.programclass.showposts import ShowPosts
-from libs.vkrequests import create_comment
 
 
 class Post(BoxLayout):
@@ -23,7 +22,6 @@ class Post(BoxLayout):
 
     def __init__(self, **kwargs):
         super(Post, self).__init__(**kwargs)
-        self.commented_post_id = ''
         self.not_set_height_label = False
         self.ids.title_post.ids._lbl_primary.bold = True
         self.ids.title_post.ids._lbl_secondary.font_size = '11sp'
@@ -37,34 +35,6 @@ class Post(BoxLayout):
         # TODO: добавить обработку ссылок в тексте.
 
     def answer_on_comments(self, *args):
-        def callback(flag):
-            if flag == 'SEND':
-                self._app.hide_input_form(input_text_form)
-                text_answer = input_text_form.ids.text_input.text
-
-                if text_answer.isspace() or text_answer == '':
-                    return
-
-                # Отправка комментария.
-                comment_id, result = create_comment(
-                    {'file': None, 'image': None, 'text': text_answer},
-                    post_id=post_id, reply_to=self.commented_post_id
-                )
-                input_text_form.clear()
-
-                if not comment_id:
-                    message = self._app.data.string_lang_sending_error
-                    icon = '%s/data/images/error.png' % self._app.directory
-                else:
-                    update_post(text_answer, post_id)
-                    message = self._app.data.string_lang_sending
-                    icon = '%s/data/images/send.png' % self._app.directory
-
-                self._app.notify(
-                    title=self._app.data.string_lang_title, message=message,
-                    app_icon=icon
-                )
-
         def update_post(text_answer, post_id):
             '''Добавляет в бокс списка комментариев только что отправленное
             сообщение.'''
@@ -78,7 +48,7 @@ class Post(BoxLayout):
 
             self._box_posts.comments = True
             post, author_name = self._box_posts.add_info_for_post(
-                items_dict=items_dict, add_commented_post=False
+                items_dict=items_dict, add_commented_post=False,
             )
             self._box_posts.ids.list_posts.add_widget(post)
 
@@ -91,16 +61,19 @@ class Post(BoxLayout):
         # type whom_name: list;
         # param whom_name: кому - 'First name Last name';
         post_id, count_comment, \
-            self.commented_post_id, whom_name, input_text_form = args
+            commented_post_id, whom_name, input_text_form = args
 
         self._app.show_input_form(input_text_form)
-        input_text_form.ids.text_input.message = 'Для: ' + whom_name
+        input_text_form.ids.text_input.message = \
+            self._app.data.string_lang_for + whom_name
         input_text_form.ids.text_input.focus = True
-        input_text_form.ids.text_input.text = \
-            '%s, ' % whom_name.split(' ')[0]
-        input_text_form.callback = callback
+        input_text_form.ids.text_input.text = '%s, ' % whom_name.split(' ')[0]
+        input_text_form.callback = \
+            lambda *args: self._app.callback_for_input_text(
+                args, post_id, commented_post_id, input_text_form, self
+            )
         # print('Call answer_on_comments:',
-        #      post_id, self.commented_post_id, whom_name, input_text_form)
+        #      post_id, commented_post_id, whom_name, input_text_form)
 
     def open_real_size_post(self):
         '''Устанавливает высоту поста в соответствии с высотой текстуры
