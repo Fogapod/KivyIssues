@@ -26,7 +26,6 @@ from libs.uix.kv.activity.baseclass.startscreen import StartScreen
 from libs.uix.kv.activity.baseclass.post import Post
 from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
 from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
-from libs.uix.kv.activity.baseclass.scrmanager import ScrManager
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
 from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
@@ -109,8 +108,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.show_posts = None
         self.instance_dialog = None
         self.dialog_progress = None
-        self.user_choice = False
         self.group_info = None
+        self.path_to_attach_file = None
         self.login = data.regdata['login']
         self.password = data.regdata['password']
         self.path_to_avatar = self.directory + '/data/images/avatar.png'
@@ -273,65 +272,40 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             )
         )
 
-    def check_file_is(self, path_to_file, check_image=False):
-        '''Проверяет корректность прикрепляемых файлов по расширению.'''
-
-        if check_image:
-            possible_files_ext = \
-                data.possible_files[data.string_lang_add_image][0]
-        else:
-            possible_files_ext = \
-                data.possible_files[data.string_lang_add_file][0]
-
-        if os.path.splitext(path_to_file)[1] in possible_files_ext:
-            return True
-
-        return False
-
-    def add_content(self, instance_selection):
+    def add_content(self, flag):
         '''Выводит файловый менеджер для выбора файлов, которые будут
-        прикреплены к отправляемому сообщению.
-
-        :param instance_selection:
-            <libs.uix.kv.activity.baseclass.selection.Selection>;
-        :param instance_selection:
-            <class 'kivy.weakproxy.WeakProxy'>;
-
-        '''
-
-        def dialog_dismiss():
-            if not self.user_choice:
-                instance_selection.ids.check.active = False
-            else:
-                self.user_choice = False
+        прикреплены к отправляемому сообщению.'''
 
         def select_file(path_to_file):
-            self.user_choice = True
             dialog_manager.dismiss()
-            name_check = instance_selection.ids.label.text
-            self.path_to_file, name_file = os.path.split(path_to_file)
+            self.path_to_attach_file, name_file = os.path.split(path_to_file)
+            ext_file = os.path.splitext(name_file)[1]
 
-            if self.check_file_is(path_to_file) or \
-                    self.check_file_is(path_to_file, check_image=True):
-                instance_selection.ids.label.text = name_file
-            else:
-                if os.path.splitext(name_file) in \
-                        data.possible_files[data.string_lang_add_file][0]:
-                    icon = '%s/data/images/paperclip_red.png' % self.directory
+            if ext_file not in data.possible_files:
+                if flag == 'FILE':
+                    icon = \
+                        '%s/data/images/paperclip_red.png' % self.directory
+                    message = data.string_lang_wrong_file
                 else:
                     icon = '%s/data/images/camera_red.png' % self.directory
+                    message = data.string_lang_wrong_image
 
                 self.notify(
-                    title=self._app.data.string_lang_title,
-                    message=data.possible_files[name_check][1], app_icon=icon
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
                 )
-                instance_selection.ids.check.active = False
+            else:
+                print(self.path_to_attach_file)
+                input_text_form = \
+                    self.screen.ids.previous.ids.input_text_form
+                text = input_text_form.ids.text_input.text
+                input_text_form.ids.text_input.text = \
+                    '%s\n\n[%s]' % (text, name_file)
 
         dialog_manager, file_manager = file_dialog(
             title='Choice', path='.', filter='files',
-            events_callback=select_file
+            size=(.9, .9), events_callback=select_file
         )
-        dialog_manager.on_dismiss = dialog_dismiss
 
     def set_avatar(self, path_to_avatar):
         self.nav_drawer.ids.avatar.source = path_to_avatar
