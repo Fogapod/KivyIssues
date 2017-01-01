@@ -582,10 +582,14 @@ def send_message(**kwargs):
     :user_id: id пользователя
     :group_id: id беседы
     :text: текст сообщения
-    :messages_to_forward: массив id сообщений, которые нужно переслать (опционально)
+    :messages_to_forward:
+        строка с id сообщений, которые нужно переслать через запятую ('1,2,3') (опционально)
     :rnd_id:
         специальный идентификатор, необходимый для предотвращения отправки повторяющихся 
         сообщений. Не нужно указывать, если в приложении не будет реализована функция автоответа
+    :file: путь к документу (опционально)
+    :image: путь к фотографии (опционально)
+
     :Возвращает: id нового сообщения
     """
     gid = None
@@ -596,9 +600,25 @@ def send_message(**kwargs):
     forward = kwargs.get('messages_to_forward')
     rnd_id = kwargs.get('rnd_id')
 
+    path_to_file = kwargs.get('file')
+    path_to_image = kwargs.get('image')
+
+    attachments = []
+
+    doc = upload_doc(path=path_to_file)[0]
+    pic = attach_pic_to_message(path=path_to_image)[0]
+
+    if doc:
+        attachments.append(
+            'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0]['id']))
+    if pic:
+        attachments.append(
+            'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
+    print attachments
     response = api.messages.send(peer_id=uid,
         message=text, forward_messages=forward,
-        chat_id=gid, random_id=rnd_id
+        chat_id=gid, random_id=rnd_id,
+        attachment=attachments
     )
 
     return response
