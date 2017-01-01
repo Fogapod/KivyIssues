@@ -201,7 +201,7 @@ def create_issue(*args):
 
     attachments = []
 
-    doc = attach_doc_to_wall_post(path=path_to_file)[0]
+    doc = upload_doc(path=path_to_file)[0]
     pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
@@ -233,7 +233,7 @@ def edit_issue(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc_to_wall_post(path=path_to_file)[0]
+        doc = upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -241,7 +241,7 @@ def edit_issue(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc_to_wall_post(path=path_to_image)[0]
+        pic = upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -267,7 +267,7 @@ def del_issue(**kwargs):
 
 # Использование извне не предполагается.
 @vk_request_errors
-def attach_doc_to_wall_post(**kwargs):
+def upload_doc(**kwargs):
     """
     :path: путь к документу
 
@@ -388,7 +388,7 @@ def create_comment(*args, **kwargs):
 
     attachments = []
 
-    doc = attach_doc_to_wall_post(path=path_to_file)[0]
+    doc = upload_doc(path=path_to_file)[0]
     pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
@@ -421,7 +421,7 @@ def edit_comment(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc_to_wall_post(path=path_to_file)[0]
+        doc = upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -429,7 +429,7 @@ def edit_comment(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc_to_wall_post(path=path_to_image)[0]
+        pic = upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
