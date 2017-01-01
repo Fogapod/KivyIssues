@@ -202,6 +202,7 @@ def create_issue(*args):
     attachments = []
 
     doc = attach_doc_to_wall_post(path=path_to_file)[0]
+    pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
