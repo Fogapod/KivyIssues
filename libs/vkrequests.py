@@ -604,6 +604,39 @@ def send_message(**kwargs):
     return response
 
 
+# Использование извне не предполагается.
+@vk_request_errors
+def attach_pic_to_message(**kwargs):
+    """
+    :path: путь к фотографии;
+
+    Возвращает:
+    #TODO: описать, что же возвращает этот метод
+
+    """
+    path = kwargs['path']
+
+    if path:
+        upload_data = api.photos.getMessagesUploadServer(group_id=GROUP_ID)
+
+        pic = {'photo': open(path, 'rb')}
+
+        response = r.post(upload_data['upload_url'], files=pic)
+        json_data = response.json()
+
+        if json_data['photo'] == '[]':
+            raise Exception('Failed loading picture')
+
+        try:
+            response = api.photos.saveMessagesPhoto(group_id=GROUP_ID,
+                                                photo=json_data['photo'],
+                                                server=json_data['server'],
+                                                hash=json_data['hash'])
+            return response
+        except Exception as e:
+            raise Exception('Failed loading picture ' + str(e))
+
+
 @vk_request_errors
 def get_message_long_poll_data():
     """
