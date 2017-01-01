@@ -211,7 +211,7 @@ def create_issue(*args):
         attachments.append(
             'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
 
-    return api.wall.post(owner_id=MGROUP_ID, message=theme_text,
+    return api.wall.post(owner_id=MGROUP_ID, message=issue_text,
                          attachments=attachments)
 
 
@@ -226,7 +226,6 @@ def edit_issue(**kwargs):
     pic_id = kwargs.get('pic_id')
     pic_oid = kwargs.get('pic_oid')
 
-    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     issue_id = kwargs['issue_id']
@@ -249,7 +248,7 @@ def edit_issue(**kwargs):
     elif pic_id and pic_oid:
         attachments.append('pic' + pic_oid + '_' + pic_id)
 
-    api.wall.edit(owner_id=MGROUP_ID, message=theme_text + issue_text,
+    api.wall.edit(owner_id=MGROUP_ID, message=issue_text,
                   attachments=attachments, post_id=issue_id)
 
 
