@@ -186,8 +186,8 @@ def create_issue(*args):
     agrs:
     :issue_data:
         {'file': путь к документу или None
-        'image':путь к фотографии или None
-        'theme':тема вопроса,'issue':основной текст вопроса
+        'image': путь к фотографии или None
+        'issue': текст вопроса
         }
 
     Возвращает: id созданной записи ( int )
@@ -542,7 +542,7 @@ def get_messages_list(**kwargs):
 
         }
     """
-    count = kwargs.get('count',20)
+    count = kwargs.get('count', 20)
     offset = kwargs.get('offset', 0)
 
     response = api.messages.getDialogs(
@@ -567,7 +567,7 @@ def get_messages(**kwargs):
         Массив сообщений
     """
     uid = kwargs['user_id']
-    count = kwargs.get('count',100)
+    count = kwargs.get('count', 100)
     offset = kwargs.get('offset', 0)
 
     response = api.messages.getHistory(
