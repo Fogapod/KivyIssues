@@ -578,6 +578,34 @@ def get_messages(**kwargs):
 
 
 @vk_request_errors
+def send_message(**kwargs):
+    """
+    :user_id: id пользователя
+    :group_id: id беседы
+    :text: текст сообщения
+    :messages_to_forward: массив id сообщений, которые нужно переслать (опционально)
+    :rnd_id:
+        специальный идентификатор, необходимый для предотвращения отправки повторяющихся 
+        сообщений. Не нужно указывать, если в приложении не будет реализована функция автоответа
+    :Возвращает: id нового сообщения
+    """
+    gid = None
+    uid = kwargs.get('user_id')
+    if not uid:
+        gid = kwargs['group_id']
+    text = kwargs['text']
+    forward = kwargs.get('messages_to_forward')
+    rnd_id = kwargs.get('rnd_id')
+
+    response = api.messages.send(peer_id=uid,
+        message=text, forward_messages=forward,
+        chat_id=gid, random_id=rnd_id
+    )
+
+    return response
+
+
+@vk_request_errors
 def get_message_long_poll_data():
     """
     Возвращает: словарь ( dict )
