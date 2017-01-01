@@ -190,20 +190,18 @@ def create_issue(*args):
         'theme':тема вопроса,'issue':основной текст вопроса
         }
 
-    Возвращает: id созданной записи ( str )
+    Возвращает: id созданной записи ( int )
 
     """
 
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
-    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     attachments = []
 
-    doc = attach_doc(path=path_to_file)[0]
-    pic = attach_pic(path=path_to_image)[0]
+    doc = attach_doc_to_wall_post(path=path_to_file)[0]
 
     if doc:
         attachments.append(
@@ -212,7 +210,7 @@ def create_issue(*args):
         attachments.append(
             'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
 
-    return api.wall.post(owner_id=MGROUP_ID, message=theme_text + issue_text,
+    return api.wall.post(owner_id=MGROUP_ID, message=theme_text,
                          attachments=attachments)
 
 
@@ -235,7 +233,7 @@ def edit_issue(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc(path=path_to_file)[0]
+        doc = attach_doc_to_wall_post(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -243,7 +241,7 @@ def edit_issue(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc(path=path_to_image)[0]
+        pic = attach_doc_to_wall_post(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -269,7 +267,7 @@ def del_issue(**kwargs):
 
 # Использование извне не предполагается.
 @vk_request_errors
-def attach_doc(**kwargs):
+def attach_doc_to_wall_post(**kwargs):
     """
     :path: путь к документу
 
@@ -301,7 +299,7 @@ def attach_doc(**kwargs):
 
 # Использование извне не предполагается.
 @vk_request_errors
-def attach_pic(**kwargs):
+def attach_pic_to_wall_post(**kwargs):
     """
     :path: путь к фотографии;
 
@@ -390,8 +388,8 @@ def create_comment(*args, **kwargs):
 
     attachments = []
 
-    doc = attach_doc(path=path_to_file)[0]
-    pic = attach_pic(path=path_to_image)[0]
+    doc = attach_doc_to_wall_post(path=path_to_file)[0]
+    pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -423,7 +421,7 @@ def edit_comment(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc(path=path_to_file)[0]
+        doc = attach_doc_to_wall_post(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -431,7 +429,7 @@ def edit_comment(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc(path=path_to_image)[0]
+        pic = attach_doc_to_wall_post(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
