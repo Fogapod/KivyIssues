@@ -1,69 +1,76 @@
-#: kivy 1.9.1
-#: import Clock kivy.clock.Clock
-#: import MDFlatButton kivymd.button.MDFlatButton
-#: import webbrowser webbrowser
+#:kivy 1.9.1
+#:import webbrowser webbrowser
+
+# Главный экран приложения.
 
 <Previous>:
     name: 'previous'
+    _app: app
 
     BoxLayout:
-        id: root_box
         orientation: 'vertical'
-        padding: dp(5), dp(10)
+        padding: dp(5), dp(15)
         spacing: dp(10)
 
         BoxLayout:
-            size_hint_y: .1
+            spacing: dp(10)
+            size_hint_y: .2
 
-            Image:
-                source: 'data/images/kivy_logo.png'
+            # Лого группы.
+            AsyncImage:
+                id: group_title
 
+            # Название группы.
             Label:
-                text: app.data.string_lang_kivy_in_vk
-                color: app.theme_cls.primary_color
-                font_size: '18sp'
-                bold: True
+                id: group_name
+                markup: True
+                size_hint_x: None
+                width: self.texture_size[0]
+                halign: 'left'
+                color: app.data.text_color_from_hex
 
-            Image:
-                source: 'data/images/vk_logo.png'
+        # Ссылка на группу
+        Label:
+            id: group_link
+            size_hint: None, None
+            height: dp(20)
+            width: self.texture_size[0]
+            halign: 'left'
+            color: app.theme_cls.primary_color
+            font_size: '10sp'
+            markup: True
+            on_ref_press: webbrowser.open(args[1])
 
-        Widget:
-            id: banner
-            size_hint_y: .45
-            canvas:
+        # Количество участников.
+        Label:
+            id: group_people
+            size_hint_y: None
+            height: dp(25)
+            font_size: '12sp'
+            bold: True
+
+            canvas.before:
+                Color:
+                    rgba: app.theme_cls.primary_color
                 Rectangle:
-                    pos: self.pos
                     size: self.size
-                    source: 'data/images/banners/processcraft-featured.jpg'
+                    pos: self.pos
 
         ScrollView:
-            size_hint_y: .4
+            size_hint_y: .5
 
+            # Описание группы.
             Label:
-                text: app.data.string_lang_introduction
-                markup: True
+                id: description
                 color: app.data.text_color_from_hex
                 font_size: '12sp'
                 text_size: self.width, None
                 size_hint_y: None
                 height: self.texture_size[1]
 
-        MDFlatButton:
-            id: button_question
-            text: app.data.string_lang_ask_a_question
-            pos_hint: {'center_x': .5}
-            theme_text_color: 'Custom'
-            text_color: app.theme_cls.primary_color
-
-        Label:
-            text:
-                '[color={}]{} -[/color] [ref={REF}]{REF}[/ref]'.format(\
-                app.data.text_color, app.data.string_lang_official_group,\
-                REF=app.data.string_lang_link_on_group)
-            markup: True
-            color: app.theme_cls.primary_color
-            font_size: '10sp'
-            size_hint: None, .05
-            width: self.texture_size[0]
-            halign: 'left'
-            on_ref_press: webbrowser.open(app.data.string_lang_link_on_group)
+        # Форма для ввода текста.
+        # /libs/uix/kv/activity/form_input_text.kv
+        FormInputText:
+            id: input_text_form
+            size_hint_y: .3
+            pos_hint: {'x': 0}

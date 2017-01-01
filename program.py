@@ -3,9 +3,9 @@
 import os
 import sys
 
-from random import choice
 
 from kivy.app import App
+# from kivy.animation import Animation
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
@@ -25,16 +25,19 @@ from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
 from libs.uix.kv.activity.baseclass.post import Post
 from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
-from libs.uix.kv.activity.baseclass.scrmanager import ScrManager
+from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.uix.kv.activity.baseclass.selection import Selection
+from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
 from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
-from libs.uix.kv.activity.baseclass.askaquestion import AskAQuestion
 from libs.uix.kv.activity.baseclass.previous import Previous
 
-from kivymd import snackbar
+from libs.vkrequests import create_issue, create_comment
+
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
 from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
+
+from plyer import notification
 
 
 class GridBottomSheet(MDGridBottomSheet):
@@ -42,7 +45,8 @@ class GridBottomSheet(MDGridBottomSheet):
     # Переопределил метод, поскольку в оригинале item просто биндился
     # на закрытие меню - item.bind(on_release=lambda x: self.dismiss()),
     # не вызывая переданную ему функцию.
-    # TODO: сообщить автору KivyMD о проблеме...
+    # TODO: в примере kitchen_sink.py KivyMD callback вызывается успешно -
+    # пересмотреть свой код.
     def add_item(self, text, callback, icon_src):
         item = GridBSItem(
             caption=text,
@@ -59,7 +63,12 @@ class NavDrawer(NavigationDrawer):
     _app = ObjectProperty()
 
     def show_posts(self, count_issues=None, only_questions=True):
-        '''Вызывает функцию, выводящую Activity с постами группы.'''
+        '''Вызывает функцию, выводящую Activity с постами группы.
+
+        :param only_questions: все или только свои посты;
+        :param count_issues: количество постов, str;
+
+        '''
 
         def _show_posts(interval):
             if not count_issues:
@@ -80,8 +89,8 @@ class NavDrawer(NavigationDrawer):
 
 
 class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
-              _class.IssueForm, _class.AuthorizationOnVK,
-              _class.GetAndSaveLoginPassword, _class.WorkWithPosts):
+              _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword,
+              _class.WorkWithPosts):
     '''Функционал программы.'''
 
     title = data.string_lang_title
@@ -100,21 +109,19 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.BoxPosts = BoxPosts
         self.show_posts = None
         self.instance_dialog = None
-        self.fill_out_form = None
         self.dialog_progress = None
-        self.set_default_text_check = True
-        self.open_filemanager_on_check = True
-        self.user_choice = False
+        self.attach_file = None
+        self.attach_image = None
+        self.group_info = None
+        self.path_to_attach_file = None
         self.login = data.regdata['login']
         self.password = data.regdata['password']
+        self.path_to_avatar = self.directory + '/data/images/avatar.png'
         self.load_all_kv_files(self.directory + '/libs/uix/kv')
         self.load_all_kv_files(self.directory + '/libs/uix/kv/activity')
         self.bottom_sheet = GridBottomSheet()
         self.config = ConfigParser()
         self.config.read(data.prog_path + '/program.ini')
-        self.check_existence_issues()
-        # None, если нет сохраненной формы неотправленного вопроса.
-        self.saved_form = self.read_form()
         self.screen = StartScreen()  # главный экран программы
         self.manager = self.screen.ids.manager
         self.nav_drawer = NavDrawer(title=data.string_lang_menu)
@@ -142,20 +149,48 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             lambda x: self.authorization_from_button_sheet(),
             'data/images/auth.png'
         )
-        Clock.schedule_interval(self.set_banner, 8)
 
         if not self.login or not self.password:
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
             self._authorization_on_vk(self.login, self.password)
 
+        Clock.schedule_interval(self.check_info_group, 1)
+
         return self.screen
+
+    def check_info_group(self, interval):
+        '''Устанавливает значения переменных для экрана Previous.'''
+
+        if self.group_info:
+            screen_previous = self.screen.ids.previous
+
+            screen_previous.ids.group_title.source = \
+                self.group_info['photo_200']
+            screen_previous.ids.group_name.text = \
+                '[size=14][b]%s[/b][/size]\n[size=11]%s[/size]' % (
+                    self.group_info['name'], self.group_info['status']
+                )
+            screen_previous.ids.group_link.text = \
+                '[ref={link}]{link}[/ref]'.format(
+                    link='https://vk.com/%s' % self.group_info['screen_name']
+                )
+            screen_previous.ids.group_people.text = \
+                '%s %s' % (
+                    data.string_lang_people, self.group_info['members_count']
+                )
+            screen_previous.ids.description.text = \
+                self.group_info['description']
+            screen_previous.ids.input_text_form.ids.text_input.message = \
+                data.string_lang_ask_a_question
+
+            Clock.unschedule(self.check_info_group)
 
     def authorization_from_button_sheet(self):
         '''Выводит список с пунктами 'Текущий пароль/Новый пароль' при
         выборе пункта меню "Авторизация".'''
 
-        def events_callback(text_item):
+        def callback(text_item):
             dialog.dismiss()
 
             if text_item == data.string_lang_current_password:
@@ -164,11 +199,11 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 Clock.schedule_once(self.show_dialog_registration, 0)
 
         self.bottom_sheet.dismiss()
-        self._list_plugins = Lists(
-            list_items=data.menu_items, events_callback=events_callback,
+        current_or_new_password_list = Lists(
+            list_items=data.menu_items, events_callback=callback,
             flag='single_list'
         )
-        dialog = card(self._list_plugins)
+        dialog = card(current_or_new_password_list)
 
     def show_login_and_password(self, instance_selection):
         '''
@@ -188,6 +223,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             self.input_dialog.ids.password.password = True
 
     def show_dialog_registration(self, interval):
+        '''Окно с формой регистрации.'''
+
         self.input_dialog = input_dialog(
             title=self.data.string_lang_registration,
             hint_text_login='Login', password=True, dismiss=False,
@@ -211,124 +248,129 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 events_callback=lambda x: func_dismiss()
             )
 
+    def show_input_form(self, instance):
+        '''Выводит окно формы для ввода текста.'''
+
+        # FIXME: не работает анимация.
+        # animation = Animation()
+        # animation += Animation(d=.5, y=0, t='out_cubic')
+        # animation.start(instance)
+
+        instance.pos_hint = {'y': 0}
+
+    def hide_input_form(self, instance):
+        '''Скрывает окно формы для ввода текста.'''
+
+        instance.pos_hint = {'y': -.3}
+
     def set_dialog_on_fail_authorization(self):
         '''Диалоговое окно с просьбой авторзироваться.'''
 
         # TODO: Добавить прерывание запроса данных с сервера.
         self.dialog_progress.dismiss()
         self.screen.ids.previous.ids.button_question.bind(
-            on_release=lambda x: snackbar.make(
-                self.data.string_lang_please_authorization)
+            on_release=lambda *args: self.notify(
+                title=data.string_lang_title,
+                message=data.string_lang_please_authorization,
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
+            )
         )
 
-    def dialog_restore_form(self):
-        '''Диалог восстановления сохраненной формы вопроса.'''
+    def callback_for_input_text(self, *args):
+        current_screen = self.screen.ids.manager.current
+        # flag - 'FILE', 'FOTO', 'SEND'
+        if current_screen == 'previous':  # форма из главного экрана
+            flag = args[0]
+        else:  # форма из списка комментариев
+            flag = args[0][0]
 
-        def set_activity_form():
-            self.close_dialog()
-            self.manager.current = 'ask a question'
-            self.saved_form = None
-
-        def restore_form():
-            self.set_default_text_check = False
-            self.open_filemanager_on_check = False
-            self.restore_form()
-            set_activity_form()
-            self.open_filemanager_on_check = True
-
-        def clear_data():
-            self.clear_data()
-            self.close_dialog()
-            self.saved_form = None
-
-        self.open_dialog(
-            text=data.string_lang_old_form_exists, dismiss=True,
-            buttons=[
-                [data.string_lang_yes, lambda *x: restore_form()],
-                [data.string_lang_no, lambda *x: set_activity_form()],
-                [data.string_lang_clear_data, lambda *x: clear_data()]
-            ]
-        )
-
-    def set_banner(self, interval):
-        '''Устанавливает баннеры приложений Kivy на главном экране. '''
-
-        try:
-            instance_banner = \
-                self.manager.current_screen.ids.banner.canvas.children[1]
-            name_banner = choice(data.name_banners)
-            instance_banner.source = 'data/images/banners/' + name_banner
-        except AttributeError:
-            pass
-
-    def check_file_is(self, path_to_file, check_image=False):
-        '''Проверяет корректность прикрепляемых файлов по расширению.'''
-
-        if check_image:
-            possible_files_ext = \
-                data.possible_files[data.string_lang_add_image][0]
-        else:
-            possible_files_ext = \
-                data.possible_files[data.string_lang_add_file][0]
-
-        if os.path.splitext(path_to_file)[1] in possible_files_ext:
-            return True
-
-        return False
-
-    def check_status(self, instance_selection):
-        '''Устанавливает подписи чеков при добавления файлов в Activity формы
-        отправки вопроса.
-
-        :type instance_selection: <class 'kivy.weakproxy.WeakProxy'>;
-        :param instance_selection:
-            <libs.uix.kv.activity.baseclass.selection.Selection>
-
-        '''
-
-        if self.open_filemanager_on_check:
-            if instance_selection.ids.check.active:
-                self.add_content(instance_selection)
+        if flag in ('FILE', 'FOTO'):
+            self.add_content(flag)
+        elif flag == 'SEND':
+            if current_screen == 'previous':
+                input_text_form = self.screen.ids.previous.ids.input_text_form
+                text_from_form = input_text_form.ids.text_input.text
             else:
-                label_text = instance_selection.ids.label.text
-                if label_text not in (
-                        self.data.string_lang_add_image,
-                        self.data.string_lang_add_file):
-                    if self.check_file_is(label_text):
-                        instance_selection.ids.label.text = \
-                            self.data.string_lang_add_file
-                    else:
-                        instance_selection.ids.label.text = \
-                            self.data.string_lang_add_image
+                input_text_form = args[3]
+                self.hide_input_form(input_text_form)
+                text_from_form = input_text_form.ids.text_input.text
 
-    def add_content(self, instance_selection):
+            if text_from_form.isspace() or text_from_form != '':
+                # Отправка вопроса.
+                if current_screen == 'previous':
+                    result, text_error = create_issue(
+                        {'file': self.attach_file,
+                         'image': self.attach_image,
+                         'issue': text_from_form,
+                         'theme': ''}
+                     )
+                else:
+                    # Отправка комментария.
+                    result, text_error = create_comment(
+                        {'file': self.attach_file,
+                         'image': self.attach_image,
+                         'text': text_from_form},
+                        post_id=args[1], reply_to=args[2]
+                    )
+                input_text_form.clear()
+
+                if result:
+                    message = data.string_lang_sending
+                    icon = '%s/data/images/send.png' % self.directory
+
+                    if current_screen != 'previous':
+                        post_instance = args[4]
+                        post_instance.update_post(
+                            text_from_form, args[1], args[2]
+                        )
+                else:
+                    message = data.string_lang_sending_error
+                    icon = '%s/data/images/error.png' % self.directory
+
+                self.notify(
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
+                )
+
+    def add_content(self, flag):
         '''Выводит файловый менеджер для выбора файлов, которые будут
         прикреплены к отправляемому сообщению.'''
 
-        def dialog_dismiss():
-            if not self.user_choice:
-                instance_selection.ids.check.active = False
-            else:
-                self.user_choice = False
-
         def select_file(path_to_file):
-            self.user_choice = True
             dialog_manager.dismiss()
-            name_check = instance_selection.ids.label.text
+            path_to_attach_file, name_file = os.path.split(path_to_file)
+            ext_file = os.path.splitext(name_file)[1]
 
-            if self.check_file_is(path_to_file) or \
-                    self.check_file_is(path_to_file, check_image=True):
-                self.path_to_file, name_file = os.path.split(path_to_file)
-                instance_selection.ids.label.text = name_file
+            if ext_file not in data.possible_files:
+                if flag == 'FILE':
+                    icon = \
+                        '%s/data/images/paperclip_red.png' % self.directory
+                    message = data.string_lang_wrong_file
+                else:
+                    icon = '%s/data/images/camera_red.png' % self.directory
+                    message = data.string_lang_wrong_image
+
+                self.notify(
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
+                )
+            # TODO: добавить визуализацию прикрепленных файлов.
             else:
-                snackbar.make(self.data.possible_files[name_check][1])
-                instance_selection.ids.check.active = False
+                if flag == 'FILE':
+                    self.attach_file = path_to_file
+                else:
+                    self.attach_image = path_to_file
+
+                input_text_form = \
+                    self.screen.ids.previous.ids.input_text_form
+                text = input_text_form.ids.text_input.text
+                input_text_form.ids.text_input.text = \
+                    '%s\n[#Прикрепленный файл - %s]' % (text, name_file)
 
         dialog_manager, file_manager = file_dialog(
             title='Choice', path='.', filter='files',
-            events_callback=select_file
+            size=(.9, .9), events_callback=select_file
         )
-        dialog_manager.on_dismiss = dialog_dismiss
 
     def set_avatar(self, path_to_avatar):
         self.nav_drawer.ids.avatar.source = path_to_avatar
@@ -403,20 +445,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         else:
             self.manager.current = name_screen
 
-    def dialog_fill_out_form(self):
-        '''Диалог с предложением сохранить форму вопроса.'''
-
-        _data = self.create_data_from_form()
-        self.open_dialog(
-            text=data.string_lang_fill_out_form,
-            buttons=[
-                [data.string_lang_yes, lambda *x:
-                    self._save_data_from_form(_data)],
-                [data.string_lang_no, lambda *x:
-                    self._close_dialog()]
-            ]
-        )
-
     def dialog_exit(self, *args):
         self.open_dialog(
             text=data.string_lang_exit,
@@ -441,6 +469,12 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             text=text, title=title, dismiss=dismiss, buttons=buttons
         )
 
+    def notify(self, title='Title:', message='Message!',
+               app_icon='data/logo/kivy-icon-128.png', timeout=1):
+        notification.notify(
+            title=title, message=message, app_icon=app_icon, timeout=timeout
+        )
+
     def load_all_kv_files(self, directory_kv_files):
         for kv_file in os.listdir(directory_kv_files):
             if kv_file in ('bugreporter.kv', '__init__.py', '__init__.pyo',
@@ -453,7 +487,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.bottom_sheet.open()
 
     def on_config_change(self, config, section, key, value):
-        '''Вызывается при выборе одного из пункта настроек программы.'''
+        '''Вызывается при выборе одного из пунктов настроек программы.'''
 
         if key == 'language':
             if not os.path.exists('%s/data/language/%s.txt' %(
@@ -472,16 +506,3 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         В противном случае запускает программу заново.'''
 
         return True
-
-    def _close_dialog(self, clear_form=True):
-        self.close_dialog()
-        if clear_form:
-            if self.manager.current == 'ask a question':
-                self.clear_form()
-                self.fill_out_form = None
-        if self.manager.current == 'ask a question':
-            self.manager.current = 'previous'
-
-    def _save_data_from_form(self, data):
-        self.save_form(data=data)
-        self._close_dialog(clear_form=False)

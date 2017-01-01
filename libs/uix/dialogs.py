@@ -93,12 +93,16 @@ def dialog_progress(text_button_cancel='Cancel', text_wait='Wait',
     return spinner, spinner.ids.label
 
 
-def file_dialog(title=None, path='.', filter='files', events_callback=None):
+def file_dialog(title=None, path='.', filter='files', events_callback=None,
+                size=None):
     def is_dir(directory, filename):
         return os.path.isdir(os.path.join(directory, filename))
 
     def is_file(directory, filename):
         return os.path.isfile(os.path.join(directory, filename))
+
+    if not size:
+        size = (.7, .5)
 
     file_manager = FileChooserListView(path=path, filters=['\ *.png'])
     if isinstance(events_callback, types.FunctionType) or \
@@ -112,7 +116,7 @@ def file_dialog(title=None, path='.', filter='files', events_callback=None):
     elif filter == 'files':
         file_manager.filters = [is_file]
 
-    dialog = card(file_manager, title)
+    dialog = card(file_manager, title, size=size)
     return dialog, file_manager
 
 

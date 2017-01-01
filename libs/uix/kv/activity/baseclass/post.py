@@ -1,13 +1,12 @@
 # -*- coding: utf: 8 -*-
 
+import time
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty, NumericProperty
 
 from libs.programclass.showposts import ShowPosts
-from libs.uix.dialogs import card
-from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
-from libs.vkrequests import create_comment
 
 
 class Post(BoxLayout):
@@ -18,9 +17,11 @@ class Post(BoxLayout):
     '''Реальные размеры (texture_size) лейбла текста поста:
     Используются для развертывание текста поста при клике на него.'''
 
+    _box_posts = ObjectProperty()
+    '''<class 'libs.uix.kv.activity.baseclass.boxposts.BoxPosts'>'''
+
     def __init__(self, **kwargs):
         super(Post, self).__init__(**kwargs)
-        self.commented_post_id = ''
         self.not_set_height_label = False
         self.ids.title_post.ids._lbl_primary.bold = True
         self.ids.title_post.ids._lbl_secondary.font_size = '11sp'
@@ -29,31 +30,28 @@ class Post(BoxLayout):
         '''Вызывается при тапе на текст поста/комментария/ссыки.'''
 
         instance, text_link = args[0]
-
         if text_link == 'Post':
             self.open_real_size_post()
+        # TODO: добавить обработку ссылок в тексте.
+
+    def update_post(self, text_answer, post_id, whom_name):
+        '''Добавляет в бокс списка комментариев только что отправленное
+        сообщение.'''
+
+        items_dict = {'text': text_answer, 'id': post_id,
+                      'date': time.time(), 'from_id': 1}
+        self._box_posts.profiles_dict = \
+            {1:
+                {'author_name': whom_name, 'author_online': 1,
+                 'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
+
+        self._box_posts.comments = True
+        post, author_name = self._box_posts.add_info_for_post(
+            items_dict=items_dict, add_commented_post=False,
+        )
+        self._box_posts.ids.list_posts.add_widget(post)
 
     def answer_on_comments(self, *args):
-        def callback(flag):
-            print('Call with flag', flag)
-            # Удаляем имя адресата и кнопку удаления адресата.
-            if flag == 'DELL':
-                print('DELL')
-                form.ids.box.remove_widget(form.ids.label_to)
-                form.ids.box.remove_widget(form.ids.delete_whom)
-                self.commented_post_id = ''
-            elif flag == 'SEND':
-                print(self.commented_post_id)
-                text_answer = form.ids.text_input.text
-                if text_answer.isspace() or text_answer == '':
-                    dialog.dismiss()
-                    return
-                result = create_comment(
-                    {'file': None, 'image': None, 'text': text_answer},
-                    post_id=post_id, reply_to=self.commented_post_id
-                )
-                print(result)
-
         # type post_id: str;
         # param post_id: id комментируемого поста;
         # ----------------------------------------
@@ -61,22 +59,20 @@ class Post(BoxLayout):
         # param commented_post_id: id комментария для которого пишется ответ;
         # ----------------------------------------
         # type whom_name: list;
-        # param whom_name: кому - ['First name', 'Last name'];
-        post_id, self.commented_post_id, whom_name = args
+        # param whom_name: кому - 'First name Last name';
+        post_id, count_comment, \
+            commented_post_id, whom_name, input_text_form = args
 
-        print('Call answer_on_comments:',
-              post_id, self.commented_post_id, whom_name)
-        form = FormInputText()
-        form.ids.text_input.background_normal = 'data/images/text_input.png'
-        form.avatar_icon = 'data/images/avatar.png'
-        form.add_file_icon = 'data/images/paperclip.png'
-        form.add_foto_icon = 'data/images/camera.png'
-        form.delete_whom_icon = 'data/images/exit.png'
-        form.label_color = self._app.theme_cls.primary_color
-        form.button_text_send = 'Отправить'
-        form.label_text_to = whom_name.split(' ')[0]
-        form.callback = callback
-        dialog = card(form, size=(.99, .3))
+        self._app.show_input_form(input_text_form)
+        input_text_form.ids.text_input.message = \
+            self._app.data.string_lang_for + whom_name
+        input_text_form.ids.text_input.focus = True
+        input_text_form.ids.text_input.text = '%s, ' % whom_name.split(' ')[0]
+        input_text_form.callback = \
+            lambda *args: self._app.callback_for_input_text(
+                args, post_id, commented_post_id, input_text_form, self,
+                whom_name
+            )
 
     def open_real_size_post(self):
         '''Устанавливает высоту поста в соответствии с высотой текстуры
@@ -108,11 +104,11 @@ class Post(BoxLayout):
         """Вызывается при клике на иконку комментариев под текстом поста.
         Выводит на экран список комментариев к посту."""
 
-        # :type post_id: str;
-        # :param post_id: id поста для которого выводится список комментариев;
-
-        # :type count_comment: str;
-        # :param count_comment: количество комментириев;
+        # type post_id: str;
+        # param post_id: id поста для которого выводится список комментариев;
+        # ----------------------------------------
+        # type count_comment: str;
+        # param count_comment: количество комментириев;
         post_id, count_comment = args
 
         name_author = self.ids.title_post.text

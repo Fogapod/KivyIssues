@@ -11,13 +11,15 @@ align="center"/>
 
 ЯЗЫК ПРОГРАММИРОВАНИЯ
 ---------------------
-Python 3
+Python 2, 3
 
 ЗАВИСИМОСТИ
 -----------
 Фреймворк [Kivy](http://kivy.org)
 
 Библиотека [KivyMD](https://gitlab.com/kivymd/KivyMD)
+
+Библиотека [plyer](https://github.com/kivy/plyer)
 
 Библиотека PIL
 

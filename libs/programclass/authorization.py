@@ -8,26 +8,31 @@ from kivy.clock import Clock
 from libs.createpreviousportrait import create_previous_portrait
 from libs import vkrequests as vkr
 
-from kivymd import snackbar
-
 
 class GetAndSaveLoginPassword(object):
 
     def get_fields_login_password(self):
         login = self.input_dialog.ids.login.text
         password = self.input_dialog.ids.password.text
+
         return login, password
 
     def check_fields_login_password(self, text_button):
         login, password = self.get_fields_login_password()
 
         if login == '' or login.isspace():
-            msg = self.data.string_lang_field_login_empty
-            snackbar.make(msg)
+            self.notify(
+                title=self.data.string_lang_title,
+                message=self.data.string_lang_field_login_empty,
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
+            )
             return
         if password == '' or password.isspace():
-            msg = self.data.string_lang_field_password_empty
-            snackbar.make(msg)
+            self.notify(
+                title=self.data.string_lang_title,
+                message=self.data.string_lang_field_password_empty,
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
+            )
             return
 
         self.input_dialog.dismiss()
@@ -51,45 +56,42 @@ class AuthorizationOnVK(object):
             )
             thread_authorization.start()
 
-        Clock.schedule_once(lambda x: self.show_progress(
-            text=self.data.string_lang_authorization,
-            func_dismiss=self.set_dialog_on_fail_authorization), 0)
+        self.screen.ids.load_screen.ids.status.text = \
+            self.data.string_lang_authorization
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
-        result, info = vkr.log_in(login=login, password=password)
+        result, text_error = vkr.log_in(login=login, password=password)
 
         if not result:
             self.set_dialog_on_fail_authorization()
             self.open_dialog(
-                text=self.data.string_lang_error_auth.format(info),
+                text=self.data.string_lang_error_auth.format(text_error),
                 dismiss=True
             )
-
         else:
             self.config.set('General', 'authorization', 1)
             self.config.write()
 
-            if not os.path.exists(self.directory + '/data/images/avatar.png'):
+            if not os.path.exists(self.path_to_avatar):
                 self.load_avatar()
             if self.data.user_name == 'User':
                 self.set_user_name()
-            self.set_issues_in_group()
 
-            self.dialog_progress.dismiss()
-            self.screen.ids.previous.ids.button_question.bind(
-                on_release=self.screen.ids.previous.on_button_question)
+            self.set_issues_in_group()
+            self.set_info_for_group()
+
+            self.screen.ids.manager.current = 'previous'
 
     def load_avatar(self):
-            self.instance_text_progress.text = \
+            self.screen.ids.load_screen.ids.status.text = \
                 self.data.string_lang_load_avatar
-            avatar, info = vkr.get_user_photo(size='max')
+            avatar, text_error = vkr.get_user_photo(size='max')
 
             if avatar:
                 path_to_avatar_origin = \
                     self.directory + '/data/images/avatar_origin.png'
-                path_to_avatar_portrait = \
-                    self.directory + '/data/images/avatar.png'
+                path_to_avatar_portrait = self.path_to_avatar
                 with open(path_to_avatar_origin, 'wb') as avatar_origin:
                     avatar_origin.write(avatar)
 
@@ -100,8 +102,13 @@ class AuthorizationOnVK(object):
                 Clock.schedule_once(lambda x: self.set_avatar(
                     path_to_avatar_portrait), 1)
 
+    def set_info_for_group(self):
+        self.screen.ids.load_screen.ids.status.text = \
+                self.data.string_lang_get_info_for_group
+        self.group_info, text_error = vkr.get_info_from_group()
+
     def set_user_name(self):
-        self.instance_text_progress.text = \
+        self.screen.ids.load_screen.ids.status.text = \
             self.data.string_lang_load_user_name
         name, info = vkr.get_user_name()
 
@@ -111,7 +118,7 @@ class AuthorizationOnVK(object):
             self.nav_drawer.ids.user_name.text = name
 
     def set_issues_in_group(self):
-        self.instance_text_progress.text = \
+        self.screen.ids.load_screen.ids.status.text = \
             self.data.string_lang_load_issues_in_group
         issues_in_group, info = vkr.get_issue_count()
 

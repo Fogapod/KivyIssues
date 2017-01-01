@@ -1,6 +1,5 @@
-#: kivy 1.9.1
-#: import Clock kivy.clock.Clock
-#: import Toolbar kivymd.toolbar.Toolbar
+#:kivy 1.9.1
+#:import Toolbar kivymd.toolbar.Toolbar
 
 <StartScreen>
     orientation: 'vertical'
@@ -16,12 +15,11 @@
         on_right_action_items:
             app.open_dialog(app.data.string_lang_new_issues, app.title, True)
 
-    ScrManager:
+    ScreenManager:
         id: manager
-        _app: app
+
+        LoadScreen:
+            id: load_screen
 
         Previous:
             id: previous
-
-        AskAQuestion:
-            id: ask_a_question

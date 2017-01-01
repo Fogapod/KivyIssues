@@ -1,88 +1,52 @@
 #:kivy 1.9.1
-#:import MDRaisedButton kivymd.button.MDRaisedButton
+#:import SingleLineTextField kivymd.textfields.SingleLineTextField
 
 # Окошко для ввода текста с кнопками прикрепления фото/файла,
-# подписями 'Отправить' и 'Кому'.
 
 <FormInputText>:
-    orientation: 'vertical'
-    padding: dp(10)
+    padding: dp(10), dp(20), dp(10), dp(20)
     spacing: dp(10)
+    size_hint: None, None
+    pos_hint: {'x': .015, 'y': -.3}
+    size: dp(app.window.width - 10), dp(120)
 
     canvas:
         Color:
-            rgba: root.background_color
+            rgba:
+                0.9686274509803922, 0.9686274509803922, 0.9686274509803922, .9
         Rectangle:
-            size: self.size
             pos: self.pos
+            size: self.size
 
-    BoxLayout:
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint_x: .1
+    Icon:
+        id: add_foto
+        size_hint: None, None
+        size: dp(30), dp(30)
+        source: 'data/images/camera.png'
+        on_release: root.callback('FOTO')
 
-            Image:
-                id: avatar
-                size_hint_y: .3
-                source: root.avatar_icon
-
-            Widget:
-                size_hint_y: .7
-
-        TextInput:
-            id: text_input
-            size_hint_x: .9
-
-    BoxLayout:
-        id: box
+    SingleLineTextField:
+        id: text_input
+        font_size: '12sp'
         size_hint_y: None
-        height: dp(40)
+        height: dp(100)
+        message_mode: 'persistent'
+
+    BoxLayout:
+        size_hint_x: None
+        width: dp(60)
         spacing: dp(10)
 
-        MDRaisedButton:
-            id: button_send
-            text: root.button_text_send
-            on_release: root.callback('SEND')
-
-        Label:
-            id: label_to
-            text: root.label_text_to
-            color: root.label_color
-            size_hint: None, 1
-            width: self.texture_size[0]
-            halign: 'left'
-
-        # libs/uix/list.py <class Icon>
         Icon:
-            id: delete_whom
+            id: add_file
             size_hint: None, None
-            size: dp(10), dp(10)
-            pos_hint: {'center_y': .5}
-            source: root.delete_whom_icon
-            on_release: root.callback('DELL')
+            size: dp(30), dp(30)
+            source: 'data/images/paperclip.png'
+            on_release: root.callback('FILE')
 
-        AnchorLayout:
-            anchor_x: 'right'
-
-            GridLayout:
-                rows: 1
-                size_hint: None, None
-                height: dp(40)
-                width: dp(80)
-
-                BoxLayout:
-                    spacing: dp(10)
-
-                    Icon:
-                        id: add_foto
-                        size_hint: None, None
-                        size: dp(30), dp(30)
-                        source: root.add_foto_icon
-                        on_release: root.callback('FOTO')
-
-                    Icon:
-                        id: add_file
-                        size_hint: None, None
-                        size: dp(30), dp(30)
-                        source: root.add_file_icon
-                        on_release: root.callback('FILE')
+        Icon:
+            id: send
+            size_hint: None, None
+            size: dp(30), dp(30)
+            source: 'data/images/send.png'
+            on_release: root.callback('SEND')

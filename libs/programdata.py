@@ -94,12 +94,7 @@ dict_language = {
     string_lang_on_english: 'english'
 }
 
-name_banners = os.listdir(prog_path + '/data/images/banners')
-
-possible_files = {
-    string_lang_add_image: [['.png', '.jpg', '.jpeg', '.gif'], string_lang_wrong_image],
-    string_lang_add_file: [['.zip', '.txt'], string_lang_wrong_file]
-}
+possible_files = ['.png', '.jpg', '.jpeg', '.gif', '.zip', '.txt']
 
 menu_items = [string_lang_current_password, string_lang_new_password]
 
