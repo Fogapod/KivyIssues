@@ -14,6 +14,7 @@ from kivy.metrics import dp
 from kivy.properties import ObjectProperty
 
 from libs import programdata as data
+from libs.programdata import thread
 from libs import programclass as _class
 from libs.programclass.showposts import ShowPosts
 from libs.createpreviousportrait import create_previous_portrait
@@ -113,6 +114,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.attach_file = None
         self.attach_image = None
         self.group_info = None
+        self.result_sending_comment_issues = None
         self.path_to_attach_file = None
         self.login = data.regdata['login']
         self.password = data.regdata['password']
@@ -277,6 +279,60 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         )
 
     def callback_for_input_text(self, *args):
+        '''Вызывается при событиях из формы ввода текста.
+
+        :args:
+            flag: ('SEND',),
+            post_id: '725',
+            reply_to: '',
+            input_text_form:
+                <libs.uix.kv.activity.baseclass.form_input_text.FormInputText>,
+            post_instance: <libs.uix.kv.activity.baseclass.post.Post>
+
+            '''
+
+        @thread
+        def _create_issues():
+            self.result_sending_comment_issues, text_error = create_issue(
+                {'file': self.attach_file,
+                 'image': self.attach_image,
+                 'issue': text_from_form,
+                 'theme': ''}
+            )
+
+        @thread
+        def _create_comment():
+            self.result_sending_comment_issues, text_error = create_comment(
+                {'file': self.attach_file,
+                 'image': self.attach_image,
+                 'text': text_from_form},
+                post_id=args[1], reply_to=args[2]
+            )
+
+        def check_result_sending_comment_issues(interval):
+            def unschedule():
+                Clock.unschedule(check_result_sending_comment_issues)
+                self.result_sending_comment_issues = None
+                self.notify(
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
+                )
+
+            message = data.string_lang_sending
+            icon = '%s/data/images/send.png' % self.directory
+
+            if self.result_sending_comment_issues:
+                if current_screen != 'previous':
+                    post_instance = args[4]
+                    post_instance.update_post(
+                        text_from_form, args[1], args[2]
+                    )
+                unschedule()
+            elif self.result_sending_comment_issues is False:
+                message = data.string_lang_sending_error
+                icon = '%s/data/images/error.png' % self.directory
+                unschedule()
+
         current_screen = self.screen.ids.manager.current
         # flag - 'FILE', 'FOTO', 'SEND'
         if current_screen == 'previous':  # форма из главного экрана
@@ -296,40 +352,15 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 text_from_form = input_text_form.ids.text_input.text
 
             if text_from_form.isspace() or text_from_form != '':
-                # Отправка вопроса.
+
                 if current_screen == 'previous':
-                    result, text_error = create_issue(
-                        {'file': self.attach_file,
-                         'image': self.attach_image,
-                         'issue': text_from_form,
-                         'theme': ''}
-                     )
+                    _create_issues()  # отправка вопроса
                 else:
-                    # Отправка комментария.
-                    result, text_error = create_comment(
-                        {'file': self.attach_file,
-                         'image': self.attach_image,
-                         'text': text_from_form},
-                        post_id=args[1], reply_to=args[2]
-                    )
+                    _create_comment()  # отправка комментария
+
                 input_text_form.clear()
-
-                if result:
-                    message = data.string_lang_sending
-                    icon = '%s/data/images/send.png' % self.directory
-
-                    if current_screen != 'previous':
-                        post_instance = args[4]
-                        post_instance.update_post(
-                            text_from_form, args[1], args[2]
-                        )
-                else:
-                    message = data.string_lang_sending_error
-                    icon = '%s/data/images/error.png' % self.directory
-
-                self.notify(
-                    title=data.string_lang_title, message=message,
-                    app_icon=icon
+                Clock.schedule_interval(
+                    check_result_sending_comment_issues, 0
                 )
 
     def add_content(self, flag):
