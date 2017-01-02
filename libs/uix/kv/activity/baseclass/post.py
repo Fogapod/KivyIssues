@@ -46,6 +46,11 @@ class Post(BoxLayout):
                  'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
 
         self._box_posts.comments = True
+        # Увеличиваем счетчик комментариев.
+        self._box_posts.label_count_comments.text = \
+            self._app.data.string_lang_count_comments.format(
+                str(int(self._box_posts.count_issues) + 1)
+            )
         post, author_name = self._box_posts.add_info_for_post(
             items_dict=items_dict, add_commented_post=False,
         )
