@@ -58,6 +58,9 @@ class BoxPosts(FloatLayout):
         super(BoxPosts, self).__init__(**kwargs)
 
         self.paginator_pages = None
+        # Label с количеством комментариев к посту.
+        self.label_count_comments = None
+
         if self.comments:
             self.ids.list_posts.spacing = 0
 
@@ -92,7 +95,7 @@ class BoxPosts(FloatLayout):
 
                 post.height = \
                     dp(value[1] + post.ids.title_post.height +
-                       count_comments.height)
+                       self.label_count_comments.height)
 
             def set_height_post(instance, value):
                 '''Смотрите метод open_real_size_post класса Post.'''
@@ -150,13 +153,13 @@ class BoxPosts(FloatLayout):
 
                 # Строка с количеством комментариев к посту.
                 box_comments = AnchorLayout(size_hint_y=None, height=dp(20))
-                count_comments = Label(
+                self.label_count_comments = Label(
                     text=self._app.data.string_lang_count_comments.format(
                         self.count_issues), font_size='11sp'
                 )
                 add_canvas(box_comments, self._app.theme_cls.primary_color)
 
-                box_comments.add_widget(count_comments)
+                box_comments.add_widget(self.label_count_comments)
                 post.add_widget(box_comments)
                 self.ids.list_posts.add_widget(post)
 
