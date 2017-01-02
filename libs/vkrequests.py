@@ -186,24 +186,23 @@ def create_issue(*args):
     agrs:
     :issue_data:
         {'file': путь к документу или None
-        'image':путь к фотографии или None
-        'theme':тема вопроса,'issue':основной текст вопроса
+        'image': путь к фотографии или None
+        'issue': текст вопроса
         }
 
-    Возвращает: id созданной записи ( str )
+    Возвращает: id созданной записи ( int )
 
     """
 
     issue_data = args[0]
     path_to_file = issue_data['file']
     path_to_image = issue_data['image']
-    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     attachments = []
 
-    doc = attach_doc(path=path_to_file)[0]
-    pic = attach_pic(path=path_to_image)[0]
+    doc = upload_doc(path=path_to_file)[0]
+    pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -212,7 +211,7 @@ def create_issue(*args):
         attachments.append(
             'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
 
-    return api.wall.post(owner_id=MGROUP_ID, message=theme_text + issue_text,
+    return api.wall.post(owner_id=MGROUP_ID, message=issue_text,
                          attachments=attachments)
 
 
@@ -227,7 +226,6 @@ def edit_issue(**kwargs):
     pic_id = kwargs.get('pic_id')
     pic_oid = kwargs.get('pic_oid')
 
-    theme_text = issue_data['theme'] + '\n\n'
     issue_text = issue_data['issue']
 
     issue_id = kwargs['issue_id']
@@ -235,7 +233,7 @@ def edit_issue(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc(path=path_to_file)[0]
+        doc = upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -243,14 +241,14 @@ def edit_issue(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc(path=path_to_image)[0]
+        pic = upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
     elif pic_id and pic_oid:
         attachments.append('pic' + pic_oid + '_' + pic_id)
 
-    api.wall.edit(owner_id=MGROUP_ID, message=theme_text + issue_text,
+    api.wall.edit(owner_id=MGROUP_ID, message=issue_text,
                   attachments=attachments, post_id=issue_id)
 
 
@@ -269,7 +267,7 @@ def del_issue(**kwargs):
 
 # Использование извне не предполагается.
 @vk_request_errors
-def attach_doc(**kwargs):
+def upload_doc(**kwargs):
     """
     :path: путь к документу
 
@@ -301,7 +299,7 @@ def attach_doc(**kwargs):
 
 # Использование извне не предполагается.
 @vk_request_errors
-def attach_pic(**kwargs):
+def attach_pic_to_wall_post(**kwargs):
     """
     :path: путь к фотографии;
 
@@ -390,8 +388,8 @@ def create_comment(*args, **kwargs):
 
     attachments = []
 
-    doc = attach_doc(path=path_to_file)[0]
-    pic = attach_pic(path=path_to_image)[0]
+    doc = upload_doc(path=path_to_file)[0]
+    pic = attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -423,7 +421,7 @@ def edit_comment(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = attach_doc(path=path_to_file)[0]
+        doc = upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -431,7 +429,7 @@ def edit_comment(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = attach_doc(path=path_to_image)[0]
+        pic = upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -543,7 +541,7 @@ def get_messages_list(**kwargs):
 
         }
     """
-    count = kwargs.get('count',20)
+    count = kwargs.get('count', 20)
     offset = kwargs.get('offset', 0)
 
     response = api.messages.getDialogs(
@@ -568,7 +566,7 @@ def get_messages(**kwargs):
         Массив сообщений
     """
     uid = kwargs['user_id']
-    count = kwargs.get('count',100)
+    count = kwargs.get('count', 100)
     offset = kwargs.get('offset', 0)
 
     response = api.messages.getHistory(
@@ -576,6 +574,87 @@ def get_messages(**kwargs):
         user_id=uid
         )
     return response
+
+
+@vk_request_errors
+def send_message(**kwargs):
+    """
+    :user_id: id пользователя
+    :group_id: id беседы
+    :text: текст сообщения
+    :messages_to_forward:
+        строка с id сообщений, которые нужно переслать через запятую ('1,2,3') (опционально)
+    :rnd_id:
+        специальный идентификатор, необходимый для предотвращения отправки повторяющихся 
+        сообщений. Не нужно указывать, если в приложении не будет реализована функция автоответа
+    :file: путь к документу (опционально)
+    :image: путь к фотографии (опционально)
+
+    :Возвращает: id нового сообщения
+    """
+    gid = None
+    uid = kwargs.get('user_id')
+    if not uid:
+        gid = kwargs['group_id']
+    text = kwargs['text']
+    forward = kwargs.get('messages_to_forward')
+    rnd_id = kwargs.get('rnd_id')
+
+    path_to_file = kwargs.get('file')
+    path_to_image = kwargs.get('image')
+
+    attachments = []
+
+    doc = upload_doc(path=path_to_file)[0]
+    pic = attach_pic_to_message(path=path_to_image)[0]
+
+    if doc:
+        attachments.append(
+            'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0]['id']))
+    if pic:
+        attachments.append(
+            'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
+    print attachments
+    response = api.messages.send(peer_id=uid,
+        message=text, forward_messages=forward,
+        chat_id=gid, random_id=rnd_id,
+        attachment=attachments
+    )
+
+    return response
+
+
+# Использование извне не предполагается.
+@vk_request_errors
+def attach_pic_to_message(**kwargs):
+    """
+    :path: путь к фотографии;
+
+    Возвращает:
+    #TODO: описать, что же возвращает этот метод
+
+    """
+    path = kwargs['path']
+
+    if path:
+        upload_data = api.photos.getMessagesUploadServer(group_id=GROUP_ID)
+
+        pic = {'photo': open(path, 'rb')}
+
+        response = r.post(upload_data['upload_url'], files=pic)
+        json_data = response.json()
+
+        if json_data['photo'] == '[]':
+            raise Exception('Failed loading picture')
+
+        try:
+            response = api.photos.saveMessagesPhoto(group_id=GROUP_ID,
+                                                photo=json_data['photo'],
+                                                server=json_data['server'],
+                                                hash=json_data['hash'])
+            return response
+        except Exception as e:
+            raise Exception('Failed loading picture ' + str(e))
 
 
 @vk_request_errors
