@@ -12,22 +12,31 @@
         padding: dp(5), dp(15)
         spacing: dp(10)
 
-        BoxLayout:
-            spacing: dp(10)
+        AnchorLayout:
+            anchor_x: 'left'
             size_hint_y: .2
 
-            # Лого группы.
-            AsyncImage:
-                id: group_title
+            GridLayout:
+                rows: 1
+                size_hint: None, None
+                width: dp(group_title.width + group_name.width)
 
-            # Название группы.
-            Label:
-                id: group_name
-                markup: True
-                size_hint_x: None
-                width: self.texture_size[0]
-                halign: 'left'
-                color: app.data.text_color_from_hex
+                BoxLayout:
+                    spacing: dp(10)
+
+                    # Лого группы.
+                    AsyncImage:
+                        id: group_title
+                        size_hint: None, None
+
+                    # Название группы.
+                    Label:
+                        id: group_name
+                        markup: True
+                        size_hint_x: None
+                        width: self.texture_size[0]
+                        halign: 'left'
+                        color: app.data.text_color_from_hex
 
         # Ссылка на группу
         Label:
