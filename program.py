@@ -29,7 +29,7 @@ from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
 from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
-from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
+from libs.uix.kv.activity.baseclass.license import ShowLicense
 from libs.uix.kv.activity.baseclass.previous import Previous
 
 from libs.vkrequests import create_issue, create_comment
@@ -85,13 +85,17 @@ class NavDrawer(NavigationDrawer):
                 only_questions=only_questions
             ).show_posts()
 
-        self.toggle()
+        self._toggle()
         Clock.schedule_once(_show_posts, .3)
 
+    def _toggle(self):
+        if self._app.manager.current == 'load screen':
+            return
+        self.toggle()
 
-class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
-              _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword,
-              _class.WorkWithPosts):
+
+class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
+              _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword):
     '''Функционал программы.'''
 
     title = data.string_lang_title
@@ -108,6 +112,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.window = Window
         self.Post = Post
         self.BoxPosts = BoxPosts
+        self.show_license = ShowLicense(_app=self).show_license
         self.show_posts = None
         self.instance_dialog = None
         self.dialog_progress = None
@@ -155,7 +160,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         if not self.login or not self.password:
             Clock.schedule_once(self.show_dialog_registration, 1)
         else:  # авторизация на сервере
-            self._authorization_on_vk(self.login, self.password)
+            #self._authorization_on_vk(self.login, self.password)
+            pass
 
         Clock.schedule_interval(self.check_info_group, 1)
 
@@ -344,7 +350,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             self.add_content(flag)
         elif flag == 'SEND':
             if current_screen == 'previous':
-                input_text_form = self.screen.ids.previous.ids.input_text_form
+                input_text_form = \
+                    self.screen.ids.previous.ids.input_text_form
                 text_from_form = input_text_form.ids.text_input.text
             else:
                 input_text_form = args[3]
@@ -454,9 +461,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         print(self.manager.screens)
 
         name_current_screen = self.manager.current
-        if name_current_screen == 'ask a question' and self.fill_out_form:
-            self.dialog_fill_out_form()
-            return
 
         # Нажата BackKey.
         if name_screen in (1001, 27):
@@ -464,10 +468,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.dialog_exit()
                 return
 
-        if name_current_screen == 'ask a question' \
-                or name_screen in (1001, 27):
-            self.manager.current = 'previous'
-        elif name_current_screen == 'box posts' \
+        if name_current_screen == 'box posts' \
                 or name_screen in (1001, 27):
             if name_screen in (1001, 27):
                 self.manager.current = self.screen.ids.box_posts.old_screen
