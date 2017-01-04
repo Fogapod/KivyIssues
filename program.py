@@ -370,15 +370,13 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                 )
 
     def add_content(self, flag):
-        '''Выводит файловый менеджер для выбора файлов, которые будут
-        прикреплены к отправляемому сообщению.'''
+        '''Выводит файловый менеджер для выбора файлов'''
 
         def select_file(path_to_file):
             dialog_manager.dismiss()
             path_to_attach_file, name_file = os.path.split(path_to_file)
-            ext_file = os.path.splitext(name_file)[1]
 
-            if ext_file not in data.possible_files:
+            if os.path.splitext(name_file)[1] not in data.possible_files:
                 if flag == 'FILE':
                     icon = \
                         '%s/data/images/paperclip_red.png' % self.directory
@@ -419,19 +417,23 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
 
         def on_select(path_to_avatar):
             dialog_manager.dismiss()
-            if self.check_file_is(path_to_avatar, check_image=True):
+
+            if os.path.splitext(path_to_avatar)[1] \
+                    not in data.possible_files[:3]:
+                self.notify(
+                    title=data.string_lang_title,
+                    message=data.string_lang_wrong_image,
+                    app_icon='%s/data/images/camera_red.png' % self.directory
+                )
+            else:
                 new_path_to_avatar = \
                     self.directory + '/data/images/avatar.png'
                 create_previous_portrait(path_to_avatar, new_path_to_avatar)
                 self.set_avatar(new_path_to_avatar)
-            else:
-                dialog(
-                    title=self.title, text=self.data.string_lang_wrong_image
-                )
 
         dialog_manager, file_manager = file_dialog(
             title=self.data.string_lang_select_avatar, path='.',
-            filter='files', events_callback=on_select
+            filter='files', events_callback=on_select, size=(.9, .9)
         )
 
     def events_program(self, instance, keyboard, keycode, text, modifiers):
