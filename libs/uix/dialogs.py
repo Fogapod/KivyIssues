@@ -45,36 +45,6 @@ def dialog(font_style='Body1', theme_text_color='Secondary', title='Title',
     return dialog
 
 
-def input_dialog(title='Title', hint_text_login='', password=False,
-                 hint_text_password='', text_button_ok='OK', dismiss=True,
-                 text_button_cancel=None, text_color=None, fields=True,
-                 events_callback=None):
-    if not text_color:
-        text_color = 0, 0, 0, 0
-
-    input_dialog = Builder.template(
-        'PasswordForm', title=title, hint_text_login=hint_text_login,
-        hint_text_password=hint_text_password, text_button_ok=text_button_ok,
-        events_callback=events_callback, password=password,
-        dismiss=dismiss
-    )
-    if text_button_cancel:
-        input_dialog.ids.box_buttons.add_widget(
-            MDFlatButton(
-                text=str(text_button_cancel), text_color=text_color,
-                on_release=lambda x: events_callback(
-                    str(text_button_cancel)), theme_text_color='Custom'
-
-            )
-        )
-    if not fields:
-        input_dialog.ids.box.remove_widget(input_dialog.ids.password)
-
-    input_dialog.open()
-
-    return input_dialog
-
-
 def dialog_progress(text_button_cancel='Cancel', text_wait='Wait',
                     events_callback=None, text_color=None):
     if not isinstance(events_callback, types.FunctionType) or \
