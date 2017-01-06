@@ -59,6 +59,7 @@ class AuthorizationOnVK(object):
 
         self.screen.ids.load_screen.ids.status.text = \
             self.data.string_lang_authorization
+        self.screen.ids.load_screen.ids.spinner.active = True
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
