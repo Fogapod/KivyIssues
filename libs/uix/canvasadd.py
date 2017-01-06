@@ -4,7 +4,7 @@ from kivy.graphics.context_instructions import Color
 from kivy.graphics.vertex_instructions import Rectangle
 
 
-def canvas_add(instance, color=None, pos=(0, 0), shift=None):
+def canvas_add(instance, color=None, pos=(0, 0), shift=None, source=None):
     '''Добавляет canvas в объект.
 
     :type shift: tuple;
@@ -12,14 +12,17 @@ def canvas_add(instance, color=None, pos=(0, 0), shift=None):
                   когда нужно создать имитацию тени;
     '''
 
-    if not color:
-        color = [0, 0, 0, 1]
-
     with instance.canvas.before:
-        Color(rgba=color)
-        canvas_instance = Rectangle(
-            pos=pos, size=(instance.width, instance.height)
-        )
+        if color:
+            Color(rgba=color)
+        if not source:
+            canvas_instance = Rectangle(
+                pos=pos, size=(instance.width, instance.height)
+            )
+        else:
+            canvas_instance = Rectangle(
+                pos=pos, size=(instance.width, instance.height), source=source
+            )
 
         def on_canvas_pos(instance, value):
             if shift:
