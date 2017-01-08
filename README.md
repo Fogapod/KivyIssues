@@ -5,9 +5,7 @@ Kivy Issues
 свой вопрос, так и ответить на чужой. По сути - это чекер постов [группы Kivy 
 ВКонтакте](https://m.vk.com/kivy_ru).
 
-Kivy Issues находится "В процессе разработки".
-
-[![Build Status](https://travis-ci.org/HeaTTheatR/KivyIssues.svg?branch=master)](https://travis-ci.org/HeaTTheatR/KivyIssues)
+Kivy Issues находится в процессе разработки.
 
 <img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous_new.png" 
 align="center"/>
