@@ -12,12 +12,12 @@ from libs import vkrequests as vkr
 class GetAndSaveLoginPassword(object):
 
     def get_fields_login_password(self):
-        login = self.input_dialog.ids.login.text
-        password = self.input_dialog.ids.password.text
+        login = self.password_form.ids.login.text
+        password = self.password_form.ids.password.text
 
         return login, password
 
-    def check_fields_login_password(self, text_button):
+    def check_fields_login_password(self):
         login, password = self.get_fields_login_password()
 
         if login == '' or login.isspace():
@@ -35,7 +35,8 @@ class GetAndSaveLoginPassword(object):
             )
             return
 
-        self.input_dialog.dismiss()
+        self.screen.ids.load_screen.remove_widget(self.password_form)
+        self.screen.ids.load_screen.ids.spinner.active = True
         self.save_login_password(login, password)
 
     def save_login_password(self, login, password):
@@ -58,16 +59,18 @@ class AuthorizationOnVK(object):
 
         self.screen.ids.load_screen.ids.status.text = \
             self.data.string_lang_authorization
+        self.screen.ids.load_screen.ids.spinner.active = True
         Clock.schedule_once(_authorization_on_vk, 1)
 
     def authorization_on_vk(self, login, password):
         result, text_error = vkr.log_in(login=login, password=password)
 
         if not result:
-            self.set_dialog_on_fail_authorization()
-            self.open_dialog(
-                text=self.data.string_lang_error_auth.format(text_error),
-                dismiss=True
+            self.show_screen_registration(fail_registration=True)
+            self.notify(
+                title=self.data.string_lang_title,
+                message=self.data.string_lang_error_auth.format(text_error),
+                app_icon='%s/data/images/vk_logo_red.png' % self.directory
             )
         else:
             self.config.set('General', 'authorization', 1)

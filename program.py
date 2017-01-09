@@ -3,60 +3,38 @@
 import os
 import sys
 
-
 from kivy.app import App
 # from kivy.animation import Animation
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.clock import Clock
-from kivy.metrics import dp
 from kivy.properties import ObjectProperty
 
 from libs import programdata as data
+from libs.programdata import thread
 from libs import programclass as _class
 from libs.programclass.showposts import ShowPosts
 from libs.createpreviousportrait import create_previous_portrait
-from libs.uix.lists import Lists
-from libs.uix.dialogs import dialog, file_dialog, dialog_progress,\
-    input_dialog, card
+from libs.uix.dialogs import dialog, file_dialog, dialog_progress
 
 # Базовые классы Activity.
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
 from libs.uix.kv.activity.baseclass.post import Post
 from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
+from libs.uix.kv.activity.baseclass.license import ShowLicense
 from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
+from libs.uix.kv.activity.baseclass.passwordform import PasswordForm
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
-from libs.uix.kv.activity.baseclass.draweritem import DrawerItem
 from libs.uix.kv.activity.baseclass.previous import Previous
 
 from libs.vkrequests import create_issue, create_comment
 
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
-from kivymd.bottomsheet import MDGridBottomSheet, GridBSItem
 
 from plyer import notification
-
-
-class GridBottomSheet(MDGridBottomSheet):
-
-    # Переопределил метод, поскольку в оригинале item просто биндился
-    # на закрытие меню - item.bind(on_release=lambda x: self.dismiss()),
-    # не вызывая переданную ему функцию.
-    # TODO: в примере kitchen_sink.py KivyMD callback вызывается успешно -
-    # пересмотреть свой код.
-    def add_item(self, text, callback, icon_src):
-        item = GridBSItem(
-            caption=text,
-            on_release=callback,
-            source=icon_src
-        )
-        item.bind(on_release=callback)
-        if self.gl_content.children.__len__() % 3 == 0:
-            self.gl_content.height += dp(96)
-        self.gl_content.add_widget(item)
 
 
 class NavDrawer(NavigationDrawer):
@@ -84,13 +62,17 @@ class NavDrawer(NavigationDrawer):
                 only_questions=only_questions
             ).show_posts()
 
-        self.toggle()
+        self._toggle()
         Clock.schedule_once(_show_posts, .3)
 
+    def _toggle(self):
+        if self._app.manager.current == 'load screen':
+            return
+        self.toggle()
 
-class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
-              _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword,
-              _class.WorkWithPosts):
+
+class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
+              _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword):
     '''Функционал программы.'''
 
     title = data.string_lang_title
@@ -107,19 +89,21 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         self.window = Window
         self.Post = Post
         self.BoxPosts = BoxPosts
+        self.show_license = ShowLicense(_app=self).show_license
         self.show_posts = None
         self.instance_dialog = None
+        self.password_form = None
         self.dialog_progress = None
         self.attach_file = None
         self.attach_image = None
         self.group_info = None
+        self.result_sending_comment_issues = None
         self.path_to_attach_file = None
         self.login = data.regdata['login']
         self.password = data.regdata['password']
         self.path_to_avatar = self.directory + '/data/images/avatar.png'
         self.load_all_kv_files(self.directory + '/libs/uix/kv')
         self.load_all_kv_files(self.directory + '/libs/uix/kv/activity')
-        self.bottom_sheet = GridBottomSheet()
         self.config = ConfigParser()
         self.config.read(data.prog_path + '/program.ini')
         self.screen = StartScreen()  # главный экран программы
@@ -143,15 +127,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         )
 
     def build(self):
-        # Пункт меню 'Авторизация'.
-        self.bottom_sheet.add_item(
-            data.string_lang_authorization[:-3],
-            lambda x: self.authorization_from_button_sheet(),
-            'data/images/auth.png'
-        )
-
         if not self.login or not self.password:
-            Clock.schedule_once(self.show_dialog_registration, 1)
+            self.show_screen_registration()
         else:  # авторизация на сервере
             self._authorization_on_vk(self.login, self.password)
 
@@ -186,25 +163,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
             Clock.unschedule(self.check_info_group)
 
-    def authorization_from_button_sheet(self):
-        '''Выводит список с пунктами 'Текущий пароль/Новый пароль' при
-        выборе пункта меню "Авторизация".'''
-
-        def callback(text_item):
-            dialog.dismiss()
-
-            if text_item == data.string_lang_current_password:
-                self._authorization_on_vk(self.login, self.password)
-            elif text_item == data.string_lang_new_password:
-                Clock.schedule_once(self.show_dialog_registration, 0)
-
-        self.bottom_sheet.dismiss()
-        current_or_new_password_list = Lists(
-            list_items=data.menu_items, events_callback=callback,
-            flag='single_list'
-        )
-        dialog = card(current_or_new_password_list)
-
     def show_login_and_password(self, instance_selection):
         '''
         Устанавливает свойства текстовых полей для ввода логина и пароля.
@@ -216,22 +174,26 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         '''
 
         if instance_selection.ids.check.active:
-            self.input_dialog.ids.login.password = False
-            self.input_dialog.ids.password.password = False
+            self.password_form.ids.login.password = False
+            self.password_form.ids.password.password = False
         else:
-            self.input_dialog.ids.login.password = True
-            self.input_dialog.ids.password.password = True
+            self.password_form.ids.login.password = True
+            self.password_form.ids.password.password = True
 
-    def show_dialog_registration(self, interval):
+    def show_screen_registration(self, fail_registration=False):
         '''Окно с формой регистрации.'''
 
-        self.input_dialog = input_dialog(
-            title=self.data.string_lang_registration,
-            hint_text_login='Login', password=True, dismiss=False,
-            hint_text_password='Password', text_button_ok='OK',
-            events_callback=self.check_fields_login_password,
-            text_color=self.theme_cls.primary_color
-        )
+        if not self.password_form:
+            self.password_form = \
+                PasswordForm(callback=self.check_fields_login_password)
+
+        self.screen.ids.load_screen.add_widget(self.password_form)
+
+        # Если произошла ошибка регистрации, деактивируем спиннер и чистим
+        # лейблы статуса авторизации.
+        if fail_registration:
+            self.screen.ids.load_screen.ids.spinner.active = False
+            self.screen.ids.load_screen.ids.status.text = ''
 
     def show_progress(self, interval=0, text='Wait', func_dismiss=None):
         '''Прогресс загрузки данных с сервера.'''
@@ -263,20 +225,61 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
         instance.pos_hint = {'y': -.3}
 
-    def set_dialog_on_fail_authorization(self):
-        '''Диалоговое окно с просьбой авторзироваться.'''
-
-        # TODO: Добавить прерывание запроса данных с сервера.
-        self.dialog_progress.dismiss()
-        self.screen.ids.previous.ids.button_question.bind(
-            on_release=lambda *args: self.notify(
-                title=data.string_lang_title,
-                message=data.string_lang_please_authorization,
-                app_icon='%s/data/images/vk_logo_red.png' % self.directory,
-            )
-        )
-
     def callback_for_input_text(self, *args):
+        '''Вызывается при событиях из формы ввода текста.
+
+        :args:
+            flag: ('SEND',),
+            post_id: '725',
+            reply_to: '',
+            input_text_form:
+                <libs.uix.kv.activity.baseclass.form_input_text.FormInputText>,
+            post_instance: <libs.uix.kv.activity.baseclass.post.Post>
+
+            '''
+
+        @thread
+        def _create_issues():
+            self.result_sending_comment_issues, text_error = create_issue(
+                {'file': self.attach_file,
+                 'image': self.attach_image,
+                 'issue': text_from_form,
+                 'theme': ''}
+            )
+
+        @thread
+        def _create_comment():
+            self.result_sending_comment_issues, text_error = create_comment(
+                {'file': self.attach_file,
+                 'image': self.attach_image,
+                 'text': text_from_form},
+                post_id=args[1], reply_to=args[2]
+            )
+
+        def check_result_sending_comment_issues(interval):
+            def unschedule():
+                Clock.unschedule(check_result_sending_comment_issues)
+                self.result_sending_comment_issues = None
+                self.notify(
+                    title=data.string_lang_title, message=message,
+                    app_icon=icon
+                )
+
+            message = data.string_lang_sending
+            icon = '%s/data/images/send.png' % self.directory
+
+            if self.result_sending_comment_issues:
+                if current_screen != 'previous':
+                    post_instance = args[4]
+                    post_instance.update_post(
+                        text_from_form, args[1], args[2]
+                    )
+                unschedule()
+            elif self.result_sending_comment_issues is False:
+                message = data.string_lang_sending_error
+                icon = '%s/data/images/error.png' % self.directory
+                unschedule()
+
         current_screen = self.screen.ids.manager.current
         # flag - 'FILE', 'FOTO', 'SEND'
         if current_screen == 'previous':  # форма из главного экрана
@@ -288,7 +291,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
             self.add_content(flag)
         elif flag == 'SEND':
             if current_screen == 'previous':
-                input_text_form = self.screen.ids.previous.ids.input_text_form
+                input_text_form = \
+                    self.screen.ids.previous.ids.input_text_form
                 text_from_form = input_text_form.ids.text_input.text
             else:
                 input_text_form = args[3]
@@ -296,52 +300,25 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 text_from_form = input_text_form.ids.text_input.text
 
             if text_from_form.isspace() or text_from_form != '':
-                # Отправка вопроса.
+
                 if current_screen == 'previous':
-                    result, text_error = create_issue(
-                        {'file': self.attach_file,
-                         'image': self.attach_image,
-                         'issue': text_from_form,
-                         'theme': ''}
-                     )
+                    _create_issues()  # отправка вопроса
                 else:
-                    # Отправка комментария.
-                    result, text_error = create_comment(
-                        {'file': self.attach_file,
-                         'image': self.attach_image,
-                         'text': text_from_form},
-                        post_id=args[1], reply_to=args[2]
-                    )
+                    _create_comment()  # отправка комментария
+
                 input_text_form.clear()
-
-                if result:
-                    message = data.string_lang_sending
-                    icon = '%s/data/images/send.png' % self.directory
-
-                    if current_screen != 'previous':
-                        post_instance = args[4]
-                        post_instance.update_post(
-                            text_from_form, args[1], args[2]
-                        )
-                else:
-                    message = data.string_lang_sending_error
-                    icon = '%s/data/images/error.png' % self.directory
-
-                self.notify(
-                    title=data.string_lang_title, message=message,
-                    app_icon=icon
+                Clock.schedule_interval(
+                    check_result_sending_comment_issues, 0
                 )
 
     def add_content(self, flag):
-        '''Выводит файловый менеджер для выбора файлов, которые будут
-        прикреплены к отправляемому сообщению.'''
+        '''Выводит файловый менеджер для выбора файлов'''
 
         def select_file(path_to_file):
             dialog_manager.dismiss()
             path_to_attach_file, name_file = os.path.split(path_to_file)
-            ext_file = os.path.splitext(name_file)[1]
 
-            if ext_file not in data.possible_files:
+            if os.path.splitext(name_file)[1] not in data.possible_files:
                 if flag == 'FILE':
                     icon = \
                         '%s/data/images/paperclip_red.png' % self.directory
@@ -382,19 +359,23 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
 
         def on_select(path_to_avatar):
             dialog_manager.dismiss()
-            if self.check_file_is(path_to_avatar, check_image=True):
+
+            if os.path.splitext(path_to_avatar)[1] \
+                    not in data.possible_files[:3]:
+                self.notify(
+                    title=data.string_lang_title,
+                    message=data.string_lang_wrong_image,
+                    app_icon='%s/data/images/camera_red.png' % self.directory
+                )
+            else:
                 new_path_to_avatar = \
                     self.directory + '/data/images/avatar.png'
                 create_previous_portrait(path_to_avatar, new_path_to_avatar)
                 self.set_avatar(new_path_to_avatar)
-            else:
-                dialog(
-                    title=self.title, text=self.data.string_lang_wrong_image
-                )
 
         dialog_manager, file_manager = file_dialog(
             title=self.data.string_lang_select_avatar, path='.',
-            filter='files', events_callback=on_select
+            filter='files', events_callback=on_select, size=(.9, .9)
         )
 
     def events_program(self, instance, keyboard, keycode, text, modifiers):
@@ -406,8 +387,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.nav_drawer.toggle()
             self.back_screen(keyboard)
         elif keyboard in (282, 319):
-            self.show_bottom_sheet()
-            # self.nav_drawer.toggle()
+            pass
 
         return True
 
@@ -423,9 +403,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
         print(self.manager.screens)
 
         name_current_screen = self.manager.current
-        if name_current_screen == 'ask a question' and self.fill_out_form:
-            self.dialog_fill_out_form()
-            return
 
         # Нажата BackKey.
         if name_screen in (1001, 27):
@@ -433,10 +410,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                 self.dialog_exit()
                 return
 
-        if name_current_screen == 'ask a question' \
-                or name_screen in (1001, 27):
-            self.manager.current = 'previous'
-        elif name_current_screen == 'box posts' \
+        if name_current_screen == 'box posts' \
                 or name_screen in (1001, 27):
             if name_screen in (1001, 27):
                 self.manager.current = self.screen.ids.box_posts.old_screen
@@ -482,9 +456,6 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.ShowLicense,
                     os.path.isdir(directory_kv_files + '/' + kv_file):
                 continue
             Builder.load_file(directory_kv_files + '/' + kv_file)
-
-    def show_bottom_sheet(self):
-        self.bottom_sheet.open()
 
     def on_config_change(self, config, section, key, value):
         '''Вызывается при выборе одного из пунктов настроек программы.'''

@@ -11,6 +11,7 @@
             opacity: .1
 
         BoxLayout:
+            id: box
             orientation: 'vertical'
             padding: dp(0), dp(10)
 
@@ -24,10 +25,11 @@
                 color: app.data.text_color_from_hex
 
             MDSpinner:
+                id: spinner
                 size_hint: None, None
                 size: dp(46), dp(46)
                 pos_hint: {'center_x': .5}
-                active: True
+                active: False
 
             Widget:
             Widget:

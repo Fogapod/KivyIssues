@@ -46,6 +46,11 @@ class Post(BoxLayout):
                  'avatar': self.ids.title_post.icon, 'device': 'mobile'}}
 
         self._box_posts.comments = True
+        # Увеличиваем счетчик комментариев.
+        self._box_posts.label_count_comments.text = \
+            self._app.data.string_lang_count_comments.format(
+                str(int(self._box_posts.count_issues) + 1)
+            )
         post, author_name = self._box_posts.add_info_for_post(
             items_dict=items_dict, add_commented_post=False,
         )
@@ -70,8 +75,7 @@ class Post(BoxLayout):
         input_text_form.ids.text_input.text = '%s, ' % whom_name.split(' ')[0]
         input_text_form.callback = \
             lambda *args: self._app.callback_for_input_text(
-                args, post_id, commented_post_id, input_text_form, self,
-                whom_name
+                args, post_id, commented_post_id, input_text_form, self
             )
 
     def open_real_size_post(self):

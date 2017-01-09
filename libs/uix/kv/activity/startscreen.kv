@@ -8,7 +8,7 @@
         id: action_bar
         background_color: app.theme_cls.primary_color
         title: app.title
-        left_action_items: [['menu', lambda x: app.nav_drawer.toggle()]]
+        left_action_items: [['menu', lambda x: app.nav_drawer._toggle()]]
         right_action_items: [['comment-outline', lambda x: None]]
         opposite_colors: True
         elevation: 10
@@ -23,3 +23,6 @@
 
         Previous:
             id: previous
+
+        ShowLicense:
+            id: show_license

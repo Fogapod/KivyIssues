@@ -3,15 +3,16 @@ Kivy Issues
 
 Приложение для вопросов и ответов по тематике Kivy. Вы можете как задать 
 свой вопрос, так и ответить на чужой. По сути - это чекер постов [группы Kivy 
-ВКонтакте](https://m.vk.com/kivy_ru). Помогите сделать Kivy простым и понятным 
-для тех, кто этого хочет!
+ВКонтакте](https://m.vk.com/kivy_ru).
+
+Kivy Issues находится в процессе разработки.
 
 <img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoots/previous_new.png" 
 align="center"/>
 
 ЯЗЫК ПРОГРАММИРОВАНИЯ
 ---------------------
-Python 2, 3
+Python 2.7, 3.4
 
 ЗАВИСИМОСТИ
 -----------
