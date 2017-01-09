@@ -7,78 +7,81 @@
     name: 'previous'
     _app: app
 
-    BoxLayout:
-        orientation: 'vertical'
-        padding: dp(5), dp(15)
-        spacing: dp(10)
+    FloatLayout:
+        id: box
 
-        AnchorLayout:
-            anchor_x: 'left'
-            size_hint_y: .2
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(5), dp(15)
+            spacing: dp(10)
 
-            GridLayout:
-                rows: 1
-                size_hint: None, None
-                width: dp(group_title.width + group_name.width)
+            AnchorLayout:
+                anchor_x: 'left'
+                size_hint_y: .2
 
-                BoxLayout:
-                    spacing: dp(10)
+                GridLayout:
+                    rows: 1
+                    size_hint: None, None
+                    width: dp(group_title.width + group_name.width)
 
-                    # Лого группы.
-                    AsyncImage:
-                        id: group_title
-                        size_hint: None, None
+                    BoxLayout:
+                        spacing: dp(10)
 
-                    # Название группы.
-                    Label:
-                        id: group_name
-                        markup: True
-                        size_hint_x: None
-                        width: self.texture_size[0]
-                        halign: 'left'
-                        color: app.data.text_color_from_hex
+                        # Лого группы.
+                        AsyncImage:
+                            id: group_title
+                            size_hint: None, None
 
-        # Ссылка на группу
-        Label:
-            id: group_link
-            size_hint: None, None
-            height: dp(20)
-            width: self.texture_size[0]
-            halign: 'left'
-            color: app.theme_cls.primary_color
-            font_size: '10sp'
-            markup: True
-            on_ref_press: webbrowser.open(args[1])
+                        # Название группы.
+                        Label:
+                            id: group_name
+                            markup: True
+                            size_hint_x: None
+                            width: self.texture_size[0]
+                            halign: 'left'
+                            color: app.data.text_color_from_hex
 
-        # Количество участников.
-        Label:
-            id: group_people
-            size_hint_y: None
-            height: dp(25)
-            font_size: '12sp'
-            bold: True
-
-            canvas.before:
-                Color:
-                    rgba: app.theme_cls.primary_color
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
-
-        ScrollView:
-            size_hint_y: .5
-
-            # Описание группы.
+            # Ссылка на группу
             Label:
-                id: description
-                color: app.data.text_color_from_hex
-                font_size: '12sp'
-                text_size: self.width, None
-                size_hint_y: None
-                height: self.texture_size[1]
+                id: group_link
+                size_hint: None, None
+                height: dp(20)
+                width: self.texture_size[0]
+                halign: 'left'
+                color: app.theme_cls.primary_color
+                font_size: '10sp'
+                markup: True
+                on_ref_press: webbrowser.open(args[1])
 
-        # Форма для ввода текста.
-        # /libs/uix/kv/activity/form_input_text.kv
-        FormInputText:
-            id: input_text_form
-            size_hint_y: .3
+            # Количество участников.
+            Label:
+                id: group_people
+                size_hint_y: None
+                height: dp(25)
+                font_size: '12sp'
+                bold: True
+
+                canvas.before:
+                    Color:
+                        rgba: app.theme_cls.primary_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+
+            ScrollView:
+                size_hint_y: .5
+
+                # Описание группы.
+                Label:
+                    id: description
+                    color: app.data.text_color_from_hex
+                    font_size: '12sp'
+                    text_size: self.width, None
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+            # Форма для ввода текста.
+            # /libs/uix/kv/activity/form_input_text.kv
+            FormInputText:
+                id: input_text_form
+                size_hint_y: .3
