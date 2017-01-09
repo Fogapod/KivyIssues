@@ -110,7 +110,6 @@ def log_in(**kwargs):
 
 @vk_request_errors
 def get_members_count():
-    """Возвращает: число участников ( str )"""
     """Возвращает: число участников"""
 
     return api.execute.GetMembersCount(gid=GROUP_ID)
