@@ -130,7 +130,7 @@ def get_issue_count():
 
 
 @vk_request_errors
-def get_info_from_group():
+def get_group_info():
     """
     Возвращает: информацию о текущей группе ( dict )
     Структура словаря:
