@@ -111,20 +111,21 @@ def log_in(**kwargs):
 @vk_request_errors
 def get_members_count():
     """Возвращает: число участников ( str )"""
+    """Возвращает: число участников"""
 
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
 
 @vk_request_errors
 def get_user_name():
-    """Возвращает: Имя_пробел_Фамилия ( str )"""
+    """Возвращает: Имя_пробел_Фамилия"""
 
     return api.execute.GetUserName()
 
 
 @vk_request_errors
 def get_issue_count():
-    """Возвращает: число записей в группе ( str )"""
+    """Возвращает: число записей в группе"""
 
     return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
@@ -135,19 +136,19 @@ def get_info_from_group():
     Возвращает: информацию о текущей группе ( dict )
     Структура словаря:
     {
-        "id":id группы ( int ),
-        "name":название группы,
-        "screen_name":короткое имя группы,
-        "is_closed":группа закрыта? ( bool ),
+        "id": id группы ( int ),
+        "name": название группы,
+        "screen_name": короткое имя группы,
+        "is_closed": группа закрыта? ( bool ),
         "type": "group",
-        "is_admin":пользователь является администратором? ( bool ),
-        "is_member":пользователь состоит в группе? ( bool ),
-        "description":текст описания группы,
-        "members_count":число участников ( int ),
-        "status":текст из статуса группы,
-        "photo_50":ссылка на фото,
-        "photo_100":ссылка на фото,
-        "photo_200":ссылка на фото
+        "is_admin": пользователь является администратором? ( bool ),
+        "is_member": пользователь состоит в группе? ( bool ),
+        "description": текст описания группы,
+        "members_count": число участников ( int ),
+        "status": текст из статуса группы,
+        "photo_50": ссылка на фото,
+        "photo_100": ссылка на фото,
+        "photo_200": ссылка на фото
     }
 
     """
