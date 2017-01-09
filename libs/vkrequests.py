@@ -157,6 +157,52 @@ def get_info_from_group():
 
 
 @vk_request_errors
+def get_user_info(**kwargs):
+    """
+    :user_id: id пользователя (если не указан, будет получена информация о себе)
+
+    Возвращает: информацию о пользователе ( dict )
+    Структура словаря:
+    {
+        "id": id пользователя ( int ),
+        "first_name": имя,
+        "last_name": фамилия,
+        "deactivated":
+            возвращается только в том случае, если страница пользователя удалена, все следующие поля не будут возвращены
+            возможные значения: 'deleted'; 'banned',
+
+        "about": поле "о себе" или '',
+        "activities": поле "деятельность" или '',
+        "books": поле "любимые книги" или '',
+        
+        "can_post": на стене пользователя можно оставлять посты? ( bool ),
+        "can_see_all_posts": доступны ли записи других пользователей на стене? ( bool ),
+        "can_see_audio": доступен ли список аудио? ( bool ),
+        "can_send_friend_request": возможно ли отправить заявку на добавление в друзья или можно только подписаться ( bool ),
+        "can_write_private_message": доступны ли личные сообщения? ( bool ),
+        "bdate": дата рождения (DD.MM.YYYY или DD.MM), не возвращается, если скрыто,
+        "blacklisted": пользователь заблокировал меня? ( bool ),
+        "blacklisted_by_me": пользователь заблокирован мной? ( bool ),
+        "career": место работы (если есть). опциональные значения:
+            "group_id": id группы,
+            "company": название места работы (если нет "group_id"),
+            "country_id": id страны,
+            "city_id": id города (если "city_name" недоступно),
+            "city_name": название города (если "city_id" недоступно),
+            "from": год начала работы,
+            "until": год окончания работы,
+            "position": должность
+        
+    }
+    """
+    uid = kwargs.get('user_id')
+    response = api.users.get(user_ids=uid, fields=\
+        'photo_id,verified,sex,bdate,city,country,home_town,has_photo,photo_50,photo_100,photo_200_orig,photo_200,photo_400_orig,photo_max,photo_max_orig,online,lists,domain,has_mobile,contacts,site,education,universities,schools,status,last_seen,followers_count,common_count,occupation,nickname,relatives,relation,personal,connections,exports,wall_comments,activities,interests,music,movies,tv,books,games,about,quotes,can_post,can_see_all_posts,can_see_audio,can_write_private_message,can_send_friend_request,is_favorite,is_hidden_from_feed,timezone,screen_name,maiden_name,crop_photo,is_friend,friend_status,career,military,blacklisted,blacklisted_by_me'
+                        )[0]
+    return response
+
+
+@vk_request_errors
 def get_issues(**kwargs):
     # TODO упорядочить получаемые данные через хранимые процедуры
     """
