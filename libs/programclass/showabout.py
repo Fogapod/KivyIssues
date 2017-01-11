@@ -12,10 +12,7 @@ class ShowAbout(object):
 
     def show_about(self, *args):
         dialog(
-            text=self.data.string_lang_about.format(
-                LINK_COLOR=self.data.text_link_color),
-            title=self.title, ref_callback=self._callback
-        )
+            text=self.translation._(u'Версия - 0.0.1'))
 
     def _callback(self, instance, text_link):
         print(instance, text_link)
