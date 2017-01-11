@@ -1,0 +1,186 @@
+# Copyright (C) 2017 Ivanov Yuri aka HeaTTheatR
+# This file is distributed under the same license as the Kivy package.
+# Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>, 2017
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-11 11:33+0300\n"
+"PO-Revision-Date: 2017-01-11 15:36+0200\n"
+"Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
+"Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
+"Language: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: program.py:161
+msgid "Меню"
+msgstr ""
+
+#: program.py:207
+msgid "Участники"
+msgstr ""
+
+#: program.py:213
+msgid "Задать вопрос"
+msgstr ""
+
+#: program.py:313
+msgid "Sent!"
+msgstr ""
+
+#: program.py:324
+msgid "Error while sending!"
+msgstr ""
+
+#: program.py:370
+msgid "This file unsupported!"
+msgstr ""
+
+#: program.py:373 program.py:412
+msgid "This is not image!"
+msgstr ""
+
+#: program.py:422
+msgid "Выберите аватар"
+msgstr ""
+
+#: program.py:469
+msgid "Закрыть приложение?"
+msgstr ""
+
+#: program.py:471 libs/programclass/showplugins.py:53
+#: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
+#: libs/programclass/showplugins.py:99
+msgid "Да"
+msgstr ""
+
+#: program.py:472 libs/programclass/showplugins.py:88
+#: libs/programclass/showplugins.py:91
+msgid "Нет"
+msgstr ""
+
+#: program.py:513
+#, python-format
+msgid "Нет файла локализации %s"
+msgstr ""
+
+#: libs/programclass/showplugins.py:150
+msgid "Нет информации о плагине!"
+msgstr ""
+
+#: libs/programclass/showplugins.py:175
+msgid "Нет установленных плагинов!"
+msgstr ""
+
+#: libs/programclass/authorization.py:26
+msgid "Field Login empty!"
+msgstr ""
+
+#: libs/programclass/authorization.py:33
+msgid "Field Password empty!"
+msgstr ""
+
+#: libs/programclass/authorization.py:61
+msgid "Авторизация..."
+msgstr ""
+
+#: libs/programclass/authorization.py:75
+#, python-format
+msgid ""
+"Ошибка авторизации!\n"
+"%s"
+msgstr ""
+
+#: libs/programclass/authorization.py:94
+msgid "Загрузка аватара..."
+msgstr ""
+
+#: libs/programclass/authorization.py:113
+msgid "Получение информации о группе..."
+msgstr ""
+
+#: libs/programclass/authorization.py:118
+msgid "Загрузка имени пользователя..."
+msgstr ""
+
+#: libs/programclass/authorization.py:128
+msgid "Загрузка кол-ва вопросов в группе..."
+msgstr ""
+
+#: libs/programclass/authorization.py:135
+#: libs/programclass/authorization.py:142 libs/uix/kv/activity/nawdrawer.kv:69
+#, python-format
+msgid "Новые - %s"
+msgstr ""
+
+#: libs/programclass/authorization.py:148 libs/uix/kv/activity/nawdrawer.kv:63
+#, python-format
+msgid "Вопросов в группе - %s"
+msgstr ""
+
+#: libs/programclass/showposts.py:102
+msgid "Страница "
+msgstr ""
+
+#: libs/uix/kv/activity/license.kv:23
+#: libs/uix/kv/activity/baseclass/license.py:42
+msgid "MIT LICENSE"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:48
+msgid "Вопросы"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:53
+msgid "Ответы"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:76
+msgid "Настройки:"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:80
+msgid "Настройки"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:83
+msgid "Плагины"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:87
+msgid "Лицензия"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:95
+msgid "Выход"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/boxposts.py:158
+#, python-format
+msgid "Комментариев: %s"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/boxposts.py:218
+msgid "Ответить"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/license.py:28
+msgid "Не найден текст лицензии!"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/license.py:45
+msgid "Ознакомиться с текстом лицензии:"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/license.py:48
+#: libs/uix/kv/activity/baseclass/license.py:50
+msgid "На русском"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/license.py:51
+#: libs/uix/kv/activity/baseclass/license.py:53
+msgid "На английском"
+msgstr ""
