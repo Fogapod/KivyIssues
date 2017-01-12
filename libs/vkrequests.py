@@ -407,7 +407,6 @@ def get_user_info(**kwargs):
 
 @vk_request_errors
 def get_issues(**kwargs):
-    # TODO упорядочить получаемые данные через хранимые процедуры
     """
     :offset:
         необходимое смещение при получении списка записей
@@ -428,6 +427,29 @@ def get_issues(**kwargs):
     return api.wall.get(owner_id=MGROUP_ID, filter='others', extended='1',
                         offset=offset, count=post_count)
 
+
+@vk_request_errors
+def get_user_posts(**kwargs):
+    """
+    :user_id: id пользователя, записи которого необходимо получить
+    :offset:
+        необходимое смещение при получении списка записей
+        стандартное значение: 0
+    :count:
+        количество записей, которое необходимо получить за раз
+        стандартное значение: 30
+        максимальное значение: 200
+
+    Возвращает: список записей пользователя (идентично get_issues)
+
+    """
+
+    uid = kwargs['user_id']
+    offset = kwargs.get('offset', '0')
+    post_count = kwargs.get('count', '30')
+
+    return api.wall.get(owner_id=uid, filter='others', extended='1',
+                        offset=offset, count=post_count)
 
 @vk_request_errors
 def create_issue(*args):
