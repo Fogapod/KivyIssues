@@ -74,7 +74,7 @@
 
             LabelSection:
                 text:  app.translation._('Настройки' + ':')
-
+                events_callback: lambda x: x
             IconItemOne:
                 icon: 'data/images/settings.png'
                 text: app.translation._('Настройки')
@@ -82,6 +82,10 @@
                 icon: 'data/images/plugins.png'
                 text: app.translation._('Плагины')
                 events_callback: app.show_plugins
+            IconItemOne:
+                icon: 'data/images/locale.png'
+                text: app.translation._('Язык')
+                events_callback: app.select_locale
             IconItemOne:
                 icon: 'data/images/license.png'
                 text: app.translation._('Лицензия')
