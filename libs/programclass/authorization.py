@@ -111,7 +111,7 @@ class AuthorizationOnVK(object):
     def set_info_for_group(self):
         self.screen.ids.load_screen.ids.status.text = \
             self.translation._(u'Получение информации о группе...')
-        self.group_info, text_error = vkr.get_info_from_group()
+        self.group_info, text_error = vkr.get_group_info()
 
     def set_user_name(self):
         self.screen.ids.load_screen.ids.status.text = \
