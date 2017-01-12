@@ -3,6 +3,7 @@ Mercury.modules
 *.log
 *.pyc
 *.pyo
+*.pot
 .idea
 .buildozer
 /bin
