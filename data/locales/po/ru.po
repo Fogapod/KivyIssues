@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 15:14+0300\n"
+"POT-Creation-Date: 2017-01-12 15:19+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -214,4 +214,8 @@ msgstr ""
 
 #: libs/uix/kv/activity/baseclass/boxposts.py:218
 msgid "Ответить"
+msgstr ""
+
+#: libs/uix/kv/activity/startscreen.kv:19
+msgid "В группе появились новые вопросы!"
 msgstr ""
