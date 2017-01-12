@@ -168,6 +168,9 @@ class Lists(BoxLayout):
 
         for name_item in dict_items.keys():
             desc_item, icon_item = dict_items[name_item]
+            if desc_item == '':
+                name_item += '\n'
+
             icon_item = IconItemThree(
                 text=name_item, secondary_text=desc_item, id=name_item,
                 icon=icon_item, events_callback=self.events_callback
