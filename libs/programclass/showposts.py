@@ -4,11 +4,10 @@
 # и управляет созданием экранов с полученными данными.
 #
 
-from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
 
-from libs.programdata import thread
+from libs._thread import thread
 
 
 class ShowPosts(object):
@@ -36,7 +35,7 @@ class ShowPosts(object):
         self.profiles_dict = {}
         self.items_list = None
         self.index_start = 0
-        self.index_end = current_number_page * self._app.data.count_issues
+        self.index_end = current_number_page * self._app.count_issues
         # Имя предыдущего экрана.
         self.previous_screen = self._app.manager.current
 
@@ -95,15 +94,16 @@ class ShowPosts(object):
                 self._app.manager.current = name_screen
 
                 Clock.unschedule(check_posts_dict)
-                # self._app.dialog_progress.dismiss()
+                self._app.hide_progress(
+                    self._app.manager.get_screen(self._app.manager.current)
+                )
                 self._app.screen.ids.action_bar.title = \
-                    self._app.data.string_lang_page + \
+                    self._app.translation._(u'Страница ') + \
                     str(self.current_number_page)
 
-        progress_line = Image(source='data/images/waiting.gif',
-                              size_hint_y=None, pos=(0, -35))
-        self._app.screen.ids.previous.ids.box.add_widget(progress_line)
-        # self._app.show_progress(text=self._app.data.string_lang_wait)
+        self._app.show_progress(
+            self._app.manager.get_screen(self._app.manager.current)
+        )
 
         if not self._app.manager.has_screen(name_screen):
             self._set_info_for_post()
@@ -119,8 +119,8 @@ class ShowPosts(object):
         if self.current_number_page == select_number_page:
             return
 
-        self.index_end = select_number_page * self._app.data.count_issues
-        self.index_start = self.index_end - self._app.data.count_issues
+        self.index_end = select_number_page * self._app.count_issues
+        self.index_start = self.index_end - self._app.count_issues
         self.current_number_page = select_number_page
         self.show_posts()
 

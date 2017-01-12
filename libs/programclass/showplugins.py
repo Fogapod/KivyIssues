@@ -19,19 +19,38 @@ class ShowPlugin(object):
     def _compare_version_plugin(self, name_plugin):
         '''Сравнивает поддерживаемые плагином версии программы.'''
 
-        app_version_min = self.started_plugins[name_plugin]['app-version-min']
-        app_version_max = self.started_plugins[name_plugin]['app-version-max']
-        app_version = self.started_plugins[name_plugin]['app-version']
+        app_version_min = \
+            self.started_plugins[name_plugin]['app-version-min']
+        app_version_max = \
+            self.started_plugins[name_plugin]['app-version-max']
+        app_version = \
+            self.started_plugins[name_plugin]['app-version']
 
         if app_version_min > app_version:
-            return self.data.string_lang_plugin_warning_support, False
+            # return self.translation._(
+            #    u'[color={TEXT_COLOR}]Плагин [color={LINK_COLOR}]\'{'
+            #    u'NAME_PLUGIN}\'[color={TEXT_COLOR}]'
+            #    u'поддерживает [color={LINK_COLOR}]Test '
+            #    u'[color={TEXT_COLOR}]до версии [color={LINK_COLOR}]'
+            #    u'{VERSION_MIN}. [color={TEXT_COLOR}]Ваша текущая версия - '
+            #    u'[color={LINK_COLOR}]{VERSION_APP}.'
+            #    u'[color={TEXT_COLOR}]Подключить?'), False
+            pass
         elif app_version > app_version_max:
-            return self.data.string_lang_plugin_warning, False
+            # return self.translation._(
+            #    u'[color={TEXT_COLOR}]Плагин [color={LINK_COLOR}]\'{'
+            #    u'NAME_PLUGIN}\'[color={TEXT_COLOR}]требует '
+            #    u'[color={LINK_COLOR}]Test [color={TEXT_COLOR}]'
+            #    u'по крайней мере, версии [color={LINK_COLOR}]'
+            #    u'{VERSION_MIN}. [color={TEXT_COLOR}]Ваша текущая версия - '
+            #    u'[color={LINK_COLOR}]{VERSION_APP}. '
+            #    u'[color={TEXT_COLOR}]Подключить?'), False
+            pass
         else:
             return '', True
 
     def _save_status_plugin(self, dialog, name_plugin, result):
-        if result == self.data.string_lang_yes:
+        if result == self.translation._(u'Да'):
             self._list_activate_plugins.append(name_plugin)
             open('{}/libs/plugins/plugins_list.list'.format(
                 self.directory), 'w').write(str(self._list_activate_plugins))
@@ -62,13 +81,14 @@ class ShowPlugin(object):
                             'app-version']
                     )
                     buttons = [
-                        [self.data.string_lang_yes, lambda *x:
+                        [self.translation._(u'Да'), lambda *x:
                             self._save_status_plugin(
                                 window, name_plugin,
-                                self.data.string_lang_yes)],
-                        [self.data.string_lang_no, lambda *x:
+                                self.translation._(u'Да'))],
+                        [self.translation._(u'Нет'), lambda *x:
                             self._save_status_plugin(
-                                window, name_plugin, self.data.string_lang_no)]
+                                window, name_plugin,
+                                self.translation._(u'Нет'))]
                     ]
                     window = dialog(
                         text=text, title=self.title, buttons=buttons,
@@ -76,7 +96,7 @@ class ShowPlugin(object):
                     )
                 else:
                     self._save_status_plugin(
-                        None, name_plugin, self.data.string_lang_yes
+                        None, name_plugin, self.translation._(u'Да')
                     )
             else:
                 try:
@@ -111,7 +131,8 @@ class ShowPlugin(object):
 
             plugin_desc = self.started_plugins[plugin]['plugin-desc']
             plugin_icon = '{}/libs/plugins/{}/plugin_logo.png'.format(
-                self.directory, self.started_plugins[plugin]['plugin-package']
+                self.directory,
+                self.started_plugins[plugin]['plugin-package']
             )
 
             if not os.path.exists(plugin_icon):
@@ -126,7 +147,8 @@ class ShowPlugin(object):
         if not os.path.exists('{}/libs/plugins/{}/README.rst'.format(
                 self.directory, name_plugin)):
             dialog(
-                text=self.data.string_lang_not_info_plugin, title=name_plugin
+                text=self.translation._(u'Нет информации о плагине!'),
+                title=name_plugin
             )
         else:
             info_plugin = open('{}/libs/plugins/{}/README.rst'.format(
@@ -137,6 +159,7 @@ class ShowPlugin(object):
                 AUTHOR=self.started_plugins[name_plugin]['plugin-author'],
                 MAIL=self.started_plugins[name_plugin]['plugin-mail'],
             )
+            # TODO: избавиться от использования RstDocument.
             widget_info = RstDocument(
                 text=info_plugin, background_color=self.data.alpha,
                 underline_color=self.data.underline_rst_color
@@ -149,13 +172,13 @@ class ShowPlugin(object):
         dict_info_plugins = self._get_info_plugins()
         if not dict_info_plugins.__len__():
             dialog(
-                text=self.data.self.data.string_lang_not_install_plugin,
+                text=self.translation._(u'Нет установленных плагинов!'),
                 title=self.title
             )
             return
 
         self._list_plugins = Lists(
-            dict_items=dict_info_plugins, events_callback=self._action_plugin,
-            flag='two_list_icon_check'
+            dict_items=dict_info_plugins,
+            events_callback=self._action_plugin, flag='two_list_icon_check'
         )
         card(self._list_plugins)

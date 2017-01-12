@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from kivy.logger import PY2
+
 from libs.vkrequests import get_issues, get_comments
 
 
@@ -21,7 +23,7 @@ class WorkWithPosts(object):
 
                 return marker
 
-        mark_text = self.data.pattern_replace_link.sub(replace, post)
+        mark_text = self.PATTERN_REPLACE_LINK.sub(replace, post)
 
         return mark_text
 
@@ -59,7 +61,7 @@ class WorkWithPosts(object):
             last_name = data_post['last_name']
             author_online = data_post['online']
 
-            if self.data.PY2:
+            if PY2:
                 author_name = u'{} {}'.format(first_name, last_name)
             else:
                 author_name = '{} {}'.format(first_name, last_name)

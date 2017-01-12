@@ -39,7 +39,7 @@
                             size_hint_x: None
                             width: self.texture_size[0]
                             halign: 'left'
-                            color: app.data.text_color_from_hex
+                            color: app.text_color_from_hex
 
             # Ссылка на группу
             Label:
@@ -74,7 +74,7 @@
                 # Описание группы.
                 Label:
                     id: description
-                    color: app.data.text_color_from_hex
+                    color: app.text_color_from_hex
                     font_size: '12sp'
                     text_size: self.width, None
                     size_hint_y: None

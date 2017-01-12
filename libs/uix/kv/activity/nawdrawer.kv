@@ -1,6 +1,8 @@
-#: kivy 1.9.1
-#: import os os
-#: import MDSeparator kivymd.card.MDSeparator
+# -*- coding: utf-8 -*-
+
+#:kivy 1.9.1
+#:import os os
+#:import MDSeparator kivymd.card.MDSeparator
 
 <ImageButton@ButtonBehavior+Image>:
 
@@ -8,7 +10,7 @@
     markup: True
     bold: True
     font_size: '16sp'
-    color: app.data.text_color_from_hex
+    color: app.text_color_from_hex
     size_hint_y: None
     height: dp(45)
 
@@ -19,8 +21,8 @@
         id: avatar
         source:
             'data/images/avatar.png' \
-            if os.path.exists('{}/data/images/avatar.png'.format(\
-            app.directory)) else 'data/images/avatar_empty.png'
+            if os.path.exists('%s/data/images/avatar.png' % app.directory) \
+            else 'data/images/avatar_empty.png'
         size_hint: None, None
         size: dp(150), dp(150)
         pos_hint: {'center_x': .5}
@@ -30,7 +32,7 @@
 
     LabelSection:
         id: user_name
-        text: app.data.user_name
+        text: app.user_name
 
     ScrollView:
         size_hint_y: None
@@ -43,12 +45,12 @@
 
             IconItemOne:
                 icon: 'data/images/issues.png'
-                text: app.data.string_lang_issues
+                text: app.translation._('Вопросы')
                 events_callback:
                     lambda: root.show_posts()
             IconItemOne:
                 icon: 'data/images/answer.png'
-                text: app.data.string_lang_answer
+                text: app.translation._('Ответы')
 
             MDSeparator:
 
@@ -58,31 +60,31 @@
             IconItemOne:
                 icon: 'data/images/issues.png'
                 id: issues_in_group
-                text: app.data.string_lang_issues_in_group.format('0')
+                text: app.translation._('Вопросов в группе - %s') % '0'
                 events_callback:
                     lambda: root.show_posts(only_questions=False)
             IconItemOne:
                 icon: 'data/images/new_issues.png'
                 id: new_issues_in_group
-                text: app.data.string_lang_new_issues_in_group.format('0')
+                text: app.translation._('Новые - %s') % '0'
                 events_callback:
                     lambda: root.show_posts(count_issues=self.text.split('- ')[1], only_questions=False)
 
             MDSeparator:
 
             LabelSection:
-                text:  app.data.string_lang_settings + ':'
+                text:  app.translation._('Настройки' + ':')
 
             IconItemOne:
                 icon: 'data/images/settings.png'
-                text: app.data.string_lang_settings
+                text: app.translation._('Настройки')
             IconItemOne:
                 icon: 'data/images/plugins.png'
-                text: app.data.string_lang_plugin
+                text: app.translation._('Плагины')
                 events_callback: app.show_plugins
             IconItemOne:
                 icon: 'data/images/license.png'
-                text: app.data.string_lang_license
+                text: app.translation._('Лицензия')
                 events_callback: app.show_license
             IconItemOne:
                 icon: 'data/images/about.png'
@@ -90,5 +92,5 @@
                 events_callback: app.show_about
             IconItemOne:
                 icon: 'data/images/exit.png'
-                text: app.data.string_lang_exit_key
+                text: app.translation._('Выход')
                 events_callback: app.dialog_exit

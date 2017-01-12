@@ -24,8 +24,8 @@ class ShowLicense(Screen):
 
             if not os.path.exists(path_to_license):
                 dialog(
-                    text=self._app.data.string_lang_not_license,
-                    title=self._app.title
+                    text=self._app.translation._(
+                        u'Не найден текст лицензии!'), title=self._app.title
                 )
                 return
 
@@ -39,17 +39,17 @@ class ShowLicense(Screen):
                 [['chevron-left', lambda x: self._app.back_screen(
                     previous_screen)]]
             self._app.screen.ids.action_bar.title = \
-              self._app.data.string_lang_mit
+              self._app.translation._('MIT LICENSE')
 
         choice_dialog = dialog(
-            text=self._app.data.string_lang_prev_license,
+            text=self._app.translation._(u'Ознакомиться с текстом лицензии:'),
             title=self._app.title,
             buttons=[
-                [self._app.data.string_lang_on_russian,
+                [self._app.translation._(u'На русском'),
                  lambda *x: _show_license(
-                     self._app.data.string_lang_on_russian)],
-                [self._app.data.string_lang_on_english,
+                     self._app.translation._(u'На русском'))],
+                [self._app.translation._(u'На английском'),
                  lambda *x: _show_license(
-                     self._app.data.string_lang_on_english)]
+                     self._app.translation._(u'На английском'))]
             ]
         )
