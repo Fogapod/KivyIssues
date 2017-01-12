@@ -73,7 +73,7 @@ class BoxPosts(FloatLayout):
             post, author_name = self.add_info_for_post(items_dict)
 
             if self.only_questions:  # пост пользователя
-                if self._app.data.user_name == author_name:
+                if self._app.user_name == author_name:
                     self.ids.list_posts.add_widget(post)
             else:  # все посты
                 self.ids.list_posts.add_widget(post)
@@ -154,8 +154,9 @@ class BoxPosts(FloatLayout):
                 # Строка с количеством комментариев к посту.
                 box_comments = AnchorLayout(size_hint_y=None, height=dp(20))
                 self.label_count_comments = Label(
-                    text=self._app.data.string_lang_count_comments.format(
-                        self.count_issues), font_size='11sp'
+                    text=self._app.translation._(
+                        u'Комментариев: %s') % self.count_issues,
+                    font_size='11sp'
                 )
                 add_canvas(box_comments, self._app.theme_cls.primary_color)
 
@@ -172,13 +173,13 @@ class BoxPosts(FloatLayout):
             if not add_commented_post:
                 if self.profiles_dict[
                         items_dict['from_id']]['author_online']:
-                    icon = self._app.data.device_online[
+                    icon = self._app.DEVISE_ONLINE[
                         self.profiles_dict[items_dict['from_id']]['device']
                     ]
                 else:
-                    icon = self._app.data.device_online[0]
+                    icon = self._app.DEVISE_ONLINE[0]
             else:
-                icon = self._app.data.device_online[0]
+                icon = self._app.DEVISE_ONLINE[0]
 
             post.ids.title_post.add_widget(RightButton(source=icon))
 
@@ -192,7 +193,7 @@ class BoxPosts(FloatLayout):
             text_post = items_dict['text']
             # Ищем в комментариях, кому адресованно -
             # подстроку вида '[id12345|NameAuthor]'.
-            count = re.match(self._app.data.pattern_whom_comment, text_post)
+            count = re.match(self._app.PATTERN_WHOM_COMMENT, text_post)
             if count:
                 count = count.group()
                 # id и имя автора, которому написан комментарий.
@@ -200,7 +201,7 @@ class BoxPosts(FloatLayout):
                     count.replace('[', '').replace(']', '').split('|')
                 text_post = text_post.replace(count, '')
                 text_post = u'[ref=Text post][b][color=%s]\n%s[/b][/color]' \
-                            '%s[/ref]' %(
+                            '%s[/ref]' % (
                     get_hex_from_color(self._app.theme_cls.primary_color),
                     whom_name, self._app.mark_links_in_post(text_post))
             else:
@@ -213,8 +214,8 @@ class BoxPosts(FloatLayout):
 
             # Подпись 'Ответить'.
             answer_label = Label(
-                text='[ref={answer}]{answer}[/ref]'.format(
-                    answer=self._app.data.string_lang_answer_on_post),
+                text=u'[ref={answer}]{answer}[/ref]'.format(
+                    answer=self._app.translation._(u'Ответить')),
                 markup=True, halign="left", font_size='11sp',
                 color=self._app.theme_cls.primary_color,
                 )
@@ -254,7 +255,7 @@ class BoxPosts(FloatLayout):
             add_canvas(post, [0, 0, 0, .2], shift=(2.5, 3))
 
         # Фон поста/комментария.
-        add_canvas(post, self._app.data.list_color)
+        add_canvas(post, self._app.list_color)
         author_name = add_name_avatar_date_post()
         add_icon_status()
 
@@ -270,14 +271,14 @@ class BoxPosts(FloatLayout):
         paginator_box = BoxLayout(size_hint_y=None, height=dp(30))
         paginator_string = create_paginator(
             number_posts=int(self.count_issues),
-            pages=self._app.data.count_issues,
+            pages=self._app.count_issues,
             current_number_page=self.current_number_page,
             link_color=get_hex_from_color(self._app.theme_cls.primary_color),
-            number_color=self._app.data.text_color
+            number_color=self._app.text_color
         )
         paginator_pages = Label(text=paginator_string, markup=True)
         paginator_box.add_widget(paginator_pages)
         self.ids.box_posts.add_widget(paginator_box)
-        add_canvas(paginator_box, self._app.data.list_color)
+        add_canvas(paginator_box, self._app.list_color)
 
         return paginator_pages
