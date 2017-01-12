@@ -8,5 +8,5 @@ po:
 mo:
 	mkdir -p data/locales/ru/LC_MESSAGES
 	mkdir -p data/locales/en/LC_MESSAGES
-	msgfmt -c -o data/locales/ru/LC_MESSAGES/langapp.mo data/locales/po/ru.po
-	msgfmt -c -o data/locales/en/LC_MESSAGES/langapp.mo data/locales/po/en.po
+	msgfmt -c -o data/locales/ru/LC_MESSAGES/kivyissues.mo data/locales/po/ru.po
+	msgfmt -c -o data/locales/en/LC_MESSAGES/kivyissues.mo data/locales/po/en.po
