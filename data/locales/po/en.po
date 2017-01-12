@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 15:19+0300\n"
+"POT-Creation-Date: 2017-01-12 23:47+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:246
+#: program.py:247
 msgid "Меню"
 msgstr "Menu"
 
-#: program.py:292
+#: program.py:276
 msgid "Участники"
 msgstr "Participants"
 
-#: program.py:298
+#: program.py:282
 msgid "Задать вопрос"
 msgstr "Ask a Question"
 
-#: program.py:398
+#: program.py:382
 msgid "Sent!"
 msgstr ""
 
-#: program.py:409
+#: program.py:393
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:455
+#: program.py:439
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:458 program.py:497
+#: program.py:442 program.py:481
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:507
+#: program.py:491
 msgid "Выберите аватар"
 msgstr "Choose an avatar"
 
-#: program.py:554
+#: program.py:527
 msgid "Закрыть приложение?"
 msgstr "Close application?"
 
-#: program.py:556 libs/programclass/showplugins.py:53
+#: program.py:529 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr "Yes"
 
-#: program.py:557 libs/programclass/showplugins.py:88
+#: program.py:530 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr "No"
 
-#: program.py:569
+#: program.py:541
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -95,7 +95,7 @@ msgstr ""
 "[b]Source:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
 "[color={link_color}]GitHub[/color][/ref]"
 
-#: program.py:593
+#: program.py:565
 msgid ""
 "\n"
 "[color=78a5a3ff]Copyright (c) Easy\n"
@@ -151,14 +151,9 @@ msgstr ""
 "USE OR OTHER DEALINGS IN THE SOFTWARE\n"
 ".                "
 
-#: program.py:609 libs/uix/kv/activity/license.kv:23
+#: program.py:581 libs/uix/kv/activity/license.kv:23
 msgid "MIT LICENSE"
 msgstr ""
-
-#: program.py:648
-#, python-format
-msgid "Нет файла локализации %s"
-msgstr "No localization file %s"
 
 #: libs/programclass/showplugins.py:150
 msgid "Нет информации о плагине!"
@@ -241,10 +236,14 @@ msgid "Плагины"
 msgstr "Plugins"
 
 #: libs/uix/kv/activity/nawdrawer.kv:87
+msgid "Язык"
+msgstr "Language"
+
+#: libs/uix/kv/activity/nawdrawer.kv:91
 msgid "Лицензия"
 msgstr "License"
 
-#: libs/uix/kv/activity/nawdrawer.kv:95
+#: libs/uix/kv/activity/nawdrawer.kv:99
 msgid "Выход"
 msgstr "Exit"
 
@@ -260,3 +259,6 @@ msgstr "Reply"
 #: libs/uix/kv/activity/startscreen.kv:19
 msgid "В группе появились новые вопросы!"
 msgstr "Found new Issues!"
+
+#~ msgid "Нет файла локализации %s"
+#~ msgstr "No localization file %s"
