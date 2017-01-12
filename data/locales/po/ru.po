@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-11 11:33+0300\n"
+"POT-Creation-Date: 2017-01-12 01:31+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,73 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:161
+#: program.py:240
 msgid "Меню"
 msgstr ""
 
-#: program.py:207
+#: program.py:269
 msgid "Участники"
 msgstr ""
 
-#: program.py:213
+#: program.py:275
 msgid "Задать вопрос"
 msgstr ""
 
-#: program.py:313
+#: program.py:375
 msgid "Sent!"
 msgstr ""
 
-#: program.py:324
+#: program.py:386
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:370
+#: program.py:432
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:373 program.py:412
+#: program.py:435 program.py:474
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:422
+#: program.py:484
 msgid "Выберите аватар"
 msgstr ""
 
-#: program.py:469
+#: program.py:531
 msgid "Закрыть приложение?"
 msgstr ""
 
-#: program.py:471 libs/programclass/showplugins.py:53
+#: program.py:533 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr ""
 
-#: program.py:472 libs/programclass/showplugins.py:88
+#: program.py:534 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr ""
 
-#: program.py:513
+#: program.py:545
+#, python-brace-format
+msgid ""
+"[size=20][b]Kivy Issues[/b][/size]\n"
+"\n"
+"[b]Версия:[/b] {version}\n"
+"[b]Лицензия:[/b] MIT\n"
+"\n"
+"[size=20][b]Разработчики[/b][/size]\n"
+"\n"
+"[b]Backend:[/b] [ref=https://m.vk.com/fogapod][color={link_color}]Евгений "
+"Ершов[/color][/ref]\n"
+"[b]Frontend:[/b] [ref=https://m.vk.com/heattheatr][color={link_color}]Иванов "
+"Юрий[/color][/ref]\n"
+"\n"
+"[b]Исходный код:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
+"[color={link_color}]GitHub[/color][/ref]"
+msgstr ""
+
+#: program.py:602
 #, python-format
 msgid "Нет файла локализации %s"
 msgstr ""
@@ -121,7 +140,7 @@ msgstr ""
 msgid "Вопросов в группе - %s"
 msgstr ""
 
-#: libs/programclass/showposts.py:102
+#: libs/programclass/showposts.py:101
 msgid "Страница "
 msgstr ""
 
