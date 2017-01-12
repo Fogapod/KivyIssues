@@ -72,9 +72,9 @@ class ShowPlugin(object):
                 text, result = self._compare_version_plugin(name_plugin)
                 if not result:
                     text = text.format(
-                        TEXT_COLOR=self.data.text_color,
+                        TEXT_COLOR=self.text_color,
                         NAME_PLUGIN=name_plugin,
-                        LINK_COLOR=self.data.text_link_color,
+                        LINK_COLOR=self.text_link_color,
                         VERSION_MIN=self.started_plugins[name_plugin][
                             'app-version-min'],
                         VERSION_APP=self.started_plugins[name_plugin][
@@ -161,8 +161,8 @@ class ShowPlugin(object):
             )
             # TODO: избавиться от использования RstDocument.
             widget_info = RstDocument(
-                text=info_plugin, background_color=self.data.alpha,
-                underline_color=self.data.underline_rst_color
+                text=info_plugin, background_color=self.alpha,
+                underline_color=self.underline_rst_color
             )
             card(widget_info, size=(.75, .6))
 
