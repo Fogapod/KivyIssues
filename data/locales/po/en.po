@@ -260,15 +260,3 @@ msgstr "Reply"
 #: libs/uix/kv/activity/startscreen.kv:19
 msgid "В группе появились новые вопросы!"
 msgstr "Found new Issues!"
-
-#~ msgid "Не найден текст лицензии!"
-#~ msgstr "Could not find the license text!"
-
-#~ msgid "Ознакомиться с текстом лицензии:"
-#~ msgstr "Read the text of the license:"
-
-#~ msgid "На русском"
-#~ msgstr "In Russian"
-
-#~ msgid "На английском"
-#~ msgstr "In English"
