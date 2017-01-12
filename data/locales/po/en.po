@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 01:31+0300\n"
+"POT-Creation-Date: 2017-01-12 15:14+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:240
+#: program.py:246
 msgid "Меню"
 msgstr "Menu"
 
-#: program.py:269
+#: program.py:292
 msgid "Участники"
 msgstr "Participants"
 
-#: program.py:275
+#: program.py:298
 msgid "Задать вопрос"
 msgstr "Ask a Question"
 
-#: program.py:375
+#: program.py:398
 msgid "Sent!"
 msgstr ""
 
-#: program.py:386
+#: program.py:409
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:432
+#: program.py:455
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:435 program.py:474
+#: program.py:458 program.py:497
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:484
+#: program.py:507
 msgid "Выберите аватар"
 msgstr "Choose an avatar"
 
-#: program.py:531
+#: program.py:554
 msgid "Закрыть приложение?"
 msgstr "Close application?"
 
-#: program.py:533 libs/programclass/showplugins.py:53
+#: program.py:556 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr "Yes"
 
-#: program.py:534 libs/programclass/showplugins.py:88
+#: program.py:557 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr "No"
 
-#: program.py:545
+#: program.py:569
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -92,10 +92,70 @@ msgstr ""
 "[b]Frontend:[/b] [ref=https://m.vk.com/heattheatr][color={link_color}]Ivanov "
 "Yuri[/color][/ref]\n"
 "\n"
-"[b]Surce:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
+"[b]Source:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
 "[color={link_color}]GitHub[/color][/ref]"
 
-#: program.py:602
+#: program.py:593
+msgid ""
+"\n"
+"[color=78a5a3ff]Copyright (c) Easy\n"
+"\n"
+"[color=#000]Данная лицензия разрешает лицам, получившим копию данного "
+"программного обеспечения и сопутствующей документации (в дальнейшем "
+"именуемыми [color=78a5a3ff]«Программное Обеспечение»[color=#000]), "
+"безвозмездно использовать [color=78a5a3ff]Программное Обеспечение "
+"[color=#000]без ограничений, включая неограниченное право на использование, "
+"копирование, изменение, слияние, публикацию, распространение, "
+"сублицензирование и/или продажу копий [color=78a5a3ff]Программного "
+"Обеспечения[color=#000], а также лицам, которым предоставляется данное "
+"[color=78a5a3ff]Программное Обеспечение[color=#000], при соблюдении "
+"следующих условий:\n"
+"\n"
+"Указанное выше уведомление об авторском праве и данные условия должны быть "
+"включены во все копии или значимые части данного "
+"[color=78a5a3ff]Программного Обеспечения.\n"
+"\n"
+"[color=78a5a3ff]ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», "
+"БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ "
+"ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И "
+"ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ "
+"ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ "
+"ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ "
+"СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ "
+"ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.\n"
+"                "
+msgstr ""
+"\n"
+"[color=78a5a3ff]Copyright (c) 2016 Easy\n"
+"\n"
+"[color=#000]Permission is hereby granted, free of charge, to any person "
+"obtaining a copy of this [color=78a5a3ff]Software [color=#000]and associated "
+"documentationfiles (the [color=78a5a3ff]Software[color=#000]), to deal in "
+"the [color=78a5a3ff]Software [color=#000]without restriction, including  "
+"without limitation the rights to use, copy, modify, merge, publish, "
+"distribute, sublicense, and/or sell copies of the "
+"[color=78a5a3ff]Software[color=#000], and to permit persons to whom the "
+"[color=78a5a3ff]Software [color=#000]is furnished to do so, subject to the "
+"following conditions:\n"
+"\n"
+"[color=#000]The above copyright notice and this permission notice shall be "
+"included in all copies or substantial portions of the "
+"[color=78a5a3ff]Software.\n"
+"\n"
+"[color=78a5a3ff]THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY "
+"KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF "
+"MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO "
+"EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, "
+"DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR "
+"OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE "
+"USE OR OTHER DEALINGS IN THE SOFTWARE\n"
+".                "
+
+#: program.py:609 libs/uix/kv/activity/license.kv:23
+msgid "MIT LICENSE"
+msgstr ""
+
+#: program.py:648
 #, python-format
 msgid "Нет файла локализации %s"
 msgstr "No localization file %s"
@@ -160,11 +220,6 @@ msgstr "Issues in the group - %s"
 msgid "Страница "
 msgstr "Page"
 
-#: libs/uix/kv/activity/license.kv:23
-#: libs/uix/kv/activity/baseclass/license.py:42
-msgid "MIT LICENSE"
-msgstr ""
-
 #: libs/uix/kv/activity/nawdrawer.kv:48
 msgid "Вопросы"
 msgstr "Issues"
@@ -202,20 +257,14 @@ msgstr "Comments %s"
 msgid "Ответить"
 msgstr "Reply"
 
-#: libs/uix/kv/activity/baseclass/license.py:28
-msgid "Не найден текст лицензии!"
-msgstr "Could not find the license text!"
+#~ msgid "Не найден текст лицензии!"
+#~ msgstr "Could not find the license text!"
 
-#: libs/uix/kv/activity/baseclass/license.py:45
-msgid "Ознакомиться с текстом лицензии:"
-msgstr "Read the text of the license:"
+#~ msgid "Ознакомиться с текстом лицензии:"
+#~ msgstr "Read the text of the license:"
 
-#: libs/uix/kv/activity/baseclass/license.py:48
-#: libs/uix/kv/activity/baseclass/license.py:50
-msgid "На русском"
-msgstr "In Russian"
+#~ msgid "На русском"
+#~ msgstr "In Russian"
 
-#: libs/uix/kv/activity/baseclass/license.py:51
-#: libs/uix/kv/activity/baseclass/license.py:53
-msgid "На английском"
-msgstr "In English"
+#~ msgid "На английском"
+#~ msgstr "In English"

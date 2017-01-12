@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 01:31+0300\n"
+"POT-Creation-Date: 2017-01-12 15:14+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:240
+#: program.py:246
 msgid "Меню"
 msgstr ""
 
-#: program.py:269
+#: program.py:292
 msgid "Участники"
 msgstr ""
 
-#: program.py:275
+#: program.py:298
 msgid "Задать вопрос"
 msgstr ""
 
-#: program.py:375
+#: program.py:398
 msgid "Sent!"
 msgstr ""
 
-#: program.py:386
+#: program.py:409
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:432
+#: program.py:455
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:435 program.py:474
+#: program.py:458 program.py:497
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:484
+#: program.py:507
 msgid "Выберите аватар"
 msgstr ""
 
-#: program.py:531
+#: program.py:554
 msgid "Закрыть приложение?"
 msgstr ""
 
-#: program.py:533 libs/programclass/showplugins.py:53
+#: program.py:556 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr ""
 
-#: program.py:534 libs/programclass/showplugins.py:88
+#: program.py:557 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr ""
 
-#: program.py:545
+#: program.py:569
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -81,7 +81,42 @@ msgid ""
 "[color={link_color}]GitHub[/color][/ref]"
 msgstr ""
 
-#: program.py:602
+#: program.py:593
+msgid ""
+"\n"
+"[color=78a5a3ff]Copyright (c) Easy\n"
+"\n"
+"[color=#000]Данная лицензия разрешает лицам, получившим копию данного "
+"программного обеспечения и сопутствующей документации (в дальнейшем "
+"именуемыми [color=78a5a3ff]«Программное Обеспечение»[color=#000]), "
+"безвозмездно использовать [color=78a5a3ff]Программное Обеспечение "
+"[color=#000]без ограничений, включая неограниченное право на использование, "
+"копирование, изменение, слияние, публикацию, распространение, "
+"сублицензирование и/или продажу копий [color=78a5a3ff]Программного "
+"Обеспечения[color=#000], а также лицам, которым предоставляется данное "
+"[color=78a5a3ff]Программное Обеспечение[color=#000], при соблюдении "
+"следующих условий:\n"
+"\n"
+"Указанное выше уведомление об авторском праве и данные условия должны быть "
+"включены во все копии или значимые части данного "
+"[color=78a5a3ff]Программного Обеспечения.\n"
+"\n"
+"[color=78a5a3ff]ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», "
+"БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ "
+"ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И "
+"ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ "
+"ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ "
+"ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ "
+"СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ "
+"ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.\n"
+"                "
+msgstr ""
+
+#: program.py:609 libs/uix/kv/activity/license.kv:23
+msgid "MIT LICENSE"
+msgstr ""
+
+#: program.py:648
 #, python-format
 msgid "Нет файла локализации %s"
 msgstr ""
@@ -144,11 +179,6 @@ msgstr ""
 msgid "Страница "
 msgstr ""
 
-#: libs/uix/kv/activity/license.kv:23
-#: libs/uix/kv/activity/baseclass/license.py:42
-msgid "MIT LICENSE"
-msgstr ""
-
 #: libs/uix/kv/activity/nawdrawer.kv:48
 msgid "Вопросы"
 msgstr ""
@@ -184,22 +214,4 @@ msgstr ""
 
 #: libs/uix/kv/activity/baseclass/boxposts.py:218
 msgid "Ответить"
-msgstr ""
-
-#: libs/uix/kv/activity/baseclass/license.py:28
-msgid "Не найден текст лицензии!"
-msgstr ""
-
-#: libs/uix/kv/activity/baseclass/license.py:45
-msgid "Ознакомиться с текстом лицензии:"
-msgstr ""
-
-#: libs/uix/kv/activity/baseclass/license.py:48
-#: libs/uix/kv/activity/baseclass/license.py:50
-msgid "На русском"
-msgstr ""
-
-#: libs/uix/kv/activity/baseclass/license.py:51
-#: libs/uix/kv/activity/baseclass/license.py:53
-msgid "На английском"
 msgstr ""
