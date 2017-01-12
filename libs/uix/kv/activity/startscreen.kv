@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #:kivy 1.9.1
 #:import Toolbar kivymd.toolbar.Toolbar
 
@@ -13,7 +15,8 @@
         opposite_colors: True
         elevation: 10
         on_right_action_items:
-            app.open_dialog(app.string_lang_new_issues, app.title, True)
+            app.open_dialog(app.translate._(\
+            'В группе появились новые вопросы!'), app.title, True)
 
     ScreenManager:
         id: manager
