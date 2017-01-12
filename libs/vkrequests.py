@@ -451,6 +451,7 @@ def get_user_posts(**kwargs):
     return api.wall.get(owner_id=uid, filter='others', extended='1',
                         offset=offset, count=post_count)
 
+
 @vk_request_errors
 def create_issue(*args):
     """
