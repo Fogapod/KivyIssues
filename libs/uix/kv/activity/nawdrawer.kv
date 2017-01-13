@@ -17,26 +17,48 @@
 <NavDrawer>:
     _app: app
 
-    ImageButton:
-        id: avatar
-        source:
-            'data/images/avatar.png' \
-            if os.path.exists('%s/data/images/avatar.png' % app.directory) \
-            else 'data/images/avatar_empty.png'
-        size_hint: None, None
-        size: dp(150), dp(150)
-        pos_hint: {'center_x': .5}
-        on_release: app.choice_avatar_user()
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+        size_hint_y: None
+        height: dp(app.window.height - scroll.height)
 
-    Widget:
+        canvas:
+            Color:
+                rgba: app.theme_cls.primary_color
+            Rectangle:
+                pos: self.pos
+                size: self.size
 
-    LabelSection:
-        id: user_name
-        text: app.user_name
+        BoxLayout:
+
+            ImageButton:
+                id: avatar
+                size_hint: None, None
+                size: dp(100), dp(100)
+                pos_hint: {'top': 1}
+                source:
+                    'data/images/avatar.png' \
+                    if os.path.exists(\
+                    '%s/data/images/avatar.png' % app.directory) \
+                    else 'data/images/avatar_empty.png'
+                on_release: app.choice_avatar_user()
+
+            Widget:
+
+        Label:
+            id: user_name
+            size_hint: None, None
+            height: dp(20)
+            width: self.texture_size[0]
+            halign: 'left'
+            markup: True
 
     ScrollView:
+        id: scroll
         size_hint_y: None
-        height: app.window.size[1] // 1.8
+        height: dp(app.window.height - 170)
 
         GridLayout:
             cols: 1
@@ -68,7 +90,9 @@
                 id: new_issues_in_group
                 text: app.translation._('Новые - %s') % '0'
                 events_callback:
-                    lambda: root.show_posts(count_issues=self.text.split('- ')[1], only_questions=False)
+                    lambda: root.show_posts(\
+                    count_issues=self.text.split('-')[1], \
+                    only_questions=False)
 
             MDSeparator:
 
