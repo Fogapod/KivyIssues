@@ -256,7 +256,8 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
         return self.screen
 
     def check_info_group(self, interval):
-        '''Устанавливает значения переменных для экрана Previous.'''
+        '''Ожидает получения данных от сервера после чего станавливает
+        значения переменных для экрана Previous.'''
 
         if self.group_info:
             screen_previous = self.screen.ids.previous
@@ -280,6 +281,9 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
                 self.group_info['description']
             screen_previous.ids.input_text_form.ids.text_input.message = \
                 self.translation._(u'Задать вопрос')
+
+            self.nav_drawer.ids.user_name.text = \
+                '[b]%s[/b]\n[size=12]online[/size]\n' % self.user_name
 
             Clock.unschedule(self.check_info_group)
 
@@ -514,13 +518,17 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
 
         '''
 
+        current_screen = self.manager.current
         # Нажата BackKey.
         if event in (1001, 27):
-            if self.manager.current == 'previous':
+            if current_screen == 'previous':
                 self.dialog_exit()
                 return
 
-        self.manager.current = self.manager.previous()
+        if current_screen == 'show license':
+            self.manager.current = self.manager.screens[-1].name
+        else:
+            self.manager.current = self.manager.previous()
 
     def dialog_exit(self, *args):
         self.open_dialog(
@@ -572,11 +580,9 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
 [color=78a5a3ff]ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
                 ''')
         self.nav_drawer._toggle()
-        previous_screen = self.manager.current
         self.manager.current = 'show license'
         self.screen.ids.action_bar.left_action_items = \
-            [['chevron-left', lambda x: self.back_screen(
-                previous_screen)]]
+            [['chevron-left', lambda x: self.back_screen()]]
         self.screen.ids.action_bar.title = \
             self.translation._('MIT LICENSE')
 
