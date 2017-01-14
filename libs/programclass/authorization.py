@@ -93,7 +93,8 @@ class AuthorizationOnVK(object):
                 )
                 box.add_widget(
                     MDLabel(
-                        text='Отсутствует подключение к Интернет',
+                        text=self.translation._(
+                            u'Отсутствует подключение к Интернет'),
                         halign='center', font_style='Subhead'
                     )
                 )
