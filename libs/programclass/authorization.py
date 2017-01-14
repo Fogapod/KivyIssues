@@ -3,15 +3,10 @@
 import os
 import threading
 
-from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
-from kivy.metrics import dp
 
 from libs.createpreviousportrait import create_previous_portrait
 from libs import vkrequests as vkr
-
-from kivymd.button import MDFlatButton
-from kivymd.label import MDLabel
 
 
 class GetAndSaveLoginPassword(object):
@@ -80,32 +75,7 @@ class AuthorizationOnVK(object):
 
         if not result:
             if 'Failed to establish a new connection' in text_error:
-                self.screen.ids.load_screen.ids.spinner.active = False
-                self.screen.ids.load_screen.ids.status.text = ''
-
-                box = BoxLayout(
-                    orientation='vertical', spacing=dp(10),
-                    size_hint_y=None, height=dp(100),
-                    pos_hint={'center_y': .5}
-                )
-                box.add_widget(
-                    MDLabel(
-                        text=self.translation._(
-                            u'Отсутствует подключение к Интернет'),
-                        halign='center', font_style='Subhead'
-                    )
-                )
-                box.add_widget(
-                    MDFlatButton(
-                        text=self.translation._(u'Повторить попытку'),
-                        theme_text_color='Custom', pos_hint={'center_x': .5},
-                        text_color=self.theme_cls.primary_color,
-                        on_release=lambda x: self._authorization_on_vk(
-                            self.login, self.password, from_fail_screen=True
-                        )
-                    )
-                )
-                self.screen.ids.load_screen.add_widget(box)
+                self.show_screen_connection_failed()
             else:
                 self.show_screen_registration(fail_registration=True)
             self.notify(
