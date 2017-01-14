@@ -15,6 +15,14 @@
         active: root.active
         on_release: root.events_callback(root.id, self.state, 'check')
 
+<OneSelectCheckItem>:
+    OneSelectCheckWidget:
+        id: root.id
+        group: root.group
+        size_hint: None, None
+        size: dp(48), dp(48)
+        on_state: root.events_callback(root.id)
+
 <IconItemThree>:
     id: avatar
     on_release: root.events_callback(root.id, 'item')
