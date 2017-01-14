@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-14 21:32+0300\n"
+"POT-Creation-Date: 2017-01-14 23:34+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,62 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:249
+#: program.py:253
 msgid "Меню"
 msgstr "Menu"
 
-#: program.py:279
+#: program.py:283
 msgid "Участники"
 msgstr "Participants"
 
-#: program.py:285
+#: program.py:289
 msgid "Задать вопрос"
 msgstr "Ask a Question"
 
-#: program.py:388
+#: program.py:342
+msgid "Отсутствует подключение к Интернет"
+msgstr "No connection to the Internet"
+
+#: program.py:348
+msgid "Повторить попытку"
+msgstr "To retry"
+
+#: program.py:422
 msgid "Sent!"
 msgstr ""
 
-#: program.py:399
+#: program.py:433
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:445
+#: program.py:479
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:448 program.py:487
+#: program.py:482 program.py:521
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:497
+#: program.py:531
 msgid "Выберите аватар"
 msgstr "Choose an avatar"
 
-#: program.py:538
+#: program.py:572
 msgid "Закрыть приложение?"
 msgstr "Close application?"
 
-#: program.py:540 libs/programclass/showplugins.py:53
+#: program.py:574 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr "Yes"
 
-#: program.py:541 libs/programclass/showplugins.py:88
+#: program.py:575 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr "No"
 
-#: program.py:552
+#: program.py:586
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -95,7 +103,7 @@ msgstr ""
 "[b]Source:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
 "[color={link_color}]GitHub[/color][/ref]"
 
-#: program.py:576
+#: program.py:610
 msgid ""
 "\n"
 "[color=78a5a3ff]Copyright (c) Easy\n"
@@ -151,7 +159,7 @@ msgstr ""
 "USE OR OTHER DEALINGS IN THE SOFTWARE\n"
 ".                "
 
-#: program.py:590 libs/uix/kv/activity/license.kv:23
+#: program.py:624 libs/uix/kv/activity/license.kv:23
 msgid "MIT LICENSE"
 msgstr ""
 
@@ -163,53 +171,45 @@ msgstr "No information available about the plugin!"
 msgid "Нет установленных плагинов!"
 msgstr "No plugins installed!"
 
-#: libs/programclass/authorization.py:31
+#: libs/programclass/authorization.py:26
 msgid "Field Login empty!"
 msgstr ""
 
-#: libs/programclass/authorization.py:38
+#: libs/programclass/authorization.py:33
 msgid "Field Password empty!"
 msgstr ""
 
-#: libs/programclass/authorization.py:74
+#: libs/programclass/authorization.py:69
 msgid "Авторизация..."
 msgstr "Authorization..."
 
-#: libs/programclass/authorization.py:96
-msgid "Отсутствует подключение к Интернет"
-msgstr "No connection to the Internet"
-
-#: libs/programclass/authorization.py:102
-msgid "Повторить попытку"
-msgstr "To retry"
-
-#: libs/programclass/authorization.py:115
+#: libs/programclass/authorization.py:83
 msgid "Ошибка авторизации!"
 msgstr "Authorization failed!"
 
-#: libs/programclass/authorization.py:134
+#: libs/programclass/authorization.py:102
 msgid "Загрузка аватара..."
 msgstr "Loading avatar..."
 
-#: libs/programclass/authorization.py:153
+#: libs/programclass/authorization.py:121
 msgid "Получение информации о группе..."
 msgstr "Getting information about the group..."
 
-#: libs/programclass/authorization.py:158
+#: libs/programclass/authorization.py:126
 msgid "Загрузка имени пользователя..."
 msgstr "Download the user name..."
 
-#: libs/programclass/authorization.py:168
+#: libs/programclass/authorization.py:136
 msgid "Загрузка кол-ва вопросов в группе..."
 msgstr "Loading of number of issues in the group..."
 
-#: libs/programclass/authorization.py:175
-#: libs/programclass/authorization.py:182 libs/uix/kv/activity/nawdrawer.kv:92
+#: libs/programclass/authorization.py:143
+#: libs/programclass/authorization.py:150 libs/uix/kv/activity/nawdrawer.kv:92
 #, python-format
 msgid "Новые - %s"
 msgstr "New - %s"
 
-#: libs/programclass/authorization.py:188 libs/uix/kv/activity/nawdrawer.kv:86
+#: libs/programclass/authorization.py:156 libs/uix/kv/activity/nawdrawer.kv:86
 #, python-format
 msgid "Вопросов в группе - %s"
 msgstr "Issues in the group - %s"
