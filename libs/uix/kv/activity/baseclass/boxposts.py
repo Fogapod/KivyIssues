@@ -79,7 +79,7 @@ class BoxPosts(FloatLayout):
                 self.ids.list_posts.add_widget(post)
 
         if self.only_questions:
-            self.count_issues = self.ids.list_posts.children.__len__()
+            self.count_issues = str(self.ids.list_posts.children.__len__())
 
         self.paginator_pages = self.add_paginator()
 
@@ -164,7 +164,7 @@ class BoxPosts(FloatLayout):
                 post.add_widget(box_comments)
                 self.ids.list_posts.add_widget(post)
 
-                return author_name
+            return author_name
 
         def add_icon_status():
             '''Добавляем иконку статуса пользователя:
