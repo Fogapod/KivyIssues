@@ -9,7 +9,7 @@ import webbrowser
 
 from kivy.app import App
 from kivy.uix.image import Image
-# from kivy.animation import Animation
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.lang import Observable
 from kivy.utils import get_color_from_hex, get_hex_from_color
@@ -17,6 +17,7 @@ from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty, StringProperty
+from kivy.metrics import dp
 
 from main import __version__
 from libs._thread import thread
@@ -41,6 +42,8 @@ from libs.vkrequests import create_issue, create_comment
 
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
+from kivymd.button import MDFlatButton
+from kivymd.label import MDLabel
 
 from plyer import notification
 
@@ -321,6 +324,41 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
             self.screen.ids.load_screen.ids.spinner.active = False
             self.screen.ids.load_screen.ids.status.text = ''
 
+    def show_screen_connection_failed(self):
+        '''Выводит подпись о не активном соеденении и кнопку для повторного
+        подключения.'''
+
+        self.screen.ids.load_screen.ids.spinner.active = False
+        self.screen.ids.load_screen.ids.status.text = ''
+
+        box = BoxLayout(
+            orientation='vertical', spacing=dp(10),
+            size_hint_y=None, height=dp(100), pos_hint={'center_y': .5}
+        )
+        box.add_widget(
+            MDLabel(
+                text=self.translation._(
+                    u'Отсутствует подключение к Интернет'),
+                halign='center', font_style='Subhead'
+            )
+        )
+        box.add_widget(
+            MDFlatButton(
+                text=self.translation._(u'Повторить попытку'),
+                theme_text_color='Custom', pos_hint={'center_x': .5},
+                text_color=self.theme_cls.primary_color,
+                on_release=lambda x: self._authorization_on_vk(
+                    self.login, self.password, from_fail_screen=True
+                )
+            )
+        )
+        self.screen.ids.load_screen.add_widget(box)
+
+    def show_input_form(self, instance):
+        '''Выводит окно формы для ввода текста.'''
+
+        instance.pos_hint = {'y': 0}
+
     def show_progress(self, screen):
         screen.add_widget(
             Image(source='data/images/waiting.gif', size_hint_y=None,
@@ -329,16 +367,6 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
 
     def hide_progress(self, screen):
         self.screen.ids.previous.ids.box.remove_widget(screen.children[0])
-
-    def show_input_form(self, instance):
-        '''Выводит окно формы для ввода текста.'''
-
-        # FIXME: не работает анимация.
-        # animation = Animation()
-        # animation += Animation(d=.5, y=0, t='out_cubic')
-        # animation.start(instance)
-
-        instance.pos_hint = {'y': 0}
 
     def hide_input_form(self, instance):
         '''Скрывает окно формы для ввода текста.'''
@@ -589,7 +617,7 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
         self.screen.ids.action_bar.title = \
             self.translation._('MIT LICENSE')
 
-    def select_locale(self):
+    def select_locale1(self):
         '''Выводит окно со спискои имеющихся языковых локализаций для
         установки языка приложения.'''
 
@@ -613,6 +641,28 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
             Lists(
                 dict_items=dict_info_locales,
                 events_callback=select_locale, flag='three_list_custom_icon'
+            )
+        )
+
+    def select_locale(self):
+        '''Выводит окно со спискои имеющихся языковых локализаций для
+        установки языка приложения.'''
+
+        def select_locale(name_locale):
+            '''Устанавливает выбранную локализацию.'''
+
+            self.lang = name_locale
+            self.config.set('General', 'language', self.lang)
+            self.config.write()
+
+        dict_info_locales = {}
+        for locale in self.dict_language.keys():
+            dict_info_locales[self.dict_language[locale]] = 'locale'
+
+        card(
+            Lists(
+                dict_items=dict_info_locales,
+                events_callback=select_locale, flag='one_select_check'
             )
         )
 
