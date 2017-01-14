@@ -617,33 +617,6 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
         self.screen.ids.action_bar.title = \
             self.translation._('MIT LICENSE')
 
-    def select_locale1(self):
-        '''Выводит окно со спискои имеющихся языковых локализаций для
-        установки языка приложения.'''
-
-        def select_locale(*args):
-            '''Устанавливает выбранную локализацию.'''
-
-            # args: ('Language\n', 'item').
-            select_language = args[0].replace('\n', '')
-            for items in self.dict_language.items():
-                if select_language in items:
-                    self.lang = items[0]
-                    self.config.set('General', 'language', self.lang)
-                    self.config.write()
-
-        dict_info_locales = {}
-        for locale in self.dict_language.keys():
-            dict_info_locales[self.dict_language[locale]] = \
-                ['', 'data/locales/flags/%s.png' % locale]
-
-        card(
-            Lists(
-                dict_items=dict_info_locales,
-                events_callback=select_locale, flag='three_list_custom_icon'
-            )
-        )
-
     def select_locale(self):
         '''Выводит окно со спискои имеющихся языковых локализаций для
         установки языка приложения.'''
@@ -657,7 +630,8 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
 
         dict_info_locales = {}
         for locale in self.dict_language.keys():
-            dict_info_locales[self.dict_language[locale]] = 'locale'
+            dict_info_locales[self.dict_language[locale]] = \
+                ['locale', locale == self.lang]
 
         card(
             Lists(
