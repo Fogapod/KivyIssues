@@ -46,6 +46,8 @@ from plyer import notification
 
 
 class Translation(Observable):
+    '''Write by tito - https://github.com/tito/kivy-gettext-example'''
+
     observers = []
     lang = None
 
@@ -529,6 +531,7 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
             self.manager.current = self.manager.screens[-1].name
         else:
             self.manager.current = self.manager.previous()
+        print(self.manager.screens)
 
     def dialog_exit(self, *args):
         self.open_dialog(
