@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-12 23:47+0300\n"
+"POT-Creation-Date: 2017-01-14 21:32+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,54 +15,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:247
+#: program.py:249
 msgid "Меню"
 msgstr "Menu"
 
-#: program.py:276
+#: program.py:279
 msgid "Участники"
 msgstr "Participants"
 
-#: program.py:282
+#: program.py:285
 msgid "Задать вопрос"
 msgstr "Ask a Question"
 
-#: program.py:382
+#: program.py:388
 msgid "Sent!"
 msgstr ""
 
-#: program.py:393
+#: program.py:399
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:439
+#: program.py:445
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:442 program.py:481
+#: program.py:448 program.py:487
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:491
+#: program.py:497
 msgid "Выберите аватар"
 msgstr "Choose an avatar"
 
-#: program.py:527
+#: program.py:538
 msgid "Закрыть приложение?"
 msgstr "Close application?"
 
-#: program.py:529 libs/programclass/showplugins.py:53
+#: program.py:540 libs/programclass/showplugins.py:53
 #: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
 #: libs/programclass/showplugins.py:99
 msgid "Да"
 msgstr "Yes"
 
-#: program.py:530 libs/programclass/showplugins.py:88
+#: program.py:541 libs/programclass/showplugins.py:88
 #: libs/programclass/showplugins.py:91
 msgid "Нет"
 msgstr "No"
 
-#: program.py:541
+#: program.py:552
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -95,7 +95,7 @@ msgstr ""
 "[b]Source:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
 "[color={link_color}]GitHub[/color][/ref]"
 
-#: program.py:565
+#: program.py:576
 msgid ""
 "\n"
 "[color=78a5a3ff]Copyright (c) Easy\n"
@@ -151,7 +151,7 @@ msgstr ""
 "USE OR OTHER DEALINGS IN THE SOFTWARE\n"
 ".                "
 
-#: program.py:581 libs/uix/kv/activity/license.kv:23
+#: program.py:590 libs/uix/kv/activity/license.kv:23
 msgid "MIT LICENSE"
 msgstr ""
 
@@ -163,50 +163,53 @@ msgstr "No information available about the plugin!"
 msgid "Нет установленных плагинов!"
 msgstr "No plugins installed!"
 
-#: libs/programclass/authorization.py:26
+#: libs/programclass/authorization.py:31
 msgid "Field Login empty!"
 msgstr ""
 
-#: libs/programclass/authorization.py:33
+#: libs/programclass/authorization.py:38
 msgid "Field Password empty!"
 msgstr ""
 
-#: libs/programclass/authorization.py:61
+#: libs/programclass/authorization.py:74
 msgid "Авторизация..."
 msgstr "Authorization..."
 
-#: libs/programclass/authorization.py:75
-#, python-format
-msgid ""
-"Ошибка авторизации!\n"
-"%s"
-msgstr ""
-"Authorization failed!\n"
-"%s"
+#: libs/programclass/authorization.py:96
+msgid "Отсутствует подключение к Интернет"
+msgstr "No connection to the Internet"
 
-#: libs/programclass/authorization.py:94
+#: libs/programclass/authorization.py:102
+msgid "Повторить попытку"
+msgstr "To retry"
+
+#: libs/programclass/authorization.py:115
+msgid "Ошибка авторизации!"
+msgstr "Authorization failed!"
+
+#: libs/programclass/authorization.py:134
 msgid "Загрузка аватара..."
 msgstr "Loading avatar..."
 
-#: libs/programclass/authorization.py:113
+#: libs/programclass/authorization.py:153
 msgid "Получение информации о группе..."
 msgstr "Getting information about the group..."
 
-#: libs/programclass/authorization.py:118
+#: libs/programclass/authorization.py:158
 msgid "Загрузка имени пользователя..."
 msgstr "Download the user name..."
 
-#: libs/programclass/authorization.py:128
+#: libs/programclass/authorization.py:168
 msgid "Загрузка кол-ва вопросов в группе..."
 msgstr "Loading of number of issues in the group..."
 
-#: libs/programclass/authorization.py:135
-#: libs/programclass/authorization.py:142 libs/uix/kv/activity/nawdrawer.kv:69
+#: libs/programclass/authorization.py:175
+#: libs/programclass/authorization.py:182 libs/uix/kv/activity/nawdrawer.kv:92
 #, python-format
 msgid "Новые - %s"
 msgstr "New - %s"
 
-#: libs/programclass/authorization.py:148 libs/uix/kv/activity/nawdrawer.kv:63
+#: libs/programclass/authorization.py:188 libs/uix/kv/activity/nawdrawer.kv:86
 #, python-format
 msgid "Вопросов в группе - %s"
 msgstr "Issues in the group - %s"
@@ -215,35 +218,35 @@ msgstr "Issues in the group - %s"
 msgid "Страница "
 msgstr "Page"
 
-#: libs/uix/kv/activity/nawdrawer.kv:48
+#: libs/uix/kv/activity/nawdrawer.kv:71
 msgid "Вопросы"
 msgstr "Issues"
 
-#: libs/uix/kv/activity/nawdrawer.kv:53
+#: libs/uix/kv/activity/nawdrawer.kv:76
 msgid "Ответы"
 msgstr "Answers"
 
-#: libs/uix/kv/activity/nawdrawer.kv:76
+#: libs/uix/kv/activity/nawdrawer.kv:101
 msgid "Настройки:"
 msgstr "Settings:"
 
-#: libs/uix/kv/activity/nawdrawer.kv:80
+#: libs/uix/kv/activity/nawdrawer.kv:105
 msgid "Настройки"
 msgstr "Settings"
 
-#: libs/uix/kv/activity/nawdrawer.kv:83
+#: libs/uix/kv/activity/nawdrawer.kv:108
 msgid "Плагины"
 msgstr "Plugins"
 
-#: libs/uix/kv/activity/nawdrawer.kv:87
+#: libs/uix/kv/activity/nawdrawer.kv:112
 msgid "Язык"
 msgstr "Language"
 
-#: libs/uix/kv/activity/nawdrawer.kv:91
+#: libs/uix/kv/activity/nawdrawer.kv:116
 msgid "Лицензия"
 msgstr "License"
 
-#: libs/uix/kv/activity/nawdrawer.kv:99
+#: libs/uix/kv/activity/nawdrawer.kv:124
 msgid "Выход"
 msgstr "Exit"
 
@@ -259,6 +262,3 @@ msgstr "Reply"
 #: libs/uix/kv/activity/startscreen.kv:19
 msgid "В группе появились новые вопросы!"
 msgstr "Found new Issues!"
-
-#~ msgid "Нет файла локализации %s"
-#~ msgstr "No localization file %s"
