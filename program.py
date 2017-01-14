@@ -561,15 +561,6 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
             self.manager.current = self.manager.previous()
         print(self.manager.screens)
 
-    def dialog_exit(self, *args):
-        self.open_dialog(
-            text=self.translation._(u'Закрыть приложение?'),
-            buttons=[
-                [self.translation._(u'Да'), lambda *x: sys.exit(0)],
-                [self.translation._(u'Нет'), lambda *x: self.close_dialog()]
-            ]
-        )
-
     def show_about(self):
         def on_ref_press(instance, text_link):
             webbrowser.open(text_link)
