@@ -3,10 +3,15 @@
 import os
 import threading
 
+from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
+from kivy.metrics import dp
 
 from libs.createpreviousportrait import create_previous_portrait
 from libs import vkrequests as vkr
+
+from kivymd.button import MDFlatButton
+from kivymd.label import MDLabel
 
 
 class GetAndSaveLoginPassword(object):
@@ -50,12 +55,21 @@ class GetAndSaveLoginPassword(object):
 
 class AuthorizationOnVK(object):
 
-    def _authorization_on_vk(self, login, password):
+    def _authorization_on_vk(self, login, password, from_fail_screen=False):
+        '''Если from_fail_screen == True - функция была вызвана из экрана
+        ошибки подключения к Интернет.'''
+
         def _authorization_on_vk(interval):
             thread_authorization = threading.Thread(
                 target=self.authorization_on_vk, args=(login, password,)
             )
             thread_authorization.start()
+
+        if from_fail_screen:
+            self.screen.ids.load_screen.remove_widget(
+                 self.screen.ids.load_screen.children[0]
+            )
+            print(self.screen.ids.load_screen.children)
 
         self.screen.ids.load_screen.ids.status.text = \
             self.translation._(u'Авторизация...')
@@ -68,11 +82,37 @@ class AuthorizationOnVK(object):
         if not result:
             # FIXME: при ошибке авторизации (Incorrect password!) -
             # выбрасывает Segmentation fault.
-            self.show_screen_registration(fail_registration=True)
+            if 'Failed to establish a new connection' in text_error:
+                self.screen.ids.load_screen.ids.spinner.active = False
+                self.screen.ids.load_screen.ids.status.text = ''
+
+                box = BoxLayout(
+                    orientation='vertical', spacing=dp(10),
+                    size_hint_y=None, height=dp(100),
+                    pos_hint={'center_y': .5}
+                )
+                box.add_widget(
+                    MDLabel(
+                        text='Отсутствует подключение к Интернет',
+                        halign='center', font_style='Subhead'
+                    )
+                )
+                box.add_widget(
+                    MDFlatButton(
+                        text=self.translation._(u'Повторить попытку'),
+                        theme_text_color='Custom', pos_hint={'center_x': .5},
+                        text_color=self.theme_cls.primary_color,
+                        on_release=lambda x: self._authorization_on_vk(
+                            self.login, self.password, from_fail_screen=True
+                        )
+                    )
+                )
+                self.screen.ids.load_screen.add_widget(box)
+            else:
+                self.show_screen_registration(fail_registration=True)
             self.notify(
                 title=self.title,
-                message=self.translation._(
-                    u'Ошибка авторизации!\n%s') % text_error,
+                message=self.translation._(u'Ошибка авторизации!'),
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory
             )
         else:
