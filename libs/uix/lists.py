@@ -54,6 +54,7 @@ class OneSelectCheckWidget(ILeftBodyTouch, MDCheckbox):
 class OneSelectCheckItem(OneLineAvatarIconListItem):
     id = StringProperty()
     group = StringProperty()
+    active = BooleanProperty()
     events_callback = ObjectProperty()
 
 
@@ -153,7 +154,8 @@ class Lists(BoxLayout):
                 OneSelectCheckItem(
                     text=text_item, id=text_item,
                     events_callback=self.events_callback,
-                    group=self.dict_items[text_item]
+                    group=self.dict_items[text_item][0],
+                    active=self.dict_items[text_item][1]
                 )
             )
 
