@@ -69,7 +69,6 @@ class AuthorizationOnVK(object):
             self.screen.ids.load_screen.remove_widget(
                  self.screen.ids.load_screen.children[0]
             )
-            print(self.screen.ids.load_screen.children)
 
         self.screen.ids.load_screen.ids.status.text = \
             self.translation._(u'Авторизация...')
