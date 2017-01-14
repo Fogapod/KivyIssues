@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-14 23:34+0300\n"
+"POT-Creation-Date: 2017-01-15 02:46+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,62 +15,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:253
+#: program.py:252
 msgid "Меню"
 msgstr ""
 
-#: program.py:283
+#: program.py:282
 msgid "Участники"
 msgstr ""
 
-#: program.py:289
+#: program.py:288
 msgid "Задать вопрос"
 msgstr ""
 
-#: program.py:342
+#: program.py:341
 msgid "Отсутствует подключение к Интернет"
 msgstr ""
 
-#: program.py:348
+#: program.py:347
 msgid "Повторить попытку"
 msgstr ""
 
-#: program.py:422
+#: program.py:416
 msgid "Sent!"
 msgstr ""
 
-#: program.py:433
+#: program.py:427
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:479
+#: program.py:473
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:482 program.py:521
+#: program.py:476 program.py:515
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:531
+#: program.py:525
 msgid "Выберите аватар"
 msgstr ""
 
-#: program.py:572
-msgid "Закрыть приложение?"
-msgstr ""
-
-#: program.py:574 libs/programclass/showplugins.py:53
-#: libs/programclass/showplugins.py:84 libs/programclass/showplugins.py:87
-#: libs/programclass/showplugins.py:99
-msgid "Да"
-msgstr ""
-
-#: program.py:575 libs/programclass/showplugins.py:88
-#: libs/programclass/showplugins.py:91
-msgid "Нет"
-msgstr ""
-
-#: program.py:586
+#: program.py:571
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -89,7 +74,7 @@ msgid ""
 "[color={link_color}]GitHub[/color][/ref]"
 msgstr ""
 
-#: program.py:610
+#: program.py:595
 msgid ""
 "\n"
 "[color=78a5a3ff]Copyright (c) Easy\n"
@@ -120,8 +105,17 @@ msgid ""
 "                "
 msgstr ""
 
-#: program.py:624 libs/uix/kv/activity/license.kv:23
+#: program.py:609 libs/uix/kv/activity/license.kv:23
 msgid "MIT LICENSE"
+msgstr ""
+
+#: libs/programclass/showplugins.py:53 libs/programclass/showplugins.py:84
+#: libs/programclass/showplugins.py:87 libs/programclass/showplugins.py:99
+msgid "Да"
+msgstr ""
+
+#: libs/programclass/showplugins.py:88 libs/programclass/showplugins.py:91
+msgid "Нет"
 msgstr ""
 
 #: libs/programclass/showplugins.py:150
@@ -192,23 +186,15 @@ msgid "Настройки:"
 msgstr ""
 
 #: libs/uix/kv/activity/nawdrawer.kv:105
-msgid "Настройки"
-msgstr ""
-
-#: libs/uix/kv/activity/nawdrawer.kv:108
 msgid "Плагины"
 msgstr ""
 
-#: libs/uix/kv/activity/nawdrawer.kv:112
+#: libs/uix/kv/activity/nawdrawer.kv:109
 msgid "Язык"
 msgstr ""
 
-#: libs/uix/kv/activity/nawdrawer.kv:116
+#: libs/uix/kv/activity/nawdrawer.kv:113
 msgid "Лицензия"
-msgstr ""
-
-#: libs/uix/kv/activity/nawdrawer.kv:124
-msgid "Выход"
 msgstr ""
 
 #: libs/uix/kv/activity/baseclass/boxposts.py:158
