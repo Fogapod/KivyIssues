@@ -79,8 +79,6 @@ class AuthorizationOnVK(object):
         result, text_error = vkr.log_in(login=login, password=password)
 
         if not result:
-            # FIXME: при ошибке авторизации (Incorrect password!) -
-            # выбрасывает Segmentation fault.
             if 'Failed to establish a new connection' in text_error:
                 self.screen.ids.load_screen.ids.spinner.active = False
                 self.screen.ids.load_screen.ids.status.text = ''
