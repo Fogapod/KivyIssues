@@ -615,9 +615,11 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
         def select_locale(name_locale):
             '''Устанавливает выбранную локализацию.'''
 
-            self.lang = name_locale
-            self.config.set('General', 'language', self.lang)
-            self.config.write()
+            for locale in self.dict_language.keys():
+                if name_locale == self.dict_language[locale]:
+                    self.lang = locale
+                    self.config.set('General', 'language', self.lang)
+                    self.config.write()
 
         dict_info_locales = {}
         for locale in self.dict_language.keys():
