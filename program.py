@@ -2,13 +2,12 @@
 
 import os
 import re
-import sys
 import gettext
 import ast
 import webbrowser
 
 from kivy.app import App
-from kivy.uix.image import Image
+from kivy.uix.modalview import ModalView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.lang import Observable
@@ -24,7 +23,7 @@ from libs._thread import thread
 from libs import programclass as _class
 from libs.programclass.showposts import ShowPosts
 from libs.createpreviousportrait import create_previous_portrait
-from libs.uix.dialogs import dialog, file_dialog, card
+from libs.uix.dialogs import file_dialog, card
 from libs.uix.lists import Lists
 
 # Базовые классы Activity.
@@ -163,7 +162,6 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
         self.BoxPosts = BoxPosts
         self.config = ConfigParser()
         self.show_posts = None
-        self.instance_dialog = None
         self.password_form = None
         self.attach_file = None
         self.attach_image = None
@@ -359,14 +357,19 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
 
         instance.pos_hint = {'y': 0}
 
-    def show_progress(self, screen):
-        screen.add_widget(
-            Image(source='data/images/waiting.gif', size_hint_y=None,
-                  pos=(0, -35))
+    def show_progress(self):
+        load_dialog = ModalView(
+            size_hint=(None, None),
+            pos_hint={'x': 5.0 / Window.width, 'y': 5.0 / Window.height},
+            background_color=[0, 0, 0, .2], size=(dp(100), dp(30)),
+            background='data/images/decorator.png', auto_dismiss=False
         )
+        load_dialog.add_widget(
+            MDLabel(text=self.translation._(u' Загрузка...'))
+        )
+        load_dialog.open()
 
-    def hide_progress(self, screen):
-        self.screen.ids.previous.ids.box.remove_widget(screen.children[0])
+        return load_dialog
 
     def hide_input_form(self, instance):
         '''Скрывает окно формы для ввода текста.'''
@@ -631,21 +634,6 @@ class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
                 dict_items=dict_info_locales,
                 events_callback=select_locale, flag='one_select_check'
             )
-        )
-
-    def close_dialog(self):
-        self.instance_dialog.dismiss()
-        self.instance_dialog = None
-
-    def open_dialog(self, text='', title=title, dismiss=False, buttons=None):
-        if not buttons:
-            buttons = []
-        if self.instance_dialog:
-            self.close_dialog()
-            return
-
-        self.instance_dialog = dialog(
-            text=text, title=title, dismiss=dismiss, buttons=buttons
         )
 
     def notify(self, title='Title:', message='Message!',
