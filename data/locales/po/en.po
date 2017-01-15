@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-15 02:46+0300\n"
+"POT-Creation-Date: 2017-01-15 23:02+0300\n"
 "PO-Revision-Date: 2017-01-11 15:36+0200\n"
 "Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
 "Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
@@ -15,47 +15,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: program.py:252
+#: program.py:250
 msgid "Меню"
 msgstr "Menu"
 
-#: program.py:282
+#: program.py:280
 msgid "Участники"
 msgstr "Participants"
 
-#: program.py:288
+#: program.py:286
 msgid "Задать вопрос"
 msgstr "Ask a Question"
 
-#: program.py:341
+#: program.py:339
 msgid "Отсутствует подключение к Интернет"
 msgstr "No connection to the Internet"
 
-#: program.py:347
+#: program.py:345
 msgid "Повторить попытку"
 msgstr "To retry"
 
-#: program.py:416
+#: program.py:368
+msgid " Загрузка..."
+msgstr " Loading..."
+
+#: program.py:419
 msgid "Sent!"
 msgstr ""
 
-#: program.py:427
+#: program.py:430
 msgid "Error while sending!"
 msgstr ""
 
-#: program.py:473
+#: program.py:476
 msgid "This file unsupported!"
 msgstr ""
 
-#: program.py:476 program.py:515
+#: program.py:479 program.py:518
 msgid "This is not image!"
 msgstr ""
 
-#: program.py:525
+#: program.py:528
 msgid "Выберите аватар"
 msgstr "Choose an avatar"
 
-#: program.py:571
+#: program.py:574
 #, python-brace-format
 msgid ""
 "[size=20][b]Kivy Issues[/b][/size]\n"
@@ -88,7 +92,7 @@ msgstr ""
 "[b]Source:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
 "[color={link_color}]GitHub[/color][/ref]"
 
-#: program.py:595
+#: program.py:598
 msgid ""
 "\n"
 "[color=78a5a3ff]Copyright (c) Easy\n"
@@ -144,7 +148,7 @@ msgstr ""
 "USE OR OTHER DEALINGS IN THE SOFTWARE\n"
 ".                "
 
-#: program.py:609 libs/uix/kv/activity/license.kv:23
+#: program.py:612 libs/uix/kv/activity/license.kv:23
 msgid "MIT LICENSE"
 msgstr ""
 
@@ -208,7 +212,7 @@ msgstr "New - %s"
 msgid "Вопросов в группе - %s"
 msgstr "Issues in the group - %s"
 
-#: libs/programclass/showposts.py:101
+#: libs/programclass/showposts.py:98
 msgid "Страница "
 msgstr "Page"
 
