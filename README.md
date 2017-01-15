@@ -7,7 +7,7 @@ Kivy Issues
 
 Kivy Issues находится в процессе разработки.
 
-<img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoot/previous_new.png" 
+<img src="https://raw.githubusercontent.com/HeaTTheatR/KivyIssues/master/data/images/screenshoot/previous.png" 
 align="center"/>
 
 ЯЗЫК ПРОГРАММИРОВАНИЯ
