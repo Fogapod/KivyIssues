@@ -94,16 +94,12 @@ class ShowPosts(object):
                 self._app.manager.current = name_screen
 
                 Clock.unschedule(check_posts_dict)
-                self._app.hide_progress(
-                    self._app.manager.get_screen(self._app.manager.current)
-                )
                 self._app.screen.ids.action_bar.title = \
                     self._app.translation._(u'Страница ') + \
                     str(self.current_number_page)
+                instance_progress.dismiss()
 
-        self._app.show_progress(
-            self._app.manager.get_screen(self._app.manager.current)
-        )
+        instance_progress = self._app.show_progress()
 
         if not self._app.manager.has_screen(name_screen):
             self._set_info_for_post()
