@@ -45,9 +45,6 @@ def vk_request_errors(request):
                 print('Capthca!!!!!')
             # TODO обработать капчу
 
-            elif 'Failed receiving session' in error:
-                print('Error receiving session!')
-
             elif 'Auth check code is needed' in error:
                 print('Auth code is needed!')
 
@@ -100,12 +97,12 @@ def log_in(**kwargs):
     global api
     try:
         api = vk.API(session, v='5.60')
-    except UnboundLocalError:
-        raise Exception('Failed receiving session!')
-
-    track_visitor()
-
-    return session.access_token
+        if not track_visitor():
+            raise
+    except: # session was not created
+        return False
+    else:
+        return session.access_token
 
 
 @vk_request_errors
@@ -1163,9 +1160,12 @@ def do_message_long_poll_request(**kwargs):
 @vk_request_errors
 def track_visitor():
     """Отвечает за занесение в статистику приложения
-    информации о пользователе."""
+    информации о пользователе.
+    Так же используется для подтверждения успешной 
+    авторизации"""
 
     api.stats.trackVisitor()
+    return True
 
 
 def set_group_id(new_gid=kivy_ru):
