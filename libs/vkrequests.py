@@ -16,9 +16,11 @@ kivy_ru = '99411738'  # raw_id of http://vk.com/kivy_ru
 # vk.logger.setLevel('DEBUG')
 
 def vk_request_errors(request):
-    def request_errors(*args, **kwargs):
+    def do_request(*args, **kwargs):
         # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
+
+        error = None
         try:
             response = request(*args, **kwargs)
         except Exception as error:
@@ -58,10 +60,8 @@ def vk_request_errors(request):
                     print('\nERROR! ' + error + '\n')
             return False, error
         else:
-            return response, True
-
-    return request_errors
-
+            return response, error
+    return do_request
 
 @vk_request_errors
 def log_in(**kwargs):
