@@ -1,6 +1,8 @@
-#: kivy 1.9.1
-#: import os os
-#: import MDSeparator kivymd.card.MDSeparator
+# -*- coding: utf-8 -*-
+
+#:kivy 1.9.1
+#:import os os
+#:import MDSeparator kivymd.card.MDSeparator
 
 <ImageButton@ButtonBehavior+Image>:
 
@@ -8,33 +10,56 @@
     markup: True
     bold: True
     font_size: '16sp'
-    color: app.data.text_color_from_hex
+    color: app.text_color_from_hex
     size_hint_y: None
     height: dp(45)
 
 <NavDrawer>:
     _app: app
 
-    ImageButton:
-        id: avatar
-        source:
-            'data/images/avatar.png' \
-            if os.path.exists('{}/data/images/avatar.png'.format(\
-            app.directory)) else 'data/images/avatar_empty.png'
-        size_hint: None, None
-        size: dp(150), dp(150)
-        pos_hint: {'center_x': .5}
-        on_release: app.choice_avatar_user()
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10), dp(10)
+        spacing: dp(10)
+        size_hint_y: None
+        height: dp(app.window.height - scroll.height)
 
-    Widget:
+        canvas:
+            Color:
+                rgba: app.theme_cls.primary_color
+            Rectangle:
+                pos: self.pos
+                size: self.size
 
-    LabelSection:
-        id: user_name
-        text: app.data.user_name
+        BoxLayout:
+
+            ImageButton:
+                id: avatar
+                size_hint: None, None
+                size: dp(100), dp(100)
+                pos_hint: {'top': 1}
+                source:
+                    'data/images/avatar.png' \
+                    if os.path.exists(\
+                    '%s/data/images/avatar.png' % app.directory) \
+                    else 'data/images/avatar_empty.png'
+                on_release: app.choice_avatar_user()
+
+            Widget:
+
+        Label:
+            id: user_name
+            size_hint: None, None
+            height: dp(20)
+            width: self.texture_size[0]
+            halign: 'left'
+            markup: True
+            font_size: '14sp'
 
     ScrollView:
+        id: scroll
         size_hint_y: None
-        height: app.window.size[1] // 1.8
+        height: dp(app.window.height - 170)
 
         GridLayout:
             cols: 1
@@ -43,12 +68,12 @@
 
             IconItemOne:
                 icon: 'data/images/issues.png'
-                text: app.data.string_lang_issues
+                text: app.translation._('Вопросы')
                 events_callback:
                     lambda: root.show_posts()
             IconItemOne:
                 icon: 'data/images/answer.png'
-                text: app.data.string_lang_answer
+                text: app.translation._('Ответы')
 
             MDSeparator:
 
@@ -58,37 +83,36 @@
             IconItemOne:
                 icon: 'data/images/issues.png'
                 id: issues_in_group
-                text: app.data.string_lang_issues_in_group.format('0')
+                text: app.translation._('Вопросов в группе - %s') % '0'
                 events_callback:
                     lambda: root.show_posts(only_questions=False)
             IconItemOne:
                 icon: 'data/images/new_issues.png'
                 id: new_issues_in_group
-                text: app.data.string_lang_new_issues_in_group.format('0')
+                text: app.translation._('Новые - %s') % '0'
                 events_callback:
-                    lambda: root.show_posts(count_issues=self.text.split('- ')[1], only_questions=False)
+                    lambda: root.show_posts(\
+                    count_issues=self.text.split('-')[1], \
+                    only_questions=False)
 
             MDSeparator:
 
             LabelSection:
-                text:  app.data.string_lang_settings + ':'
-
-            IconItemOne:
-                icon: 'data/images/settings.png'
-                text: app.data.string_lang_settings
+                text:  app.translation._('Настройки' + ':')
+                events_callback: lambda x: x
             IconItemOne:
                 icon: 'data/images/plugins.png'
-                text: app.data.string_lang_plugin
+                text: app.translation._('Плагины')
                 events_callback: app.show_plugins
             IconItemOne:
+                icon: 'data/images/locale.png'
+                text: app.translation._('Язык')
+                events_callback: app.select_locale
+            IconItemOne:
                 icon: 'data/images/license.png'
-                text: app.data.string_lang_license
+                text: app.translation._('Лицензия')
                 events_callback: app.show_license
             IconItemOne:
                 icon: 'data/images/about.png'
                 text: 'About'
                 events_callback: app.show_about
-            IconItemOne:
-                icon: 'data/images/exit.png'
-                text: app.data.string_lang_exit_key
-                events_callback: app.dialog_exit

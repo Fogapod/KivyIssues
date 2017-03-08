@@ -1,0 +1,215 @@
+# Copyright (C) 2017 Ivanov Yuri aka HeaTTheatR
+# This file is distributed under the same license as the Kivy package.
+# Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>, 2017
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-15 23:02+0300\n"
+"PO-Revision-Date: 2017-01-11 15:36+0200\n"
+"Last-Translator: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
+"Language-Team: Ivanov Yuri aka HeaTTheatR <gorodage@gmail.com>\n"
+"Language: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: program.py:250
+msgid "Меню"
+msgstr ""
+
+#: program.py:280
+msgid "Участники"
+msgstr ""
+
+#: program.py:286
+msgid "Задать вопрос"
+msgstr ""
+
+#: program.py:339
+msgid "Отсутствует подключение к Интернет"
+msgstr ""
+
+#: program.py:345
+msgid "Повторить попытку"
+msgstr ""
+
+#: program.py:368
+msgid " Загрузка..."
+msgstr ""
+
+#: program.py:419
+msgid "Sent!"
+msgstr ""
+
+#: program.py:430
+msgid "Error while sending!"
+msgstr ""
+
+#: program.py:476
+msgid "This file unsupported!"
+msgstr ""
+
+#: program.py:479 program.py:518
+msgid "This is not image!"
+msgstr ""
+
+#: program.py:528
+msgid "Выберите аватар"
+msgstr ""
+
+#: program.py:574
+#, python-brace-format
+msgid ""
+"[size=20][b]Kivy Issues[/b][/size]\n"
+"\n"
+"[b]Версия:[/b] {version}\n"
+"[b]Лицензия:[/b] MIT\n"
+"\n"
+"[size=20][b]Разработчики[/b][/size]\n"
+"\n"
+"[b]Backend:[/b] [ref=https://m.vk.com/fogapod][color={link_color}]Евгений "
+"Ершов[/color][/ref]\n"
+"[b]Frontend:[/b] [ref=https://m.vk.com/heattheatr][color={link_color}]Иванов "
+"Юрий[/color][/ref]\n"
+"\n"
+"[b]Исходный код:[/b] [ref=https://github.com/HeaTTheatR/KivyIssues]"
+"[color={link_color}]GitHub[/color][/ref]"
+msgstr ""
+
+#: program.py:598
+msgid ""
+"\n"
+"[color=78a5a3ff]Copyright (c) Easy\n"
+"\n"
+"[color=#000]Данная лицензия разрешает лицам, получившим копию данного "
+"программного обеспечения и сопутствующей документации (в дальнейшем "
+"именуемыми [color=78a5a3ff]«Программное Обеспечение»[color=#000]), "
+"безвозмездно использовать [color=78a5a3ff]Программное Обеспечение "
+"[color=#000]без ограничений, включая неограниченное право на использование, "
+"копирование, изменение, слияние, публикацию, распространение, "
+"сублицензирование и/или продажу копий [color=78a5a3ff]Программного "
+"Обеспечения[color=#000], а также лицам, которым предоставляется данное "
+"[color=78a5a3ff]Программное Обеспечение[color=#000], при соблюдении "
+"следующих условий:\n"
+"\n"
+"Указанное выше уведомление об авторском праве и данные условия должны быть "
+"включены во все копии или значимые части данного "
+"[color=78a5a3ff]Программного Обеспечения.\n"
+"\n"
+"[color=78a5a3ff]ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», "
+"БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ "
+"ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И "
+"ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ "
+"ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ "
+"ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ "
+"СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ "
+"ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.\n"
+"                "
+msgstr ""
+
+#: program.py:612 libs/uix/kv/activity/license.kv:23
+msgid "MIT LICENSE"
+msgstr ""
+
+#: libs/programclass/showplugins.py:53 libs/programclass/showplugins.py:84
+#: libs/programclass/showplugins.py:87 libs/programclass/showplugins.py:99
+msgid "Да"
+msgstr ""
+
+#: libs/programclass/showplugins.py:88 libs/programclass/showplugins.py:91
+msgid "Нет"
+msgstr ""
+
+#: libs/programclass/showplugins.py:150
+msgid "Нет информации о плагине!"
+msgstr ""
+
+#: libs/programclass/showplugins.py:175
+msgid "Нет установленных плагинов!"
+msgstr ""
+
+#: libs/programclass/authorization.py:26
+msgid "Field Login empty!"
+msgstr ""
+
+#: libs/programclass/authorization.py:33
+msgid "Field Password empty!"
+msgstr ""
+
+#: libs/programclass/authorization.py:69
+msgid "Авторизация..."
+msgstr ""
+
+#: libs/programclass/authorization.py:83
+msgid "Ошибка авторизации!"
+msgstr ""
+
+#: libs/programclass/authorization.py:102
+msgid "Загрузка аватара..."
+msgstr ""
+
+#: libs/programclass/authorization.py:121
+msgid "Получение информации о группе..."
+msgstr ""
+
+#: libs/programclass/authorization.py:126
+msgid "Загрузка имени пользователя..."
+msgstr ""
+
+#: libs/programclass/authorization.py:136
+msgid "Загрузка кол-ва вопросов в группе..."
+msgstr ""
+
+#: libs/programclass/authorization.py:143
+#: libs/programclass/authorization.py:150 libs/uix/kv/activity/nawdrawer.kv:92
+#, python-format
+msgid "Новые - %s"
+msgstr ""
+
+#: libs/programclass/authorization.py:156 libs/uix/kv/activity/nawdrawer.kv:86
+#, python-format
+msgid "Вопросов в группе - %s"
+msgstr ""
+
+#: libs/programclass/showposts.py:98
+msgid "Страница "
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:71
+msgid "Вопросы"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:76
+msgid "Ответы"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:101
+msgid "Настройки:"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:105
+msgid "Плагины"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:109
+msgid "Язык"
+msgstr ""
+
+#: libs/uix/kv/activity/nawdrawer.kv:113
+msgid "Лицензия"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/boxposts.py:158
+#, python-format
+msgid "Комментариев: %s"
+msgstr ""
+
+#: libs/uix/kv/activity/baseclass/boxposts.py:218
+msgid "Ответить"
+msgstr ""
+
+#: libs/uix/kv/activity/startscreen.kv:19
+msgid "В группе появились новые вопросы!"
+msgstr ""

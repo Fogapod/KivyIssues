@@ -1,30 +1,38 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
+import re
+import gettext
+import ast
+import webbrowser
 
 from kivy.app import App
-# from kivy.animation import Animation
+from kivy.uix.modalview import ModalView
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
+from kivy.lang import Observable
+from kivy.utils import get_color_from_hex, get_hex_from_color
 from kivy.core.window import Window
 from kivy.config import ConfigParser
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
+from kivy.metrics import dp
 
-from libs import programdata as data
-from libs.programdata import thread
+from main import __version__
+from libs._thread import thread
 from libs import programclass as _class
 from libs.programclass.showposts import ShowPosts
 from libs.createpreviousportrait import create_previous_portrait
-from libs.uix.dialogs import dialog, file_dialog, dialog_progress
+from libs.uix.dialogs import file_dialog, card
+from libs.uix.lists import Lists
 
 # Базовые классы Activity.
 from libs.uix.kv.activity.baseclass.startscreen import StartScreen
 from libs.uix.kv.activity.baseclass.post import Post
 from libs.uix.kv.activity.baseclass.boxposts import BoxPosts
 from libs.uix.kv.activity.baseclass.license import ShowLicense
-from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.uix.kv.activity.baseclass.passwordform import PasswordForm
+from libs.uix.kv.activity.baseclass.form_input_text import FormInputText
 from libs.uix.kv.activity.baseclass.selection import Selection
 from libs.uix.kv.activity.baseclass.loadscreen import LoadScreen
 from libs.uix.kv.activity.baseclass.previous import Previous
@@ -33,8 +41,61 @@ from libs.vkrequests import create_issue, create_comment
 
 from kivymd.theming import ThemeManager
 from kivymd.navigationdrawer import NavigationDrawer
+from kivymd.button import MDFlatButton
+from kivymd.label import MDLabel
 
 from plyer import notification
+
+
+class Translation(Observable):
+    '''Write by tito - https://github.com/tito/kivy-gettext-example'''
+
+    observers = []
+    lang = None
+
+    def __init__(self, defaultlang):
+        super(Translation, self).__init__()
+
+        self.ugettext = None
+        self.lang = defaultlang
+        self.switch_lang(self.lang)
+
+    def _(self, text):
+        try:
+            return self.ugettext(text)
+        except UnicodeDecodeError:
+            return self.ugettext(text.decode('utf-8'))
+
+    def fbind(self, name, func, args, **kwargs):
+        if name == "_":
+            self.observers.append((func, args, kwargs))
+        else:
+            return super(Translation, self).fbind(
+                name, func, *args, **kwargs
+            )
+
+    def funbind(self, name, func, args, **kwargs):
+        if name == "_":
+            key = (func, args, kwargs)
+            if key in self.observers:
+                self.observers.remove(key)
+        else:
+            return super(Translation, self).funbind(
+                name, func, *args, **kwargs
+            )
+
+    def switch_lang(self, lang):
+        # get the right locales directory, and instanciate a gettext
+        locale_dir = os.path.join(
+            os.path.dirname(__file__), 'data', 'locales'
+        )
+        locales = \
+            gettext.translation('kivyissues', locale_dir, languages=[lang])
+        self.ugettext = locales.ugettext
+
+        # update all the kv rules attached to this text
+        for func, largs, kwargs in self.observers:
+            func(largs, None, None)
 
 
 class NavDrawer(NavigationDrawer):
@@ -50,7 +111,7 @@ class NavDrawer(NavigationDrawer):
 
         def _show_posts(interval):
             if not count_issues:
-                issues = str(self._app.data.issues_in_group)
+                issues = str(self._app.issues_in_group)
             else:
                 if count_issues == '0':
                     return
@@ -71,52 +132,56 @@ class NavDrawer(NavigationDrawer):
         self.toggle()
 
 
-class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
+class Program(App, _class.ShowPlugin, _class.WorkWithPosts,
               _class.AuthorizationOnVK, _class.GetAndSaveLoginPassword):
     '''Функционал программы.'''
 
-    title = data.string_lang_title
+    title = 'Kivy Issues'
     icon = 'data/images/kivy_logo.png'
     nav_drawer = ObjectProperty()
     theme_cls = ThemeManager()
     theme_cls.primary_palette = 'BlueGrey'
+    lang = StringProperty('ru')
 
     def __init__(self, **kvargs):
         super(Program, self).__init__(**kvargs)
         Window.bind(on_keyboard=self.events_program)
 
-        self.data = data
+        self.POSSIBLE_FILES = \
+            ['.png', '.jpg', '.jpeg', '.gif', '.zip', '.txt']
+        self.DEVISE_ONLINE = {
+            'mobile': 'data/images/mobile.png',
+            'computer': 'data/images/computer.png',
+            0: 'data/images/offline.png'
+        }
+        self.PATTERN_WHOM_COMMENT = pattern_whom_comment
+        self.PATTERN_REPLACE_LINK = pattern_replace_link
+
         self.window = Window
         self.Post = Post
         self.BoxPosts = BoxPosts
-        self.show_license = ShowLicense(_app=self).show_license
+        self.config = ConfigParser()
         self.show_posts = None
-        self.instance_dialog = None
         self.password_form = None
-        self.dialog_progress = None
         self.attach_file = None
         self.attach_image = None
         self.group_info = None
         self.result_sending_comment_issues = None
         self.path_to_attach_file = None
-        self.login = data.regdata['login']
-        self.password = data.regdata['password']
         self.path_to_avatar = self.directory + '/data/images/avatar.png'
-        self.load_all_kv_files(self.directory + '/libs/uix/kv')
-        self.load_all_kv_files(self.directory + '/libs/uix/kv/activity')
-        self.config = ConfigParser()
-        self.config.read(data.prog_path + '/program.ini')
-        self.screen = StartScreen()  # главный экран программы
-        self.manager = self.screen.ids.manager
-        self.nav_drawer = NavDrawer(title=data.string_lang_menu)
+        self.dict_language = ast.literal_eval(
+            open('%s/data/locales/locales' % self.directory).read()
+        )
 
     def get_application_config(self):
         return super(Program, self).get_application_config(
                         '{}/%(appname)s.ini'.format(self.directory))
 
     def build_config(self, config):
+        '''Создает файл настроек приложения program.ini.'''
+
         config.adddefaultsection('General')
-        config.setdefault('General', 'language', 'Русский')
+        config.setdefault('General', 'language', 'ru')
         config.setdefault('General', 'theme', 'default')
         config.setdefault('General', 'authorization', 0)
         config.setdefault('General', 'issues_in_group', 0)
@@ -126,7 +191,64 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
             'General', 'regdata', "{'login': None, 'password': None}"
         )
 
+    def set_from_config(self):
+        '''Устанавливает значения переменных из файла настроек
+        program.ini.'''
+
+        self.config.read('%s/program.ini' % self.directory)
+        self.theme = self.config.get('General', 'theme')
+        self.language = self.config.get('General', 'language')
+        self.authorization = self.config.getint('General', 'authorization')
+        self.regdata = \
+            ast.literal_eval(self.config.get('General', 'regdata'))
+        self.login = self.regdata['login']
+        self.password = self.regdata['password']
+        self.user_name = self.config.get('General', 'user_name')
+        self.count_issues = self.config.getint('General', 'count_issues')
+        self.issues_in_group = \
+            self.config.getint('General', 'issues_in_group')
+
+    def set_color(self):
+        '''Устанавливает значение цвета для использование в .py и .kv
+        файлах приложения.'''
+
+        config_theme = ConfigParser()
+        config_theme.read(
+            '{}/data/themes/{theme}/{theme}.ini'.format(
+                self.directory, theme=self.theme)
+        )
+        self.alpha = \
+            get_color_from_hex(config_theme.get('color', 'alpha'))
+        self.list_color = \
+            get_color_from_hex(config_theme.get('color', 'list_color'))
+        self.text_color_from_hex = \
+            get_color_from_hex(config_theme.get('color', 'text_color'))
+        self.floating_button_down_color = \
+            get_color_from_hex(config_theme.get(
+                'color', 'floating_button_down_color')
+            )
+        self.floating_button_disabled_color = \
+            get_color_from_hex(config_theme.get(
+                'color', 'floating_button_disabled_color')
+            )
+
+        self.text_color = config_theme.get('color', 'text_color')
+        self.text_key_color = config_theme.get('color', 'text_key_color')
+        self.text_link_color = config_theme.get('color', 'text_link_color')
+        self.underline_rst_color = \
+            config_theme.get('color', 'underline_rst_color')
+
     def build(self):
+        self.set_from_config()
+        self.set_color()
+        self.translation = Translation(self.language)
+
+        self.load_all_kv_files(self.directory + '/libs/uix/kv')
+        self.load_all_kv_files(self.directory + '/libs/uix/kv/activity')
+        self.screen = StartScreen()  # главный экран программы
+        self.manager = self.screen.ids.manager
+        self.nav_drawer = NavDrawer(title=self.translation._(u'Меню'))
+
         if not self.login or not self.password:
             self.show_screen_registration()
         else:  # авторизация на сервере
@@ -137,7 +259,8 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
         return self.screen
 
     def check_info_group(self, interval):
-        '''Устанавливает значения переменных для экрана Previous.'''
+        '''Ожидает получения данных от сервера после чего станавливает
+        значения переменных для экрана Previous.'''
 
         if self.group_info:
             screen_previous = self.screen.ids.previous
@@ -154,12 +277,16 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                 )
             screen_previous.ids.group_people.text = \
                 '%s %s' % (
-                    data.string_lang_people, self.group_info['members_count']
+                    self.translation._(u'Участники'),
+                    self.group_info['members_count']
                 )
             screen_previous.ids.description.text = \
                 self.group_info['description']
             screen_previous.ids.input_text_form.ids.text_input.message = \
-                data.string_lang_ask_a_question
+                self.translation._(u'Задать вопрос')
+
+            self.nav_drawer.ids.user_name.text = \
+                '[b]%s[/b]\n[size=12]online[/size]\n' % self.user_name
 
             Clock.unschedule(self.check_info_group)
 
@@ -195,30 +322,54 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
             self.screen.ids.load_screen.ids.spinner.active = False
             self.screen.ids.load_screen.ids.status.text = ''
 
-    def show_progress(self, interval=0, text='Wait', func_dismiss=None):
-        '''Прогресс загрузки данных с сервера.'''
+    def show_screen_connection_failed(self):
+        '''Выводит подпись о не активном соеденении и кнопку для повторного
+        подключения.'''
 
-        def p():
-            pass
+        self.screen.ids.load_screen.ids.spinner.active = False
+        self.screen.ids.load_screen.ids.status.text = ''
 
-        if not func_dismiss:
-            func_dismiss = p
-
-        self.dialog_progress, self.instance_text_progress = \
-            dialog_progress(
-                text_wait=text, text_color=self.data.text_color_from_hex,
-                events_callback=lambda x: func_dismiss()
+        box = BoxLayout(
+            orientation='vertical', spacing=dp(10),
+            size_hint_y=None, height=dp(100), pos_hint={'center_y': .5}
+        )
+        box.add_widget(
+            MDLabel(
+                text=self.translation._(
+                    u'Отсутствует подключение к Интернет'),
+                halign='center', font_style='Subhead'
             )
+        )
+        box.add_widget(
+            MDFlatButton(
+                text=self.translation._(u'Повторить попытку'),
+                theme_text_color='Custom', pos_hint={'center_x': .5},
+                text_color=self.theme_cls.primary_color,
+                on_release=lambda x: self._authorization_on_vk(
+                    self.login, self.password, from_fail_screen=True
+                )
+            )
+        )
+        self.screen.ids.load_screen.add_widget(box)
 
     def show_input_form(self, instance):
         '''Выводит окно формы для ввода текста.'''
 
-        # FIXME: не работает анимация.
-        # animation = Animation()
-        # animation += Animation(d=.5, y=0, t='out_cubic')
-        # animation.start(instance)
-
         instance.pos_hint = {'y': 0}
+
+    def show_progress(self):
+        load_dialog = ModalView(
+            size_hint=(None, None),
+            pos_hint={'x': 5.0 / Window.width, 'y': 5.0 / Window.height},
+            background_color=[0, 0, 0, .2], size=(dp(100), dp(30)),
+            background='data/images/decorator.png', auto_dismiss=False
+        )
+        load_dialog.add_widget(
+            MDLabel(text=self.translation._(u' Загрузка...'))
+        )
+        load_dialog.open()
+
+        return load_dialog
 
     def hide_input_form(self, instance):
         '''Скрывает окно формы для ввода текста.'''
@@ -261,11 +412,11 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                 Clock.unschedule(check_result_sending_comment_issues)
                 self.result_sending_comment_issues = None
                 self.notify(
-                    title=data.string_lang_title, message=message,
-                    app_icon=icon
+                    title=self.title,
+                    message=message, app_icon=icon
                 )
 
-            message = data.string_lang_sending
+            message = self.translation._('Sent!')
             icon = '%s/data/images/send.png' % self.directory
 
             if self.result_sending_comment_issues:
@@ -276,7 +427,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                     )
                 unschedule()
             elif self.result_sending_comment_issues is False:
-                message = data.string_lang_sending_error
+                message = self.translation._('Error while sending!')
                 icon = '%s/data/images/error.png' % self.directory
                 unschedule()
 
@@ -318,17 +469,17 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
             dialog_manager.dismiss()
             path_to_attach_file, name_file = os.path.split(path_to_file)
 
-            if os.path.splitext(name_file)[1] not in data.possible_files:
+            if os.path.splitext(name_file)[1] not in self.POSSIBLE_FILES:
                 if flag == 'FILE':
                     icon = \
                         '%s/data/images/paperclip_red.png' % self.directory
-                    message = data.string_lang_wrong_file
+                    message = self.translation._('This file unsupported!')
                 else:
                     icon = '%s/data/images/camera_red.png' % self.directory
-                    message = data.string_lang_wrong_image
+                    message = self.translation._('This is not image!')
 
                 self.notify(
-                    title=data.string_lang_title, message=message,
+                    title=self.title, message=message,
                     app_icon=icon
                 )
             # TODO: добавить визуализацию прикрепленных файлов.
@@ -361,10 +512,10 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
             dialog_manager.dismiss()
 
             if os.path.splitext(path_to_avatar)[1] \
-                    not in data.possible_files[:3]:
+                    not in self.POSSIBLE_FILES[:3]:
                 self.notify(
-                    title=data.string_lang_title,
-                    message=data.string_lang_wrong_image,
+                    title=self.title,
+                    message=self.translation._('This is not image!'),
                     app_icon='%s/data/images/camera_red.png' % self.directory
                 )
             else:
@@ -374,7 +525,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                 self.set_avatar(new_path_to_avatar)
 
         dialog_manager, file_manager = file_dialog(
-            title=self.data.string_lang_select_avatar, path='.',
+            title=self.translation._(u'Выберите аватар'), path='.',
             filter='files', events_callback=on_select, size=(.9, .9)
         )
 
@@ -391,7 +542,7 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
 
         return True
 
-    def back_screen(self, name_screen):
+    def back_screen(self, event=None):
         '''Менеджер экранов. Вызывается при нажатии Back Key
         и шеврона "Назад" в ToolBar.
 
@@ -399,48 +550,90 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
         :param name_screen: имя Activity, которое будет установлено;
 
         '''
-        print(name_screen)
-        print(self.manager.screens)
 
-        name_current_screen = self.manager.current
-
+        current_screen = self.manager.current
         # Нажата BackKey.
-        if name_screen in (1001, 27):
-            if name_current_screen == 'previous':
+        if event in (1001, 27):
+            if current_screen == 'previous':
                 self.dialog_exit()
                 return
 
-        if name_current_screen == 'box posts' \
-                or name_screen in (1001, 27):
-            if name_screen in (1001, 27):
-                self.manager.current = self.screen.ids.box_posts.old_screen
-            else:
-                self.manager.current = name_screen
+        if current_screen == 'show license':
+            self.manager.current = self.manager.screens[-1].name
         else:
-            self.manager.current = name_screen
+            self.manager.current = self.manager.previous()
+        print(self.manager.screens)
 
-    def dialog_exit(self, *args):
-        self.open_dialog(
-            text=data.string_lang_exit,
-            buttons=[
-                [data.string_lang_yes, lambda *x: sys.exit(0)],
-                [data.string_lang_no, lambda *x: self.close_dialog()]
-            ]
+    def show_about(self):
+        def on_ref_press(instance, text_link):
+            webbrowser.open(text_link)
+
+        self.nav_drawer.toggle()
+        self.screen.ids.load_screen.ids.status.text = \
+            self.translation._(
+                u'[size=20][b]Kivy Issues[/b][/size]\n\n'
+                u'[b]Версия:[/b] {version}\n'
+                u'[b]Лицензия:[/b] MIT\n\n'
+                u'[size=20][b]Разработчики[/b][/size]\n\n'
+                u'[b]Backend:[/b] [ref=https://m.vk.com/fogapod]'
+                u'[color={link_color}]Евгений Ершов[/color][/ref]\n'
+                u'[b]Frontend:[/b] [ref=https://m.vk.com/heattheatr]'
+                u'[color={link_color}]Иванов Юрий[/color][/ref]\n\n'
+                u'[b]Исходный код:[/b] '
+                u'[ref=https://github.com/HeaTTheatR/KivyIssues]'
+                u'[color={link_color}]GitHub[/color][/ref]').format(
+                version=__version__,
+                link_color=get_hex_from_color(self.theme_cls.primary_color)
+            )
+        self.screen.ids.load_screen.ids.status.bind(
+            on_ref_press=on_ref_press
         )
+        self.screen.ids.load_screen.ids.spinner.active = False
+        self.manager.current = 'load screen'
+        self.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: self.back_screen()]]
 
-    def close_dialog(self):
-        self.instance_dialog.dismiss()
-        self.instance_dialog = None
+    def show_license(self):
+        self.screen.ids.show_license.ids.text_license.text = \
+                self.translation._('''
+[color=78a5a3ff]Copyright (c) Easy
 
-    def open_dialog(self, text='', title=title, dismiss=False, buttons=None):
-        if not buttons:
-            buttons = []
-        if self.instance_dialog:
-            self.close_dialog()
-            return
+[color=#000]Данная лицензия разрешает лицам, получившим копию данного программного обеспечения и сопутствующей документации (в дальнейшем именуемыми [color=78a5a3ff]«Программное Обеспечение»[color=#000]), безвозмездно использовать [color=78a5a3ff]Программное Обеспечение [color=#000]без ограничений, включая неограниченное право на использование, копирование, изменение, слияние, публикацию, распространение, сублицензирование и/или продажу копий [color=78a5a3ff]Программного Обеспечения[color=#000], а также лицам, которым предоставляется данное [color=78a5a3ff]Программное Обеспечение[color=#000], при соблюдении следующих условий:
 
-        self.instance_dialog = dialog(
-            text=text, title=title, dismiss=dismiss, buttons=buttons
+Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части данного [color=78a5a3ff]Программного Обеспечения.
+
+[color=78a5a3ff]ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
+                ''')
+        self.nav_drawer._toggle()
+        self.manager.current = 'show license'
+        self.screen.ids.action_bar.left_action_items = \
+            [['chevron-left', lambda x: self.back_screen()]]
+        self.screen.ids.action_bar.title = \
+            self.translation._('MIT LICENSE')
+
+    def select_locale(self):
+        '''Выводит окно со спискои имеющихся языковых локализаций для
+        установки языка приложения.'''
+
+        def select_locale(name_locale):
+            '''Устанавливает выбранную локализацию.'''
+
+            for locale in self.dict_language.keys():
+                if name_locale == self.dict_language[locale]:
+                    self.lang = locale
+                    self.config.set('General', 'language', self.lang)
+                    self.config.write()
+
+        dict_info_locales = {}
+        for locale in self.dict_language.keys():
+            dict_info_locales[self.dict_language[locale]] = \
+                ['locale', locale == self.lang]
+
+        card(
+            Lists(
+                dict_items=dict_info_locales,
+                events_callback=select_locale, flag='one_select_check'
+            )
         )
 
     def notify(self, title='Title:', message='Message!',
@@ -457,23 +650,16 @@ class Program(App, _class.ShowPlugin, _class.ShowAbout, _class.WorkWithPosts,
                 continue
             Builder.load_file(directory_kv_files + '/' + kv_file)
 
-    def on_config_change(self, config, section, key, value):
-        '''Вызывается при выборе одного из пунктов настроек программы.'''
-
-        if key == 'language':
-            if not os.path.exists('%s/data/language/%s.txt' %(
-                    self.directory, data.select_locale[value])):
-                dialog(
-                    text=data.string_lang_not_locale.format(
-                        data.select_locale[value]),
-                    title=self.title
-                )
-                config.set(section, key, data.old_language)
-                config.write()
-                self.close_settings()
+    def on_lang(self, instance, lang):
+        self.translation.switch_lang(lang)
 
     def on_pause(self):
         '''Ставит приложение на 'паузу' при выходе из него.
         В противном случае запускает программу заново.'''
 
         return True
+
+pattern_whom_comment = re.compile(r'\[id\d+\|\w+\]', re.UNICODE)
+pattern_replace_link = re.compile(r'(?#Protocol)(?:(?:ht|f)tp(' \
+                             '?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,'
+                                  '*:=]|%[a-f\d]{2})*)?')

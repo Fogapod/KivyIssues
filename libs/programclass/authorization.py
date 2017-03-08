@@ -22,15 +22,15 @@ class GetAndSaveLoginPassword(object):
 
         if login == '' or login.isspace():
             self.notify(
-                title=self.data.string_lang_title,
-                message=self.data.string_lang_field_login_empty,
+                title=self.title,
+                message=self.translation._('Field Login empty!'),
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory,
             )
             return
         if password == '' or password.isspace():
             self.notify(
-                title=self.data.string_lang_title,
-                message=self.data.string_lang_field_password_empty,
+                title=self.title,
+                message=self.translation._('Field Password empty!'),
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory,
             )
             return
@@ -41,24 +41,32 @@ class GetAndSaveLoginPassword(object):
 
     def save_login_password(self, login, password):
         # TODO: Сохранить access_token и зашифровать его.
-        self.data.regdata['login'] = login
-        self.data.regdata['password'] = password
-        self.config.set('General', 'regdata', self.data.regdata)
+        self.regdata['login'] = login
+        self.regdata['password'] = password
+        self.config.set('General', 'regdata', self.regdata)
         self.config.write()
         self._authorization_on_vk(login, password)
 
 
 class AuthorizationOnVK(object):
 
-    def _authorization_on_vk(self, login, password):
+    def _authorization_on_vk(self, login, password, from_fail_screen=False):
+        '''Если from_fail_screen == True - функция была вызвана из экрана
+        ошибки подключения к Интернет.'''
+
         def _authorization_on_vk(interval):
             thread_authorization = threading.Thread(
                 target=self.authorization_on_vk, args=(login, password,)
             )
             thread_authorization.start()
 
+        if from_fail_screen:
+            self.screen.ids.load_screen.remove_widget(
+                 self.screen.ids.load_screen.children[0]
+            )
+
         self.screen.ids.load_screen.ids.status.text = \
-            self.data.string_lang_authorization
+            self.translation._(u'Авторизация...')
         self.screen.ids.load_screen.ids.spinner.active = True
         Clock.schedule_once(_authorization_on_vk, 1)
 
@@ -66,10 +74,13 @@ class AuthorizationOnVK(object):
         result, text_error = vkr.log_in(login=login, password=password)
 
         if not result:
-            self.show_screen_registration(fail_registration=True)
+            if 'Failed to establish a new connection' in text_error:
+                self.show_screen_connection_failed()
+            else:
+                self.show_screen_registration(fail_registration=True)
             self.notify(
-                title=self.data.string_lang_title,
-                message=self.data.string_lang_error_auth.format(text_error),
+                title=self.title,
+                message=self.translation._(u'Ошибка авторизации!'),
                 app_icon='%s/data/images/vk_logo_red.png' % self.directory
             )
         else:
@@ -78,7 +89,7 @@ class AuthorizationOnVK(object):
 
             if not os.path.exists(self.path_to_avatar):
                 self.load_avatar()
-            if self.data.user_name == 'User':
+            if self.user_name == 'User':
                 self.set_user_name()
 
             self.set_issues_in_group()
@@ -88,7 +99,7 @@ class AuthorizationOnVK(object):
 
     def load_avatar(self):
             self.screen.ids.load_screen.ids.status.text = \
-                self.data.string_lang_load_avatar
+                self.translation._(u'Загрузка аватара...')
             avatar, text_error = vkr.get_user_photo(size='max')
 
             if avatar:
@@ -107,12 +118,12 @@ class AuthorizationOnVK(object):
 
     def set_info_for_group(self):
         self.screen.ids.load_screen.ids.status.text = \
-                self.data.string_lang_get_info_for_group
-        self.group_info, text_error = vkr.get_info_from_group()
+            self.translation._(u'Получение информации о группе...')
+        self.group_info, text_error = vkr.get_group_info()
 
     def set_user_name(self):
         self.screen.ids.load_screen.ids.status.text = \
-            self.data.string_lang_load_user_name
+            self.translation._(u'Загрузка имени пользователя...')
         name, info = vkr.get_user_name()
 
         if name:
@@ -122,28 +133,26 @@ class AuthorizationOnVK(object):
 
     def set_issues_in_group(self):
         self.screen.ids.load_screen.ids.status.text = \
-            self.data.string_lang_load_issues_in_group
+            self.translation._(u'Загрузка кол-ва вопросов в группе...')
         issues_in_group, info = vkr.get_issue_count()
 
         if issues_in_group:
-            if issues_in_group > self.data.issues_in_group:
-                new_issues = str(issues_in_group - self.data.issues_in_group)
+            if issues_in_group > self.issues_in_group:
+                new_issues = str(issues_in_group - self.issues_in_group)
                 self.nav_drawer.ids.new_issues_in_group.text = \
-                    self.data.string_lang_new_issues_in_group.format(
-                        new_issues
-                    )
+                    self.translation._(u'Новые - %s') % new_issues
                 self.screen.ids.action_bar.right_action_items = \
                     [['comment-plus-outline',
                       lambda x: self.manager.screens[2].show_posts(
                           new_issues)]]
             else:
                 self.nav_drawer.ids.new_issues_in_group.text = \
-                    self.data.string_lang_new_issues_in_group.format('0')
+                    self.translation._(u'Новые - %s') % u'0'
 
             self.config.set('General', 'issues_in_group', issues_in_group)
             self.config.write()
-            self.data.issues_in_group = issues_in_group
+            self.issues_in_group = issues_in_group
             self.nav_drawer.ids.issues_in_group.text = \
-                self.data.string_lang_issues_in_group.format(
-                    str(issues_in_group)
+                self.translation._(u'Вопросов в группе - %s') % str(
+                    issues_in_group
                 )

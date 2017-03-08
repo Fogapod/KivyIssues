@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #:kivy 1.9.1
 #:import MDSeparator kivymd.card.MDSeparator
 
@@ -18,18 +20,18 @@
             halign: 'left'
             color: app.theme_cls.primary_color
             font_size: '18sp'
-            text: app.data.string_lang_mit
+            text: app.translation._('MIT LICENSE')
 
         MDSeparator:
 
         Image:
-            source: 'license/open-source-logo.png'
+            source: 'data/images/open-source-logo.png'
 
         ScrollView:
 
             Label:
                 id: text_license
-                color: app.data.text_color_from_hex
+                color: app.text_color_from_hex
                 font_size: '12sp'
                 text_size: self.width, None
                 size_hint_y: None

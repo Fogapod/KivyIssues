@@ -47,6 +47,17 @@ class CheckWidget(IRightBodyTouch, MDCheckbox):
     pass
 
 
+class OneSelectCheckWidget(ILeftBodyTouch, MDCheckbox):
+    pass
+
+
+class OneSelectCheckItem(OneLineAvatarIconListItem):
+    id = StringProperty()
+    group = StringProperty()
+    active = BooleanProperty()
+    events_callback = ObjectProperty()
+
+
 class CheckItem(TwoLineAvatarIconListItem):
     events_callback = ObjectProperty()
     '''Функция обработки сигналов экрана.'''
@@ -134,6 +145,19 @@ class Lists(BoxLayout):
             self.three_list_custom_icon(self.dict_items)
         elif self.flag == 'single_list' or self.flag == 'single_list_icon':
             self.single_list(self.list_items)
+        elif self.flag == 'one_select_check':
+            self.one_select_check()
+
+    def one_select_check(self):
+        for text_item in self.dict_items.keys():
+            self.ids.list_items.add_widget(
+                OneSelectCheckItem(
+                    text=text_item, id=text_item,
+                    events_callback=self.events_callback,
+                    group=self.dict_items[text_item][0],
+                    active=self.dict_items[text_item][1]
+                )
+            )
 
     def single_list(self, list_items):
         '''
@@ -168,6 +192,9 @@ class Lists(BoxLayout):
 
         for name_item in dict_items.keys():
             desc_item, icon_item = dict_items[name_item]
+            if desc_item == '':
+                name_item += '\n'
+
             icon_item = IconItemThree(
                 text=name_item, secondary_text=desc_item, id=name_item,
                 icon=icon_item, events_callback=self.events_callback
