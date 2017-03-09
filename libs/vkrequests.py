@@ -951,11 +951,6 @@ def send_message(**kwargs):
         строка с id сообщений, которые нужно переслать через запятую
         ('1,2,3') (опционально)
 
-    :rnd_id:
-        специальный идентификатор, необходимый для предотвращения отправки
-        повторяющихся сообщений. Не нужно указывать,
-        если в приложении не будет реализована функция автоответа
-
     :file:
         путь к документу (опционально)
 
@@ -972,7 +967,6 @@ def send_message(**kwargs):
         gid = kwargs['group_id']
     text = kwargs['text']
     forward = kwargs.get('messages_to_forward')
-    rnd_id = kwargs.get('rnd_id')
 
     path_to_file = kwargs.get('file')
     path_to_image = kwargs.get('image')
@@ -991,8 +985,7 @@ def send_message(**kwargs):
     # print attachments
     response = api.messages.send(peer_id=uid,
         message=text, forward_messages=forward,
-        chat_id=gid, random_id=rnd_id,
-        attachment=attachments
+        chat_id=gid, attachment=attachments
     )
 
     return response
