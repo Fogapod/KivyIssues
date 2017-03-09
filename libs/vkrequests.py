@@ -17,8 +17,6 @@ kivy_ru = '99411738'  # raw_id of http://vk.com/kivy_ru
 
 def vk_request_errors(request):
     def do_request(*args, **kwargs):
-        if not api:
-            return False, 'auth required'
         # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
 
@@ -28,33 +26,33 @@ def vk_request_errors(request):
         except Exception as error:
             error = str(error)
             check_error = error.lower()
-            if 'too many requests' in check_error or 'timed out' in\
-                check_error or 'read timed out' in check_error:
-                print 'Too many requests/response time out'
+            if 'too many requests' in check_error or 'timed out' in check_error\
+               or 'read timed out' in check_error:
+                print 'Слишком много запросов/вышло время ожидания'
                 time.sleep(0.33)
                 return request_errors(*args, **kwargs) # TODO: add counter
 
             elif 'connection' in check_error:
-                print 'Check your connection!'
+                print 'Проблема с подключением к сети'
 
             elif 'incorrect password' in check_error:
-                print 'Incorrect password!'
+                print 'Неправильный пароль'
             
             elif 'invalid access_token' in check_error:
-                print 'invalid access_token'
+                print 'Устаревший/неправильный access_token'
 
             elif 'captcha' in check_error:
-                print 'Capthca'
+                print 'Требуется ввести капчу'
                 #TODO обработать капчу
 
             elif 'auth check code is needed' in check_error:
-                print 'Auth code is needed'
+                print 'Необходим ключ для двухфакторной авторизации'
 
             elif 'failed loading' in check_error:
                 raise # необходимо для методов, заружающих файлы на сервер
 
             else:
-                print('\nUnknown error: ' + error + '\n')
+                print '\nUnknown error: ' + error + '\n'
             return False, error
         else:
             return response, error
