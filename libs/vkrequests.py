@@ -10,10 +10,8 @@ __author__ = 'Eugene Ershov - http://vk.com/fogapod'
 
 api = None
 token = None
-kivy_ru = '99411738'  # raw_id of http://vk.com/kivy_ru
+kivy_ru = '99411738'  # raw_id of https://vk.com/kivy_ru
 
-
-# vk.logger.setLevel('DEBUG')
 
 def error_catcher(request):
     def do_request(*args, **kwargs):
@@ -58,19 +56,23 @@ def error_catcher(request):
             return response, error
     return do_request
 
+
 @error_catcher
 def log_in(**kwargs):
     """
     :token: ключ доступа для работы с аккаунтом ( str )
-    :key: код подтверждения при двухфакторной авторизации ( int )
+    :key:
+        код подтверждения при двухфакторной (или любой другой) авторизации ( int )
     :login: логин ( str )
     :password: пароль ( str )
 
-    Возвращает: новое значение token ( str )
+    Возвращает: новое значение access_token ( str )
 
     """
 
-    set_group_id()
+    _set_group_id()
+    # установка группы, с которой методам предстоит работать.
+    # по умолчанию - https://vk.com/kivy_ru (id = 99411738)
 
     session, error = _create_session(**kwargs)
     if error:
@@ -79,7 +81,7 @@ def log_in(**kwargs):
     global api
     api = vk.API(session, v='5.60')
 
-    response, error = track_visitor()
+    response, error = _track_visitor()
     if error:
         return response, error
     else:
@@ -481,8 +483,8 @@ def create_issue(*args):
 
     attachments = []
 
-    doc = upload_doc(path=path_to_file)[0]
-    pic = attach_pic_to_wall_post(path=path_to_image)[0]
+    doc = __upload_doc(path=path_to_file)[0]
+    pic = _attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -513,7 +515,7 @@ def edit_issue(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = upload_doc(path=path_to_file)[0]
+        doc = _upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -521,7 +523,7 @@ def edit_issue(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = upload_doc(path=path_to_image)[0]
+        pic = _upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -545,9 +547,8 @@ def del_issue(**kwargs):
         return True
 
 
-# Использование извне не предполагается.
 @error_catcher
-def upload_doc(**kwargs):
+def _upload_doc(**kwargs):
     """
     :path: путь к документу
 
@@ -577,9 +578,8 @@ def upload_doc(**kwargs):
             raise Exception('Failed loading document ' + str(e))
 
 
-# Использование извне не предполагается.
 @error_catcher
-def attach_pic_to_wall_post(**kwargs):
+def _attach_pic_to_wall_post(**kwargs):
     """
     :path: путь к фотографии;
 
@@ -611,7 +611,6 @@ def attach_pic_to_wall_post(**kwargs):
             raise Exception('Failed loading picture ' + str(e))
 
 
-# TODO упорядочить получаемые данные через хранимые процедуры
 @error_catcher
 def get_comments(**kwargs):
     """
@@ -668,8 +667,8 @@ def create_comment(*args, **kwargs):
 
     attachments = []
 
-    doc = upload_doc(path=path_to_file)[0]
-    pic = attach_pic_to_wall_post(path=path_to_image)[0]
+    doc = _upload_doc(path=path_to_file)[0]
+    pic = _attach_pic_to_wall_post(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -701,7 +700,7 @@ def edit_comment(**kwargs):
     attachments = []
 
     if path_to_file:
-        doc = upload_doc(path=path_to_file)[0]
+        doc = _upload_doc(path=path_to_file)[0]
         attachments.append(
             'doc' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -709,7 +708,7 @@ def edit_comment(**kwargs):
         attachments.append('doc' + doc_oid + '_' + doc_id)
 
     if path_to_image:
-        pic = upload_doc(path=path_to_image)[0]
+        pic = _upload_doc(path=path_to_image)[0]
         attachments.append(
             'pic' + str(doc[0]['owner_id']) + '_' + str(doc[0['id']]))
 
@@ -733,7 +732,7 @@ def del_comment(**kwargs):
         return True
 
 
-# FIXME всегда возвращает фото
+# ! всегда возвращает фото !
 @error_catcher
 def get_user_photo(**kwargs):
     """
@@ -980,8 +979,8 @@ def send_message(**kwargs):
 
     attachments = []
 
-    doc = upload_doc(path=path_to_file)[0]
-    pic = attach_pic_to_message(path=path_to_image)[0]
+    doc = _upload_doc(path=path_to_file)[0]
+    pic = _attach_pic_to_message(path=path_to_image)[0]
 
     if doc:
         attachments.append(
@@ -999,9 +998,8 @@ def send_message(**kwargs):
     return response
 
 
-# Использование извне не предполагается.
 @error_catcher
-def attach_pic_to_message(**kwargs):
+def _attach_pic_to_message(**kwargs):
     """
     :path: путь к фотографии;
 
@@ -1157,11 +1155,6 @@ def do_message_long_poll_request(**kwargs):
                     оповещения отключены до: -1 - навсегда; 0 - включены;
                     другое число - когда нужно включить
                 ]
-
-    Более полная информация о событиях:
-    https://vk.com/dev/using_longpoll?f=3.%20%D0%A1%D1%82%D1%80%D1%83%D0%
-    BA%D1%82%D1%83%D1%80%D0%B0%20%D1%81%D0%BE%D0%B1%D1%8B%D1%82%D0%B8%D0%B9
-
     """
 
     url = kwargs['url']
@@ -1169,7 +1162,7 @@ def do_message_long_poll_request(**kwargs):
 
 
 @error_catcher
-def track_visitor():
+def _track_visitor():
     """Отвечает за занесение в статистику приложения
     информации о пользователе.
     Так же используется для подтверждения успешной 
@@ -1179,7 +1172,10 @@ def track_visitor():
     return True
 
 
-def set_group_id(new_gid=kivy_ru):
+def _set_group_id(new_gid=kivy_ru):
+    """Устанавливает глобалбные значения 
+    GROUP_ID и MGROUP_ID, с которыми будут работать 
+    остальные методы"""
     global GROUP_ID, MGROUP_ID
 
     GROUP_ID = str(new_gid)
