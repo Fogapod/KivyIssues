@@ -17,6 +17,8 @@ kivy_ru = '99411738'  # raw_id of http://vk.com/kivy_ru
 
 def vk_request_errors(request):
     def do_request(*args, **kwargs):
+        if not api:
+            return False, 'auth required'
         # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
 
@@ -25,36 +27,34 @@ def vk_request_errors(request):
             response = request(*args, **kwargs)
         except Exception as error:
             error = str(error)
-            if 'Too many requests per second' in error or 'timed out' in error:
+            check_error = error.lower()
+            if 'too many requests' in check_error or 'timed out' in\
+                check_error or 'read timed out' in check_error:
+                print 'Too many requests/response time out'
                 time.sleep(0.33)
-                return request_errors(*args, **kwargs)
+                return request_errors(*args, **kwargs) # TODO: add counter
 
-            elif 'Failed to establish a new connection' in error:
-                print('Check your connection!')
+            elif 'connection' in check_error:
+                print 'Check your connection!'
 
-            elif 'incorrect password' in error:
-                print('Incorrect password!')
+            elif 'incorrect password' in check_error:
+                print 'Incorrect password!'
+            
+            elif 'invalid access_token' in check_error:
+                print 'invalid access_token'
 
-            elif 'Read timed out' in error or 'Connection aborted' in error:
-                print('WARNING\nResponse time exceeded!')
-                time.sleep(0.66)
-                return request_errors(*args, **kwargs)
+            elif 'captcha' in check_error:
+                print 'Capthca'
+                #TODO обработать капчу
 
-            elif 'Failed loading' in error:
-                raise
+            elif 'auth check code is needed' in check_error:
+                print 'Auth code is needed'
 
-            elif 'Captcha' in error:
-                print('Capthca!!!!!')
-            # TODO обработать капчу
-
-            elif 'Auth check code is needed' in error:
-                print('Auth code is needed!')
+            elif 'failed loading' in check_error:
+                raise # необходимо для методов, заружающих файлы на сервер
 
             else:
-                if not api:
-                    print('Authentication required')
-                else:
-                    print('\nERROR! ' + error + '\n')
+                print('\nUnknown error: ' + error + '\n')
             return False, error
         else:
             return response, error
@@ -74,35 +74,48 @@ def log_in(**kwargs):
 
     set_group_id()
 
-    # 65536 == offline; 4096 == messages; 8192 == wall; 131072 == docs;
-    # 4 == photos;
+    session, error = _create_session(**kwargs)
+    if error:
+        return response, error
+
+    global api
+    api = vk.API(session, v='5.60')
+
+    response, error = track_visitor()
+    if error:
+        return response, error
+    else:
+        return session.access_token, error
+
+
+@vk_request_errors
+def _create_session(**kwargs):
+    """child function of log_in()"""
+
     scope = '208900'
+    # permissions: 65536 == offline; 4096 == messages;
+    # 8192 == wall; 131072 == docs; 4 == photos;
     app_id = '5720412'
 
     token = kwargs.get('token')
     key = kwargs.get('key')
-
     if token:
-        session = vk.AuthSession(access_token=token, scope=scope,
-                                 app_id=app_id)
+        session = vk.AuthSession(
+            access_token=token, scope=scope, app_id=app_id
+        )
     elif key:
         login, password = kwargs['login'], kwargs['password']
-        session = vk.AuthSession(user_login=login, user_password=password,
-                                 scope=scope, app_id=app_id, key=key)
+        session = vk.AuthSession(
+            user_login=login, user_password=password,
+            scope=scope, app_id=app_id, key=key
+        )
     else:
         login, password = kwargs['login'], kwargs['password']
-        session = vk.AuthSession(user_login=login, user_password=password,
-                                 scope=scope, app_id=app_id)
-
-    global api
-    try:
-        api = vk.API(session, v='5.60')
-        if not track_visitor():
-            raise
-    except: # session was not created
-        return False
-    else:
-        return session.access_token
+        session = vk.AuthSession(
+            user_login=login, user_password=password,
+            scope=scope, app_id=app_id
+        )
+    return session
 
 
 @vk_request_errors
