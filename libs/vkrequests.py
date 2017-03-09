@@ -15,7 +15,7 @@ kivy_ru = '99411738'  # raw_id of http://vk.com/kivy_ru
 
 # vk.logger.setLevel('DEBUG')
 
-def vk_request_errors(request):
+def error_catcher(request):
     def do_request(*args, **kwargs):
         # response = request(*args, **kwargs); time.sleep(0.66)
         # Для вывода ошибки в консоль
@@ -58,7 +58,7 @@ def vk_request_errors(request):
             return response, error
     return do_request
 
-@vk_request_errors
+@error_catcher
 def log_in(**kwargs):
     """
     :token: ключ доступа для работы с аккаунтом ( str )
@@ -86,7 +86,7 @@ def log_in(**kwargs):
         return session.access_token, error
 
 
-@vk_request_errors
+@error_catcher
 def _create_session(**kwargs):
     """child function of log_in()"""
 
@@ -116,28 +116,28 @@ def _create_session(**kwargs):
     return session
 
 
-@vk_request_errors
+@error_catcher
 def get_members_count():
     """Возвращает: число участников"""
 
     return api.execute.GetMembersCount(gid=GROUP_ID)
 
 
-@vk_request_errors
+@error_catcher
 def get_user_name():
     """Возвращает: Имя_пробел_Фамилия"""
 
     return api.execute.GetUserName()
 
 
-@vk_request_errors
+@error_catcher
 def get_issue_count():
     """Возвращает: число записей в группе"""
 
     return api.execute.GetIssuesCount(mgid=MGROUP_ID)
 
 
-@vk_request_errors
+@error_catcher
 def get_group_info():
     """
     Возвращает: информацию о текущей группе ( dict )
@@ -164,7 +164,7 @@ def get_group_info():
     return response[0]
 
 
-@vk_request_errors
+@error_catcher
 def get_user_info(**kwargs):
     """
     :user_id: id пользователя (если не указан, будет получена информация о себе)
@@ -413,7 +413,7 @@ def get_user_info(**kwargs):
     return response
 
 
-@vk_request_errors
+@error_catcher
 def get_issues(**kwargs):
     """
     :offset:
@@ -436,7 +436,7 @@ def get_issues(**kwargs):
                         offset=offset, count=post_count)
 
 
-@vk_request_errors
+@error_catcher
 def get_user_posts(**kwargs):
     """
     :user_id: id пользователя, записи которого необходимо получить
@@ -460,7 +460,7 @@ def get_user_posts(**kwargs):
                         offset=offset, count=post_count)
 
 
-@vk_request_errors
+@error_catcher
 def create_issue(*args):
     """
     agrs:
@@ -496,7 +496,7 @@ def create_issue(*args):
 
 
 # TODO: требует доработки.
-@vk_request_errors
+@error_catcher
 def edit_issue(**kwargs):
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
@@ -532,7 +532,7 @@ def edit_issue(**kwargs):
                   attachments=attachments, post_id=issue_id)
 
 
-@vk_request_errors
+@error_catcher
 def del_issue(**kwargs):
     """
     :issue_id: id записи, подлежащей удалению;
@@ -546,7 +546,7 @@ def del_issue(**kwargs):
 
 
 # Использование извне не предполагается.
-@vk_request_errors
+@error_catcher
 def upload_doc(**kwargs):
     """
     :path: путь к документу
@@ -578,7 +578,7 @@ def upload_doc(**kwargs):
 
 
 # Использование извне не предполагается.
-@vk_request_errors
+@error_catcher
 def attach_pic_to_wall_post(**kwargs):
     """
     :path: путь к фотографии;
@@ -612,7 +612,7 @@ def attach_pic_to_wall_post(**kwargs):
 
 
 # TODO упорядочить получаемые данные через хранимые процедуры
-@vk_request_errors
+@error_catcher
 def get_comments(**kwargs):
     """
     :post_id:
@@ -639,7 +639,7 @@ def get_comments(**kwargs):
                                 extended='1')
 
 
-@vk_request_errors
+@error_catcher
 def create_comment(*args, **kwargs):
     """
     :comment_data:
@@ -684,7 +684,7 @@ def create_comment(*args, **kwargs):
 
 
 # TODO: требует доработки.
-@vk_request_errors
+@error_catcher
 def edit_comment(**kwargs):
     path_to_file = issue_data['file']
     doc_id = kwargs.get('doc_id')
@@ -720,7 +720,7 @@ def edit_comment(**kwargs):
                          attachments=attachments, comment_id=cid)
 
 
-@vk_request_errors
+@error_catcher
 def del_comment(**kwargs):
     """
     :comment_id: id комментария, подлежащего удалению;
@@ -734,7 +734,7 @@ def del_comment(**kwargs):
 
 
 # FIXME всегда возвращает фото
-@vk_request_errors
+@error_catcher
 def get_user_photo(**kwargs):
     """
     :size: необходимый размер фотографии
@@ -756,7 +756,7 @@ def get_user_photo(**kwargs):
         return r.get(url[photo_size]).content
 
 
-@vk_request_errors
+@error_catcher
 def get_messages_list(**kwargs):
     """
     :count:
@@ -908,7 +908,7 @@ def get_messages_list(**kwargs):
     return response
 
 
-@vk_request_errors
+@error_catcher
 def get_messages(**kwargs):
     """
     Загружает дополнительные сообщения из выбранного диалога
@@ -936,7 +936,7 @@ def get_messages(**kwargs):
     return response
 
 
-@vk_request_errors
+@error_catcher
 def send_message(**kwargs):
     """
     :user_id:
@@ -1000,7 +1000,7 @@ def send_message(**kwargs):
 
 
 # Использование извне не предполагается.
-@vk_request_errors
+@error_catcher
 def attach_pic_to_message(**kwargs):
     """
     :path: путь к фотографии;
@@ -1032,7 +1032,7 @@ def attach_pic_to_message(**kwargs):
             raise Exception('Failed loading picture ' + str(e))
 
 
-@vk_request_errors
+@error_catcher
 def get_message_long_poll_data():
     """
     Возвращает: словарь ( dict )
@@ -1049,7 +1049,7 @@ def get_message_long_poll_data():
     return response
 
 
-@vk_request_errors
+@error_catcher
 def do_message_long_poll_request(**kwargs):
     """
     :url: специальный url, собранный с использованием данных из get_message_long_poll_data()
@@ -1168,7 +1168,7 @@ def do_message_long_poll_request(**kwargs):
     return r.post(url)
 
 
-@vk_request_errors
+@error_catcher
 def track_visitor():
     """Отвечает за занесение в статистику приложения
     информации о пользователе.
