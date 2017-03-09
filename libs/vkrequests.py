@@ -57,7 +57,6 @@ def error_catcher(request):
     return do_request
 
 
-@error_catcher
 def log_in(**kwargs):
     """
     :token: ключ доступа для работы с аккаунтом ( str )
@@ -74,9 +73,11 @@ def log_in(**kwargs):
     # установка группы, с которой методам предстоит работать.
     # по умолчанию - https://vk.com/kivy_ru (id = 99411738)
 
-    session, error = _create_session(**kwargs)
+    response, error = _create_session(**kwargs)
     if error:
         return response, error
+
+    session = response
 
     global api
     api = vk.API(session, v='5.60')
