@@ -543,8 +543,7 @@ def del_issue(**kwargs):
 
     pid = kwargs['issue_id']
     response = api.wall.delete(owner_id=MGROUP_ID, post_id=pid)
-    if response:
-        return True
+    return True
 
 
 @error_catcher
@@ -728,8 +727,7 @@ def del_comment(**kwargs):
 
     cid = kwargs['comment_id']
     response = api.wall.deleteComment(owner_id=MGROUP_ID, comment_id=cid)
-    if response:
-        return True
+    return True
 
 
 # ! всегда возвращает фото !
