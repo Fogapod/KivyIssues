@@ -74,7 +74,7 @@ class AuthorizationOnVK(object):
         result, text_error = vkr.log_in(login=login, password=password)
 
         if not result:
-            if 'Failed to establish a new connection' in text_error:
+            if 'connection' in text_error:
                 self.show_screen_connection_failed()
             else:
                 self.show_screen_registration(fail_registration=True)
