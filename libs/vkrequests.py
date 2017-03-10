@@ -21,36 +21,37 @@ def error_catcher(request):
         error = None
         try:
             response = request(*args, **kwargs)
-        except Exception as error:
-            error = str(error)
-            check_error = error.lower()
-            if 'too many requests' in check_error or 'timed out' in check_error\
-               or 'read timed out' in check_error:
+
+        except Exception as raw_error:
+            raw_error = str(raw_error)
+            error = raw_error.lower()
+
+            if 'too many requests' in error or 'timed out' in error:
                 print 'Слишком много запросов/вышло время ожидания'
                 time.sleep(0.33)
                 return request_errors(*args, **kwargs) # TODO: add counter
 
-            elif 'connection' in check_error:
+            elif 'connection' in error:
                 print 'Проблема с подключением к сети'
 
-            elif 'incorrect password' in check_error:
+            elif 'incorrect password' in error:
                 print 'Неправильный пароль'
             
-            elif 'invalid access_token' in check_error:
+            elif 'invalid access_token' in error:
                 print 'Устаревший/неправильный access_token'
 
-            elif 'captcha' in check_error:
+            elif 'captcha' in error:
                 print 'Требуется ввести капчу'
                 #TODO обработать капчу
 
-            elif 'auth check code is needed' in check_error:
+            elif 'auth check code is needed' in error:
                 print 'Необходим ключ для двухфакторной авторизации'
 
-            elif 'failed loading' in check_error:
+            elif 'failed loading' in error:
                 raise # необходимо для методов, заружающих файлы на сервер
 
             else:
-                print '\nUnknown error: ' + error + '\n'
+                print '\nUnknown error: ' + raw_error + '\n'
             return False, error
         else:
             return response, error
