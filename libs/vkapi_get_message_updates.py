@@ -20,15 +20,15 @@ while not authorized:
         response, error = vkr.log_in(login=LOGIN, password=PASSWORD)
 
     if response:
-        print(u'\tАвторизация прошла\ntoken: ' + response)
         authorized = True
 
     elif 'code is needed' in error:
         key = raw_input('key:')
         response, error = vkr.log_in(login=LOGIN, password=PASSWORD, key=key)
         if response:
-            print(u'\tАвторизация прошла\ntoken: ' + response)
             authorized = True
+
+    print(u'\nУспешная авторизация\ntoken: ' + response)
 
 class App():
     def __init__(self):
@@ -37,15 +37,15 @@ class App():
 
     def listen_for_updates(self):
         while self.listen_message_updates:
-            response = vkr.get_message_updates(ts=self.mlpd['ts'],pts=self.mlpd['pts'])[0]
+            response, error = vkr.get_message_updates(ts=self.mlpd['ts'],pts=self.mlpd['pts'])
             print(response)
-            if response[0]:
+ 
+            if response:
                 updates = response[0]
                 self.mlpd['pts'] = response[1]
                 messages = response[2]
             else:
-                time.sleep(1)
-                continue
+                break
 
             time.sleep(2) # проверять обновления каждые 2 секунды
 
