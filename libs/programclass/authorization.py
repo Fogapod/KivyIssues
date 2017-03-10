@@ -124,7 +124,7 @@ class AuthorizationOnVK(object):
     def set_user_name(self):
         self.screen.ids.load_screen.ids.status.text = \
             self.translation._(u'Загрузка имени пользователя...')
-        name, info = vkr.get_user_name()
+        name, text_error = vkr.get_user_name()
 
         if name:
             self.config.set('General', 'user_name', name)
@@ -134,7 +134,7 @@ class AuthorizationOnVK(object):
     def set_issues_in_group(self):
         self.screen.ids.load_screen.ids.status.text = \
             self.translation._(u'Загрузка кол-ва вопросов в группе...')
-        issues_in_group, info = vkr.get_issue_count()
+        issues_in_group, text_error = vkr.get_issue_count()
 
         if issues_in_group:
             if issues_in_group > self.issues_in_group:
