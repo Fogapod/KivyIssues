@@ -981,7 +981,7 @@ def send_message(**kwargs):
     if pic:
         attachments.append(
             'photo' + str(pic[0]['owner_id']) + '_' + str(pic[0]['id']))
-    # print attachments
+
     response = api.messages.send(peer_id=uid,
         message=text, forward_messages=forward,
         chat_id=gid, attachment=attachments
@@ -1032,7 +1032,7 @@ def get_message_long_poll_data():
         "ts": 
             параметр, необходимый методу get_message_updates(),
         "pts":
-            параметр, необходимый методу get_message_updates;
+            параметр, необходимый методу get_message_updates();
             счётчик событий. Вернётся самое большое значение на 
             данный момент (последнее событие + 1)
     """
