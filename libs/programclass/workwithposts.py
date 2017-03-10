@@ -45,14 +45,14 @@ class WorkWithPosts(object):
         '''
 
         if not comments:
-            wall_posts, info = get_issues(offset='0', count=count_issues)
+            wall_posts, text_error = get_issues(offset=0, count=count_issues)
         else:
-            wall_posts, info = get_comments(id=post_id, count=count_issues)
+            wall_posts, text_error = get_comments(id=post_id, count=count_issues)
 
         profiles_dict = {}
 
         if not wall_posts:
-            print(info)
+            print(text_error)
             return
 
         for data_post in wall_posts['profiles']:
