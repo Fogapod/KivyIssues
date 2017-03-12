@@ -18,9 +18,9 @@ class AndroidNotification(Notification):
         icon = getattr(Drawable, kwargs.get('icon_android', 'icon'))
         noti = NotificationBuilder(activity)
         noti.setContentTitle(AndroidString(
-            kwargs.get('title').encode('utf-8')))
+            kwargs.get('title')))
         noti.setContentText(AndroidString(
-            kwargs.get('message').encode('utf-8')))
+            kwargs.get('message')))
         noti.setTicker(AndroidString(
             kwargs.get('ticker').encode('utf-8')))
         noti.setSmallIcon(icon)
