@@ -6,6 +6,14 @@ AndroidString = autoclass('java.lang.String')
 Context = autoclass('android.content.Context')
 NotificationBuilder = autoclass('android.app.Notification$Builder')
 Drawable = autoclass("{}.R$drawable".format(activity.getPackageName()))
+Intent = autoclass('android.content.Intent')
+PendingIntent = autoclass('android.app.PendingIntent')
+
+java_class = activity.getClass()
+notificationIntent = Intent(activity, java_class)
+notificationIntent.setFlags(
+    Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+intent = PendingIntent.getActivity(activity, 0, notificationIntent, 0)
 
 
 class AndroidNotification(Notification):
@@ -22,9 +30,10 @@ class AndroidNotification(Notification):
         noti.setContentText(AndroidString(
             kwargs.get('message')))
         noti.setTicker(AndroidString(
-            kwargs.get('ticker').encode('utf-8')))
+            kwargs.get('ticker')))
         noti.setSmallIcon(icon)
         noti.setAutoCancel(True)
+        noti.setContentIntent(intent)
 
         if SDK_INT >= 16:
             noti = noti.build()
