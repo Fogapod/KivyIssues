@@ -22,6 +22,8 @@ Python 2.7, 3.4
 
 Библиотека [plyer](https://github.com/kivy/plyer)
 
+Модуль для всплывающих уведомлений [kivy-toaster](https://github.com/knappador/kivy-toaster)
+
 Библиотека PIL
 
 ЛИЦЕНЗИЯ
