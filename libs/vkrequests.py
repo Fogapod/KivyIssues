@@ -15,9 +15,6 @@ kivy_ru = '99411738'  # raw_id of https://vk.com/kivy_ru
 
 def error_catcher(request):
     def do_request(*args, **kwargs):
-        # response = request(*args, **kwargs); time.sleep(0.66)
-        # Для вывода ошибки в консоль
-
         error = None
         try:
             response = request(*args, **kwargs)
@@ -29,7 +26,7 @@ def error_catcher(request):
             if 'too many requests' in error or 'timed out' in error:
                 print 'Слишком много запросов/вышло время ожидания'
                 time.sleep(0.33)
-                return request_errors(*args, **kwargs) # TODO: add counter
+                return do_request(*args, **kwargs) # TODO: add counter
 
             elif 'connection' in error:
                 print 'Проблема с подключением к сети'
